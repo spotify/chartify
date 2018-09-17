@@ -81,3 +81,4 @@ release-dev: clean ## package and upload a release
 
 release-prod: clean ## package and upload a release
 	python3 setup.py sdist bdist_wheel --universal
+	twine upload dist/*
