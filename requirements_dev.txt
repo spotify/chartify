@@ -1,6 +1,8 @@
 -e .
 pip==10.0.0
-wheel==0.29.0
+wheel==0.31.1
+setuptools==40.3.0
+twine==1.11.0
 watchdog==0.8.3
 flake8==2.6.0
 tox==2.3.1
