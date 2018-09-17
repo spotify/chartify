@@ -77,9 +77,7 @@ install: clean ## install the package to the active Python's site-packages
 
 release-dev: clean ## package and upload a release
 	python3 setup.py sdist bdist_wheel --universal
-	twine register dist/chartify-2.1.0.tar.gz -r testpypi
-	twine upload dist/* -r testpypi.
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 release-prod: clean ## package and upload a release
 	python3 setup.py sdist bdist_wheel --universal
-	./sp-pypi-upload
