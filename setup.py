@@ -85,7 +85,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author=find_meta('author'),
     author_email=find_meta('email'),
-    url='https://ghe.spotify.net/product-insights/chartify/',
+    url='https://github.com/spotify/chartify',
     packages=find_packages(include=['chartify']),
     include_package_data=True,
     install_requires=requirements,
