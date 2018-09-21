@@ -49,8 +49,7 @@ class BasePlot:
                                      'categorical', 'density'):
             return PlotNumericXY
         elif x_axis_type == 'density' and y_axis_type == 'density':
-            raise NotImplementedError(
-                "Plot for this axis type combination not yet implemented.")
+            return PlotDensityXY
         elif x_axis_type == 'datetime' and y_axis_type == 'density':
             raise NotImplementedError(
                 "Plot for this axis type combination not yet implemented.")
@@ -792,6 +791,56 @@ class PlotNumericDensityXY(BasePlot):
             color_column=color_column,
             color_order=color_values,
             stacked=False)
+
+        return self._chart
+
+
+class PlotDensityXY(BasePlot):
+    """Plot functions for denxity X & Y:
+
+    Methods:
+        - hexbin
+    """
+
+    def hexbin(self,
+               data_frame,
+               x_values_column,
+               y_values_column,
+               size,
+               color_palette='Blues',
+               reverse_color_order=False,
+               ):
+        """Hexbin.
+
+        Args:
+            data_frame (pandas.DataFrame): Data source for the plot.
+            values_column (str): Column of numeric values.
+            color_column (str, optional): Column name to group by on
+                the color dimension.
+            color_order (list, optional): List of values within the
+                'color_column' for specific sorting of the colors.
+        """
+        if isinstance(color_palette, str):
+            color_palette = color_palettes[color_palette]
+        if reverse_color_order:
+            color_palette = color_palette[::-1]
+        # color_palette = color_palette.expand_palette(3)
+        color_palette = [c.get_hex_l() for c in color_palette.colors]
+
+        # Set the chart aspect ratio otherwise the hexbins won't be symmetric.
+        aspect_scale = (self._chart.style.plot_width
+                        / self._chart.style.plot_height)
+        self._chart.figure.match_aspect = True
+        self._chart.figure.aspect_scale = aspect_scale
+        self._chart.figure.hexbin(
+            data_frame[x_values_column],
+            data_frame[y_values_column],
+            size=size,
+            orientation="flattop",
+            aspect_scale=aspect_scale,
+            palette=color_palette,
+            line_color='white'
+            )
 
         return self._chart
 
