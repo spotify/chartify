@@ -818,7 +818,7 @@ class PlotDensityXY(BasePlot):
             y_values_column (str): Column of numeric values to bin into tiles.
             size (float): Bin size for the tiles.
             color_palette (str, chartify.ColorPalette): Color palette to
-                apply to the heatmap.
+                apply to the tiles.
                 See chartify.color_palettes.show() for available color palettes.
             reverse_color_order (bool): Reverse order of the color palette.
         """
