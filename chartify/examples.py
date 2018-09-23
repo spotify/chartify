@@ -257,6 +257,28 @@ def plot_area():
 
 
 @_print_source
+def plot_hexbin():
+    """
+    Hexbin example
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+
+    ch = chartify.Chart(blank_labels=True,
+                        x_axis_type='density',
+                        y_axis_type='density')
+    ch.set_title("Hexbin")
+    ch.plot.hexbin(data_frame=data,
+                   x_values_column='unit_price',
+                   y_values_column='quantity',
+                   size=.2,
+                   orientation='pointytop')
+    ch.show(_OUTPUT_FORMAT)
+
+
+@_print_source
 def _area_example_1(total_quantity_by_month_and_fruit):
     """# Stacked area"""
     # Plot the data

@@ -809,6 +809,8 @@ class PlotDensityXY(BasePlot):
                size,
                color_palette='Blues',
                reverse_color_order=False,
+               orientation='pointytop',
+               color_value_range=10
                ):
         """Hexbin.
 
@@ -821,12 +823,19 @@ class PlotDensityXY(BasePlot):
                 apply to the tiles.
                 See chartify.color_palettes.show() for available color palettes.
             reverse_color_order (bool): Reverse order of the color palette.
+            orientation (str): "pointytop" or "flattop". Whether the hexagonal
+                tiles should be oriented with a pointed corner on top, or a
+                flat side on top.
+            color_value_range (int): The size of the range of colors in
+                the color palette.
+                A larger color range will result in greater variation
+                among the cell colors.
         """
         if isinstance(color_palette, str):
             color_palette = color_palettes[color_palette]
         if reverse_color_order:
             color_palette = color_palette[::-1]
-        # color_palette = color_palette.expand_palette(3)
+        color_palette = color_palette.expand_palette(color_value_range)
         color_palette = [c.get_hex_l() for c in color_palette.colors]
 
         # Set the chart aspect ratio otherwise the hexbins won't be symmetric.
@@ -838,7 +847,7 @@ class PlotDensityXY(BasePlot):
             data_frame[x_values_column],
             data_frame[y_values_column],
             size=size,
-            orientation="flattop",
+            orientation=orientation,
             aspect_scale=aspect_scale,
             palette=color_palette,
             line_color='white'
