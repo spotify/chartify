@@ -516,6 +516,43 @@ class TestAxisFormatPrecision:
                                                    parameters[1]) == value)
 
 
+class TestHexbin:
+    def setup(self):
+        n_samples = 2000
+        np.random.seed(10)
+        x_values = 2 + .5 * np.random.standard_normal(n_samples)
+        y_values = 1 + .5 * np.random.standard_normal(n_samples)
+        data = pd.DataFrame({'x': x_values, 'y': y_values})
+        self.data = data
+
+    def test_hexbin(self):
+        ch = chartify.Chart(
+            x_axis_type='density', y_axis_type='density', layout='slide_100%')
+        ch.plot.hexbin(self.data, 'x', 'y', .5)
+        assert (ch.data[0]['r'].tolist() == [
+            -2, -1, -2, -1, -3, -2, -1, -3, -2, -4, -3
+        ])
+        assert (ch.data[0]['q'].tolist() == [
+            1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5
+        ])
+        assert (ch.data[0]['c'].tolist() == [
+            13, 75, 485, 232, 126, 851, 27, 123, 64, 1, 3
+        ])
+
+        ch = chartify.Chart(
+            x_axis_type='density', y_axis_type='density', layout='slide_50%')
+        ch.plot.hexbin(self.data, 'x', 'y', 1)
+        assert (ch.data[0]['r'].tolist() == [
+            -1, 0, -2, -1, 0, -3, -2, -1
+        ])
+        assert (ch.data[0]['q'].tolist() == [
+            0, 0, 1, 1, 1, 2, 2, 2
+        ])
+        assert (ch.data[0]['c'].tolist() == [
+            11, 3, 180, 1181, 32, 2, 391, 200
+        ])
+
+
 class TestHistogram:
     def setup(self):
         self.data = pd.DataFrame({

@@ -814,11 +814,13 @@ class PlotDensityXY(BasePlot):
 
         Args:
             data_frame (pandas.DataFrame): Data source for the plot.
-            values_column (str): Column of numeric values.
-            color_column (str, optional): Column name to group by on
-                the color dimension.
-            color_order (list, optional): List of values within the
-                'color_column' for specific sorting of the colors.
+            x_values_column (str): Column of numeric values to bin into tiles.
+            y_values_column (str): Column of numeric values to bin into tiles.
+            size (float): Bin size for the tiles.
+            color_palette (str, chartify.ColorPalette): Color palette to
+                apply to the heatmap.
+                See chartify.color_palettes.show() for available color palettes.
+            reverse_color_order (bool): Reverse order of the color palette.
         """
         if isinstance(color_palette, str):
             color_palette = color_palettes[color_palette]
