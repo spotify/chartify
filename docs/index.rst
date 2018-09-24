@@ -1,7 +1,7 @@
 Welcome to chartify's documentation!
 ======================================
 
-Release v\ |release| (:doc:`What's new? <history>`).
+(:doc:`What's new? <history>`).
 
 .. include:: ../README.rst
 

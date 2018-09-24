@@ -22,6 +22,8 @@ Plot
     :members:
 .. autoclass:: chartify._core.plot.PlotNumericDensityXY
     :members:
+.. autoclass:: chartify._core.plot.PlotDensityXY
+    :members:
 .. autoclass:: chartify._core.plot.PlotMixedTypeXY
     :members:
 
