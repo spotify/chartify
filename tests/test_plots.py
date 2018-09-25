@@ -530,8 +530,8 @@ class TestHexbin:
             x_axis_type='density',
             y_axis_type='density',
             layout='slide_100%',
-            orientation='flattop')
-        ch.plot.hexbin(self.data, 'x', 'y', .5)
+            )
+        ch.plot.hexbin(self.data, 'x', 'y', .5, orientation='flattop')
         assert (ch.data[0]['r'].tolist() == [
             -2, -1, -2, -1, -3, -2, -1, -3, -2, -4, -3
         ])
@@ -546,8 +546,8 @@ class TestHexbin:
             x_axis_type='density',
             y_axis_type='density',
             layout='slide_50%',
-            orientation='flattop')
-        ch.plot.hexbin(self.data, 'x', 'y', 1)
+            )
+        ch.plot.hexbin(self.data, 'x', 'y', 1, orientation='flattop')
         assert (ch.data[0]['r'].tolist() == [
             -1, 0, -2, -1, 0, -3, -2, -1
         ])
