@@ -20,12 +20,12 @@ Why use Chartify?
 Examples
 --------
 
-.. image:: /docs/_static/chartify1.png
-.. image:: /docs/_static/chartify2.png
-.. image:: /docs/_static/chartify3.png
-.. image:: /docs/_static/chartify4.png
-.. image:: /docs/_static/chartify5.png
-.. image:: /docs/_static/chartify6.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify1.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify2.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify3.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify4.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify5.png
+.. image:: https://raw.githubusercontent.com/spotify/chartify/master/docs/_static/chartify6.png
 
 `See this notebook for more examples! </examples/Examples.ipynb>`_.
 
