@@ -291,7 +291,8 @@ class PlotNumericXY(BasePlot):
              color_column=None,
              color_order=None,
              line_dash='solid',
-             line_width=4):
+             line_width=4,
+             alpha=1.0):
         """Line Chart.
 
         Note:
@@ -313,6 +314,7 @@ class PlotNumericXY(BasePlot):
                 - 'dotdash'
                 - 'dashdot'
             line_width (int, optional): Width of the line
+            alpha (float): Alpha value.
         """
         settings = self._chart.style._get_settings('line_plot')
         line_cap = settings['line_cap']
@@ -348,7 +350,8 @@ class PlotNumericXY(BasePlot):
                 line_join=line_join,
                 line_cap=line_cap,
                 legend=color_value,
-                line_dash=line_dash)
+                line_dash=line_dash,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -377,6 +380,7 @@ class PlotNumericXY(BasePlot):
                 the color dimension.
             color_order (list, optional): List of values within the
                 'color_column' for specific sorting of the colors.
+            alpha (float): Alpha value.
             marker (str): marker type. Valid types:
                 'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
                 'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
@@ -1682,7 +1686,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.circle(
                 'factors',
                 numeric_column,
-                size=15,
+                size=10,
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
@@ -1699,7 +1703,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.circle(
                 numeric_column,
                 'factors',
-                size=15,
+                size=10,
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
@@ -1715,7 +1719,8 @@ class PlotMixedTypeXY(BasePlot):
                  categorical_order_by='values',
                  categorical_order_ascending=False,
                  line_dash='solid',
-                 line_width=4
+                 line_width=4,
+                 alpha=1.0
                  ):
         """Parallel coordinate plot.
 
@@ -1743,6 +1748,7 @@ class PlotMixedTypeXY(BasePlot):
                 - 'dotdash'
                 - 'dashdot'
             line_width (int, optional): Width of the line
+            alpha (float): Alpha value
         """
         settings = self._chart.style._get_settings('line_plot')
         line_cap = settings['line_cap']
@@ -1790,7 +1796,8 @@ class PlotMixedTypeXY(BasePlot):
                 line_join=line_join,
                 line_cap=line_cap,
                 legend=legend,
-                line_dash=line_dash)
+                line_dash=line_dash,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
