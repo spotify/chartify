@@ -127,6 +127,15 @@ class ColorPalette:
 
     @classmethod
     def from_hex_list(cls, colors, palette_type=None, name=None):
+        """Create ColorPalette from list of color hex values or color names.
+
+        Args:
+            colors (list of str): List of color hex values or names.
+            palette_type (str, optional): Type of palette:
+                'sequential', 'diverging', 'categorical'
+            name (str, optional): Name of color palette.
+
+        """
         hex_list = [Color(color) for color in colors]
         return cls(hex_list, palette_type, name)
 
@@ -157,6 +166,7 @@ class ColorPalette:
         return new_palette
 
     def expand_palette(self, target_color_count):
+        """Linearly expand the color palette up to the target color count."""
         palette_color_count = len(self.colors)
         if target_color_count <= palette_color_count:
             return self
@@ -177,6 +187,9 @@ class ColorPalette:
             colors=extrapolated_palette,
             palette_type=self.palette_type,
             name=self.name)
+
+    def to_hex_list(self):
+        return [color.get_hex_l() for color in self.colors]
 
     def __getitem__(self, key):
         if isinstance(key, str):
@@ -249,6 +262,22 @@ class ColorPalettes:
                     colors=hex_color_list,
                     palette_type=palette_type,
                     name=name))
+
+    def create_palette(self, colors, palette_type, name):
+        """Create ColorPalette from list of color hex values or color names.
+
+        Args:
+        colors (list of str): List of color hex values or names.
+        palette_type (str, optional): Type of palette:
+            'sequential', 'diverging', 'categorical'
+        name (str, optional): Name of color palette.
+        """
+        new_palette = ColorPalette.from_hex_list(
+            colors=colors,
+            palette_type=palette_type,
+            name=name,
+            )
+        self._add_palette(new_palette)
 
 
 color_palettes = ColorPalettes()
