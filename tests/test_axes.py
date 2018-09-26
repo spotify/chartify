@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import chartify
+import numpy as np
 import pandas as pd
 
 
@@ -45,3 +46,53 @@ class TestBaseAxes:
             pd.to_datetime('2018-01-01'), pd.to_datetime('2018-02-01'))
         assert (ch.figure.x_range.end == 1517443200000)
         assert (ch.figure.x_range.start == 1514764800000)
+
+    def test_xaxis_tick_orientation(self):
+        data = chartify.examples.example_data()
+
+        quantity_by_fruit_and_country = (
+            data.groupby(['fruit', 'country', 'date'])['quantity'].sum()
+            .reset_index().head(10))
+        ch = chartify.Chart(blank_labels=True,
+                            x_axis_type='categorical')
+        ch.plot.bar(
+            data_frame=quantity_by_fruit_and_country,
+            categorical_columns=['fruit', 'country', 'date'],
+            numeric_column='quantity',
+            color_column='fruit')
+
+        ch.axes.set_xaxis_tick_orientation(['vertical',
+                                            'horizontal',
+                                            'diagonal'])
+        assert np.allclose(ch.figure.xaxis[0].major_label_orientation,
+                           1.5707963267948966)
+        assert ch.figure.xaxis[0].subgroup_label_orientation == 'parallel'
+        assert np.allclose(ch.figure.xaxis[0].group_label_orientation,
+                           0.7853981633974483)
+
+        ch.axes.set_xaxis_tick_orientation('horizontal')
+        assert ch.figure.xaxis[0].major_label_orientation == 'horizontal'
+        assert ch.figure.xaxis[0].subgroup_label_orientation == 'parallel'
+        assert ch.figure.xaxis[0].group_label_orientation == 'parallel'
+
+        ch = chartify.Chart(blank_labels=True,
+                            y_axis_type='categorical')
+        ch.plot.bar(
+            data_frame=quantity_by_fruit_and_country,
+            categorical_columns=['fruit', 'country', 'date'],
+            numeric_column='quantity',
+            color_column='fruit')
+
+        ch.axes.set_yaxis_tick_orientation(['vertical',
+                                            'vertical',
+                                            'diagonal'])
+        assert np.allclose(ch.figure.yaxis[0].major_label_orientation,
+                           1.5707963267948966)
+        assert ch.figure.yaxis[0].subgroup_label_orientation == 'parallel'
+        assert np.allclose(ch.figure.yaxis[0].group_label_orientation,
+                           0.7853981633974483)
+
+        ch.axes.set_yaxis_tick_orientation('horizontal')
+        assert ch.figure.yaxis[0].major_label_orientation == 'horizontal'
+        assert ch.figure.yaxis[0].subgroup_label_orientation == 'normal'
+        assert ch.figure.yaxis[0].group_label_orientation == 'normal'
