@@ -37,7 +37,7 @@ class ChartifyOptions:
             'style.color_palette_accent':
             OptionValue('Category20'),
             'style.color_palette_accent_default_color':
-            OptionValue('light grey'),
+            OptionValue('grey'),
             'chart.blank_labels':
             OptionValue(False),
             'config.logos_path':

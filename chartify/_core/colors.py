@@ -189,6 +189,7 @@ class ColorPalette:
             name=self.name)
 
     def to_hex_list(self):
+        """Return list of hex values of colors in the palette."""
         return [color.get_hex_l() for color in self.colors]
 
     def __getitem__(self, key):
