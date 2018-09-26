@@ -362,7 +362,9 @@ class PlotNumericXY(BasePlot):
                 y_column,
                 size_column=None,
                 color_column=None,
-                color_order=None):
+                color_order=None,
+                alpha=1.0,
+                marker='circle'):
         """Scatter plot.
 
         Args:
@@ -375,9 +377,14 @@ class PlotNumericXY(BasePlot):
                 the color dimension.
             color_order (list, optional): List of values within the
                 'color_column' for specific sorting of the colors.
+            marker (str): marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+'
         """
         if size_column is None:
-            size_column = 4
+            size_column = 6
 
         colors, color_values = self._get_color_and_order(
             data_frame, color_column, color_order)
@@ -405,8 +412,11 @@ class PlotNumericXY(BasePlot):
                 y=y_column,
                 size=size_column,
                 source=source,
-                color=color,
-                legend=color_value)
+                fill_color=color,
+                legend=color_value,
+                marker=marker,
+                line_color=color,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
