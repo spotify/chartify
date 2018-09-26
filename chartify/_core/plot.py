@@ -916,6 +916,19 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.axes.set_xaxis_tick_format(
                 self._axis_format_precision(max_value, min_value))
 
+    @staticmethod
+    def _get_bar_width(factors):
+        """Get the bar width based on the number of factors"""
+        n_factors = len(factors)
+        if n_factors == 1:
+            return .3
+        elif n_factors == 2:
+            return .5
+        elif n_factors == 3:
+            return .7
+        else:
+            return .9
+
     def _construct_source(self,
                           data_frame,
                           categorical_columns,
@@ -1331,11 +1344,11 @@ class PlotMixedTypeXY(BasePlot):
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
-
+        bar_width = self._get_bar_width(factors)
         if vertical:
             self._chart.figure.vbar(
                 x='factors',
-                width=.9,
+                width=bar_width,
                 top=numeric_column,
                 bottom=0,
                 line_color='white',
@@ -1344,7 +1357,7 @@ class PlotMixedTypeXY(BasePlot):
         else:
             self._chart.figure.hbar(
                 y='factors',
-                height=.9,
+                height=bar_width,
                 right=numeric_column,
                 left=0,
                 line_color='white',
@@ -1583,7 +1596,7 @@ class PlotMixedTypeXY(BasePlot):
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
-
+        bar_width = self._get_bar_width(factors)
         # Set numeric axis format to percentages.
         if normalize:
             if vertical:
@@ -1604,7 +1617,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.vbar_stack(
                 stack_values,
                 x='factors',
-                width=.9,
+                width=bar_width,
                 line_color='white',
                 source=source,
                 fill_color=colors,
@@ -1613,7 +1626,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.hbar_stack(
                 stack_values,
                 y='factors',
-                height=.9,
+                height=bar_width,
                 line_color='white',
                 source=source,
                 fill_color=colors,
