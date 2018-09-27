@@ -1,5 +1,5 @@
 -e .
-pip==10.0.0
+pip==18.0.0
 wheel==0.31.1
 setuptools==40.3.0
 twine==1.11.0
@@ -10,6 +10,7 @@ coverage==4.1
 Sphinx==1.7.7
 commonmark==0.5.4
 recommonmark==0.4.0
+prompt-toolkit==1.0.15
 
 pytest==3.2.3
 pytest-cov==2.5.1
