@@ -2,6 +2,11 @@
 History
 =======
 
+2.3.1 (2018-09-27)
+------------------
+
+* Fix scatter plot bug that can occur due to nested data types.
+
 2.3.0 (2018-09-26)
 ------------------
 

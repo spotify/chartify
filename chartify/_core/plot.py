@@ -328,10 +328,16 @@ class PlotNumericXY(BasePlot):
         for color_value, color in zip(color_values, colors):
 
             if color_column is None:  # Single line
-                sliced_data = data_frame[[x_column, y_column]]
+                sliced_data = data_frame
             else:
                 sliced_data = data_frame[data_frame[color_column] ==
                                          color_value]
+            # Filter to only relevant columns.
+            sliced_data = (
+                sliced_data[
+                    [col for col in sliced_data.columns
+                        if col in (
+                            x_column, y_column, color_column)]])
 
             cast_data = self._cast_datetime_axis(sliced_data, x_column)
 
@@ -402,7 +408,12 @@ class PlotNumericXY(BasePlot):
             else:
                 sliced_data = data_frame[data_frame[color_column] ==
                                          color_value]
-
+            # Filter to only relevant columns.
+            sliced_data = (
+                sliced_data[
+                    [col for col in sliced_data.columns
+                        if col in (
+                            x_column, y_column, size_column, color_column)]])
             cast_data = self._cast_datetime_axis(sliced_data, x_column)
 
             source = self._named_column_data_source(
@@ -476,11 +487,16 @@ class PlotNumericXY(BasePlot):
         for color_value, color in zip(color_values, colors):
 
             if color_column is None:  # Single series
-                sliced_data = data_frame[[x_column, y_column, text_column]]
+                sliced_data = data_frame
             else:
                 sliced_data = data_frame[data_frame[color_column] ==
                                          color_value]
-                sliced_data = sliced_data[[x_column, y_column, text_column]]
+            # Filter to only relevant columns.
+            sliced_data = (
+                sliced_data[
+                    [col for col in sliced_data.columns
+                        if col in (
+                            x_column, y_column, text_column, color_column)]])
             cast_data = self._cast_datetime_axis(sliced_data, x_column)
 
             source = self._named_column_data_source(
