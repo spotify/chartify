@@ -75,6 +75,14 @@ class TestBaseAxes:
         assert ch.figure.xaxis[0].subgroup_label_orientation == 'parallel'
         assert ch.figure.xaxis[0].group_label_orientation == 'parallel'
 
+        ch.axes.set_xaxis_tick_orientation('vertical')
+        assert np.allclose(ch.figure.xaxis[0].major_label_orientation,
+                           1.5707963267948966)
+        assert np.allclose(ch.figure.xaxis[0].subgroup_label_orientation,
+                           1.5707963267948966)
+        assert np.allclose(ch.figure.xaxis[0].group_label_orientation,
+                           1.5707963267948966)
+
         ch = chartify.Chart(blank_labels=True,
                             y_axis_type='categorical')
         ch.plot.bar(

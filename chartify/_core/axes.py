@@ -79,11 +79,14 @@ class BaseAxes:
     def _convert_subgroup_orientation_labels(self, orientation):
         """Map the user inputted orientation values to the values expected by
         bokeh for group labels."""
-        horizontal_value = 'normal'
-        vertical_value = 'parallel'
-        # Flip the values if the chart is vertical.
+
         if self._vertical:
-            horizontal_value, vertical_value = vertical_value, horizontal_value
+            horizontal_value = 'parallel'
+            vertical_value = pi / 180 * 90
+        else:
+            horizontal_value = 'normal'
+            vertical_value = 'parallel'
+
         if orientation == 'horizontal':
             orientation = horizontal_value
         elif orientation == 'vertical':
