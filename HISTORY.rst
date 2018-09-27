@@ -3,6 +3,7 @@ History
 =======
 
 2.3.0 (2018-09-26)
+------------------
 
 New Features:
 * Added hexbin plot type.
