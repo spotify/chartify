@@ -951,6 +951,33 @@ def style_color_palette_accent():
     ch.show(_OUTPUT_FORMAT)
 
 
+@_print_source
+def style_color_palette_custom():
+    """
+    Custom color palette
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+
+    # Create a new custom palette
+    chartify.color_palettes.create_palette(colors=['#ff0000', 'yellow',
+                                                   'purple', 'orange'],
+                                           palette_type='categorical',
+                                           name='custom palette')
+
+    ch = chartify.Chart(blank_labels=True)
+    # Apply the custom palette
+    ch.style.set_color_palette('categorical', 'custom palette')
+    ch.plot.scatter(
+        data_frame=data,
+        x_column='unit_price',
+        y_column='quantity',
+        color_column='fruit')
+    ch.set_title("Custom color palette")
+    ch.show(_OUTPUT_FORMAT)
+
 def example_data():
     """Data set used in Chartify examples.
     """

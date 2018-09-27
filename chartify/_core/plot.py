@@ -291,7 +291,8 @@ class PlotNumericXY(BasePlot):
              color_column=None,
              color_order=None,
              line_dash='solid',
-             line_width=4):
+             line_width=4,
+             alpha=1.0):
         """Line Chart.
 
         Note:
@@ -313,6 +314,7 @@ class PlotNumericXY(BasePlot):
                 - 'dotdash'
                 - 'dashdot'
             line_width (int, optional): Width of the line
+            alpha (float): Alpha value.
         """
         settings = self._chart.style._get_settings('line_plot')
         line_cap = settings['line_cap']
@@ -348,7 +350,8 @@ class PlotNumericXY(BasePlot):
                 line_join=line_join,
                 line_cap=line_cap,
                 legend=color_value,
-                line_dash=line_dash)
+                line_dash=line_dash,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -362,7 +365,9 @@ class PlotNumericXY(BasePlot):
                 y_column,
                 size_column=None,
                 color_column=None,
-                color_order=None):
+                color_order=None,
+                alpha=1.0,
+                marker='circle'):
         """Scatter plot.
 
         Args:
@@ -375,9 +380,15 @@ class PlotNumericXY(BasePlot):
                 the color dimension.
             color_order (list, optional): List of values within the
                 'color_column' for specific sorting of the colors.
+            alpha (float): Alpha value.
+            marker (str): marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+'
         """
         if size_column is None:
-            size_column = 4
+            size_column = 6
 
         colors, color_values = self._get_color_and_order(
             data_frame, color_column, color_order)
@@ -405,8 +416,11 @@ class PlotNumericXY(BasePlot):
                 y=y_column,
                 size=size_column,
                 source=source,
-                color=color,
-                legend=color_value)
+                fill_color=color,
+                legend=color_value,
+                marker=marker,
+                line_color=color,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -902,6 +916,19 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.axes.set_xaxis_tick_format(
                 self._axis_format_precision(max_value, min_value))
 
+    @staticmethod
+    def _get_bar_width(factors):
+        """Get the bar width based on the number of factors"""
+        n_factors = len(factors)
+        if n_factors == 1:
+            return .3
+        elif n_factors == 2:
+            return .5
+        elif n_factors == 3:
+            return .7
+        else:
+            return .9
+
     def _construct_source(self,
                           data_frame,
                           categorical_columns,
@@ -1317,11 +1344,11 @@ class PlotMixedTypeXY(BasePlot):
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
-
+        bar_width = self._get_bar_width(factors)
         if vertical:
             self._chart.figure.vbar(
                 x='factors',
-                width=.9,
+                width=bar_width,
                 top=numeric_column,
                 bottom=0,
                 line_color='white',
@@ -1330,7 +1357,7 @@ class PlotMixedTypeXY(BasePlot):
         else:
             self._chart.figure.hbar(
                 y='factors',
-                height=.9,
+                height=bar_width,
                 right=numeric_column,
                 left=0,
                 line_color='white',
@@ -1569,7 +1596,7 @@ class PlotMixedTypeXY(BasePlot):
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
-
+        bar_width = self._get_bar_width(factors)
         # Set numeric axis format to percentages.
         if normalize:
             if vertical:
@@ -1590,7 +1617,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.vbar_stack(
                 stack_values,
                 x='factors',
-                width=.9,
+                width=bar_width,
                 line_color='white',
                 source=source,
                 fill_color=colors,
@@ -1599,7 +1626,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.hbar_stack(
                 stack_values,
                 y='factors',
-                height=.9,
+                height=bar_width,
                 line_color='white',
                 source=source,
                 fill_color=colors,
@@ -1672,7 +1699,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.circle(
                 'factors',
                 numeric_column,
-                size=15,
+                size=10,
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
@@ -1689,7 +1716,7 @@ class PlotMixedTypeXY(BasePlot):
             self._chart.figure.circle(
                 numeric_column,
                 'factors',
-                size=15,
+                size=10,
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
@@ -1705,7 +1732,8 @@ class PlotMixedTypeXY(BasePlot):
                  categorical_order_by='values',
                  categorical_order_ascending=False,
                  line_dash='solid',
-                 line_width=4
+                 line_width=4,
+                 alpha=1.0
                  ):
         """Parallel coordinate plot.
 
@@ -1733,6 +1761,7 @@ class PlotMixedTypeXY(BasePlot):
                 - 'dotdash'
                 - 'dashdot'
             line_width (int, optional): Width of the line
+            alpha (float): Alpha value
         """
         settings = self._chart.style._get_settings('line_plot')
         line_cap = settings['line_cap']
@@ -1780,7 +1809,8 @@ class PlotMixedTypeXY(BasePlot):
                 line_join=line_join,
                 line_cap=line_cap,
                 legend=legend,
-                line_dash=line_dash)
+                line_dash=line_dash,
+                alpha=alpha)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:

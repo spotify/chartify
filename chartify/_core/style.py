@@ -264,7 +264,7 @@ class Style:
                 'figure.yaxis.group_text_font': 'helvetica',
                 'figure.y_range.factor_padding': .25,
                 'figure.yaxis.subgroup_text_font_size': "11pt",
-                'figure.yaxis.group_text_font_size': "11pt"
+                'figure.yaxis.group_text_font_size': "11pt",
             },
             'categorical_xyaxis': {
                 # Used for grouped categorical axes

@@ -63,6 +63,38 @@ class BaseAxes:
         self.set_xaxis_label(xaxis_label)
         self.set_yaxis_label(yaxis_label)
 
+    @staticmethod
+    def _convert_major_orientation_labels(orientation):
+        """Map the user inputted orientation values to the values expected by
+        bokeh for major labels."""
+        if orientation == 'vertical':
+            orientation = pi / 180 * 90
+        elif orientation == 'diagonal':
+            orientation = pi / 180 * 45
+        elif orientation != 'horizontal':
+            raise ValueError(
+                'Orientation must be `horizontal`, `vertical`, or `diagonal`.')
+        return orientation
+
+    def _convert_subgroup_orientation_labels(self, orientation):
+        """Map the user inputted orientation values to the values expected by
+        bokeh for group labels."""
+        horizontal_value = 'normal'
+        vertical_value = 'parallel'
+        # Flip the values if the chart is vertical.
+        if self._vertical:
+            horizontal_value, vertical_value = vertical_value, horizontal_value
+        if orientation == 'horizontal':
+            orientation = horizontal_value
+        elif orientation == 'vertical':
+            orientation = vertical_value
+        elif orientation == 'diagonal':
+            orientation = pi / 180 * 45
+        else:
+            raise ValueError(
+                'Orientation must be `horizontal`, `vertical`, or `diagonal`.')
+        return orientation
+
     @property
     def xaxis_label(self):
         """Return x-axis label.
@@ -138,16 +170,26 @@ class BaseAxes:
         """Change the orientation or the x axis tick labels.
 
         Args:
-            orientation (str or int): 'horizontal', 'vertical', or 'diagonal'
+            orientation (str or list of str):
+                str: 'horizontal', 'vertical', or 'diagonal'
+                list of str: different orientation values corresponding to each
+                level of the grouping. Example: ['horizontal', 'vertical']
         """
-        if orientation == 'vertical':
-            orientation = pi / 180 * 90
-        elif orientation == 'diagonal':
-            orientation = pi / 180 * 45
-        elif orientation != 'horizontal':
-            raise ValueError(
-                'Orientation must be `horizontal`, `vertical`, or `diagonal`.')
-        self._chart.figure.xaxis.major_label_orientation = orientation
+
+        if not isinstance(orientation, list):
+            orientation = [orientation] * 3
+
+        level_1 = orientation[0]
+        level_2 = orientation[1] if len(orientation) > 1 else 'horizontal'
+        level_3 = orientation[2] if len(orientation) > 2 else level_2
+
+        level_1 = self._convert_major_orientation_labels(level_1)
+        level_2 = self._convert_subgroup_orientation_labels(level_2)
+        level_3 = self._convert_subgroup_orientation_labels(level_3)
+
+        self._chart.figure.xaxis.major_label_orientation = level_1
+        self._chart.figure.xaxis.subgroup_label_orientation = level_2
+        self._chart.figure.xaxis.group_label_orientation = level_3
         return self._chart
 
 
@@ -353,6 +395,32 @@ class CategoricalYMixin:
             self._chart.figure.yaxis.group_text_color = None
         except:
             pass
+        return self._chart
+
+    def set_yaxis_tick_orientation(self, orientation='horizontal'):
+        """Change the orientation or the y axis tick labels.
+
+        Args:
+            orientation (str or list of str):
+                str: 'horizontal', 'vertical', or 'diagonal'
+                list of str: different orientation values corresponding to each
+                level of the grouping. Example: ['horizontal', 'vertical']
+        """
+
+        if not isinstance(orientation, list):
+            orientation = [orientation] * 3
+
+        level_1 = orientation[0]
+        level_2 = orientation[1] if len(orientation) > 1 else 'horizontal'
+        level_3 = orientation[2] if len(orientation) > 2 else level_2
+
+        level_1 = self._convert_major_orientation_labels(level_1)
+        level_2 = self._convert_subgroup_orientation_labels(level_2)
+        level_3 = self._convert_subgroup_orientation_labels(level_3)
+
+        self._chart.figure.yaxis.major_label_orientation = level_1
+        self._chart.figure.yaxis.subgroup_label_orientation = level_2
+        self._chart.figure.yaxis.group_label_orientation = level_3
         return self._chart
 
     hide_yaxis.__doc__ = BaseAxes.hide_yaxis.__doc__

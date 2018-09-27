@@ -27,3 +27,10 @@ class TestColorPalettes:
         palette = chartify.color_palettes['Category20']
         assert (isinstance(palette, chartify._core.colors.ColorPalette))
         assert (palette.name == 'Category20')
+
+    def test_create_palette(self):
+        chartify.color_palettes.create_palette(['white', 'black', '#fff000'],
+                                               'sequential',
+                                               'New')
+        new_palette = chartify.color_palettes['New']
+        assert new_palette.to_hex_list() == ['#ffffff', '#000000', '#fff000']
