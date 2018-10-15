@@ -594,6 +594,9 @@ class PlotNumericXY(BasePlot):
                         next_y = last_y + data[y_column].reset_index(drop=True)
                         y_data = np.hstack((next_y, last_y[::-1]))
                         last_y = next_y
+                        # Reverse order of vertical legends to ensure
+                        # that the order is consistent with the stack order.
+                        self._chart._reverse_vertical_legend = True
                 else:
                     y_data = pd.concat(
                         [data[y_column], data[second_y_column][::-1]])
@@ -1648,6 +1651,9 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 legend=legend)
         self._chart.style._apply_settings('legend')
+        # Reverse order of vertical legends to ensure that the order
+        # is consistent with the stack order.
+        self._chart._reverse_vertical_legend = True
 
         return self._chart
 

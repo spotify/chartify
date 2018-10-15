@@ -110,6 +110,9 @@ class Chart:
         self._source = self._add_source_to_figure()
         self._subtitle_glyph = self._add_subtitle_to_figure()
         self.figure.toolbar.logo = None  # Remove bokeh logo from toolbar.
+        # Reverse the order of vertical legends. Used with stacked plot types
+        # to ensure that the stack order is consistent with the legend order.
+        self._reverse_vertical_legend = False
         # Logos disabled for now.
         # self.logo = Logo(self)
         # Set default for title
@@ -313,6 +316,13 @@ y_axis_type='{y_axis_type}')
         else:
             self.figure.legend.location = location
             self.figure.legend.orientation = orientation
+
+        vertical = self.axes._vertical
+        # Reverse the legend order
+        if self._reverse_vertical_legend:
+            if orientation == 'vertical' and vertical:
+                self.figure.legend[0].items = list(
+                    reversed(self.figure.legend[0].items))
         return self
 
     def show(self, format='html'):
