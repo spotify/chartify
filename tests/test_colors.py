@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import chartify
+import numpy as np
 
 
 class TestColor:
@@ -34,3 +35,10 @@ class TestColorPalettes:
                                                'New')
         new_palette = chartify.color_palettes['New']
         assert new_palette.to_hex_list() == ['#ffffff', '#000000', '#fff000']
+
+    def test_shift_palette(self):
+        palette = chartify.color_palettes['Greys']
+        assert np.array_equal(
+            palette.shift_palette('red', 20).to_hex_list(),
+            ['#e0afaf', '#ca9999', '#aa7979', '#8e5d5d',
+             '#734242', '#4f1e1e', '#310000'])
