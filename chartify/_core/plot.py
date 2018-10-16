@@ -1839,7 +1839,6 @@ class PlotMixedTypeXY(BasePlot):
         if color_column is not None:
             self._chart.style._apply_settings('legend')
 
-
     def scatter(self,
                 data_frame,
                 categorical_columns,
