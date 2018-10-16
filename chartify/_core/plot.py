@@ -1861,6 +1861,8 @@ class PlotMixedTypeXY(BasePlot):
             categorical_columns (str or list): Column name to plot on
                 the categorical axis.
             numeric_column (str): Column name to plot on the numerical axis.
+            size_column (str, optional): Column name of numerical values
+                to plot on the size dimension.
             color_column (str, optional): Column name to group by on
                 the color dimension.
             color_order (list, optional):
@@ -1874,11 +1876,17 @@ class PlotMixedTypeXY(BasePlot):
                     to conform the categorical axis to.
             categorical_order_ascending (bool, optional):
                 Sort order of the categorical axis. Default False.
+            alpha (float): Alpha value.
+            marker (str): marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+'
         """
         vertical = self._chart.axes._vertical
 
         if size_column is None:
-            size_column = 6
+            size_column = 15
 
         axis_factors = data_frame.groupby(categorical_columns).size()
 
