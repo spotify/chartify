@@ -1269,10 +1269,11 @@ class PlotMixedTypeXY(BasePlot):
         for color_value, color in zip(color_values, colors):
 
             sliced_data = data_frame[(data_frame[stack_column] == color_value)]
-
             # Reindex to be consistent with the factors.
-            sliced_data = (sliced_data.set_index(categorical_columns)
-                           .reindex(factors).reset_index())
+            type_map = {column: str for column in categorical_columns}
+            sliced_data = (sliced_data.astype(type_map)
+                           .set_index(categorical_columns)
+                           .reindex(index=factors).reset_index())
 
             text_values = np.where(sliced_data[text_column].isna(), '',
                                    sliced_data[text_column])
