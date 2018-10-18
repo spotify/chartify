@@ -188,6 +188,23 @@ class ColorPalette:
             palette_type=self.palette_type,
             name=self.name)
 
+    def shift_palette(self, target_color, percent=10):
+        """Shift each color in the palette toward the given target color.
+
+        Args:
+            target_color (str): Color hex value or name.
+            percent (int): Distance to shift the current palette toward the
+                target color.
+        """
+        shifted_colors = [
+            color.linear_gradient(Color(target_color), n=100)[percent - 1]
+            for color in self.colors
+        ]
+        return ColorPalette.from_hex_list(
+            colors=shifted_colors,
+            palette_type=self.palette_type,
+            name=self.name)
+
     def to_hex_list(self):
         """Return list of hex values of colors in the palette."""
         return [color.get_hex_l() for color in self.colors]

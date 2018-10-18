@@ -594,6 +594,9 @@ class PlotNumericXY(BasePlot):
                         next_y = last_y + data[y_column].reset_index(drop=True)
                         y_data = np.hstack((next_y, last_y[::-1]))
                         last_y = next_y
+                        # Reverse order of vertical legends to ensure
+                        # that the order is consistent with the stack order.
+                        self._chart._reverse_vertical_legend = True
                 else:
                     y_data = pd.concat(
                         [data[y_column], data[second_y_column][::-1]])
@@ -1266,10 +1269,11 @@ class PlotMixedTypeXY(BasePlot):
         for color_value, color in zip(color_values, colors):
 
             sliced_data = data_frame[(data_frame[stack_column] == color_value)]
-
             # Reindex to be consistent with the factors.
-            sliced_data = (sliced_data.set_index(categorical_columns)
-                           .reindex(factors).reset_index())
+            type_map = {column: str for column in categorical_columns}
+            sliced_data = (sliced_data.astype(type_map)
+                           .set_index(categorical_columns)
+                           .reindex(index=factors).reset_index())
 
             text_values = np.where(sliced_data[text_column].isna(), '',
                                    sliced_data[text_column])
@@ -1648,6 +1652,9 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 legend=legend)
         self._chart.style._apply_settings('legend')
+        # Reverse order of vertical legends to ensure that the order
+        # is consistent with the stack order.
+        self._chart._reverse_vertical_legend = True
 
         return self._chart
 
@@ -1831,3 +1838,116 @@ class PlotMixedTypeXY(BasePlot):
         # Set legend defaults if there are multiple series.
         if color_column is not None:
             self._chart.style._apply_settings('legend')
+
+    def scatter(self,
+                data_frame,
+                categorical_columns,
+                numeric_column,
+                size_column=None,
+                color_column=None,
+                color_order=None,
+                categorical_order_by='count',
+                categorical_order_ascending=False,
+                alpha=1.0,
+                marker='circle'):
+        """Scatter chart.
+
+        Note:
+            To change the orientation set x_axis_type or y_axis_type
+            argument of the Chart object.
+
+        Args:
+            data_frame (pandas.DataFrame): Data source for the plot.
+            categorical_columns (str or list): Column name to plot on
+                the categorical axis.
+            numeric_column (str): Column name to plot on the numerical axis.
+            size_column (str, optional): Column name of numerical values
+                to plot on the size dimension.
+            color_column (str, optional): Column name to group by on
+                the color dimension.
+            color_order (list, optional):
+                List of values within the 'color_column' for
+                    specific color sort.
+            categorical_order_by (str or array-like, optional):
+                Dimension for ordering the categorical axis. Default 'count'.
+                - 'count': Order categorical axis by the count of values.
+                - 'labels': Order categorical axis by the categorical labels.
+                - array-like object (list, tuple, np.array): New labels
+                    to conform the categorical axis to.
+            categorical_order_ascending (bool, optional):
+                Sort order of the categorical axis. Default False.
+            alpha (float): Alpha value.
+            marker (str): marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+'
+        """
+        vertical = self._chart.axes._vertical
+
+        if size_column is None:
+            size_column = 15
+
+        axis_factors = data_frame.groupby(categorical_columns).size()
+
+        order_length = getattr(categorical_order_by, "__len__", None)
+        if categorical_order_by == 'labels':
+            axis_factors = axis_factors.sort_index(
+                ascending=categorical_order_ascending).index
+        elif categorical_order_by == 'count':
+            axis_factors = axis_factors.sort_values(
+                ascending=categorical_order_ascending).index
+        # User-specified order.
+        elif order_length is not None:
+            axis_factors = categorical_order_by
+        else:
+            raise ValueError(
+                """Must be 'count', 'labels', or a list of values.""")
+
+        colors, color_values = self._get_color_and_order(
+            data_frame, color_column, color_order)
+        # Apply factors to the axis.
+        self._set_categorical_axis_default_factors(vertical, axis_factors)
+
+        for color_value, color in zip(color_values, colors):
+            if color_column is None:  # Single series
+                color_value = numeric_column
+                legend = None
+                sliced_data = data_frame
+            else:
+                legend = bokeh.core.properties.value(str(color_value))
+                sliced_data = data_frame[data_frame[color_column] ==
+                                         color_value]
+            # Filter to only relevant columns.
+            data_factors = sliced_data.set_index(categorical_columns).index
+            sliced_data = (
+                sliced_data[
+                    [col for col in sliced_data.columns
+                        if col in (
+                            numeric_column, size_column)]])
+            source = self._named_column_data_source(
+                sliced_data, series_name=color_value)
+            source.add(data_factors, 'factors')
+
+            if vertical:
+                x_value, y_value = 'factors', numeric_column
+            else:
+                y_value, x_value = 'factors', numeric_column
+
+            self._chart.figure.scatter(
+                x=x_value,
+                y=y_value,
+                size=size_column,
+                fill_color=color,
+                line_color=color,
+                source=source,
+                legend=legend,
+                marker=marker,
+                alpha=alpha
+                )
+
+        # Set legend defaults if there are multiple series.
+        if color_column is not None:
+            self._chart.style._apply_settings('legend')
+
+        return self._chart
