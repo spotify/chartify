@@ -2,6 +2,14 @@
 History
 =======
 
+2.3.2 (2018-10-18)
+------------------
+
+* Stacked bar and area order now matches default vertical legend order.
+* Added method for shifting color palettes.
+* Added scatter plots with a single categorical axis.
+* Fixed bug with text_stacked that occurred with multiple categorical levels.
+
 2.3.1 (2018-09-27)
 ------------------
 
