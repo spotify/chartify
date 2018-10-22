@@ -15,6 +15,7 @@
 # limitations under the License.
 import chartify
 import numpy as np
+import pandas as pd
 
 
 class TestLegend:
@@ -43,6 +44,52 @@ class TestLegend:
             color_column='fruit')
         ch.set_legend_location(None)
         assert (ch.figure.legend[0].visible is False)
+
+    def test_reverse_vertical_legend_area(self):
+        data = chartify.examples.example_data()
+
+        total_quantity_by_month_and_fruit = (
+            data.groupby([data['date'] + pd.offsets.MonthBegin(-1), 'fruit'])
+            ['quantity'].sum()
+            .reset_index().rename(columns={'date': 'month'})
+            .sort_values('month'))
+
+        # Plot the data
+        ch = chartify.Chart(blank_labels=True, x_axis_type='datetime')
+        ch.plot.area(
+            data_frame=total_quantity_by_month_and_fruit,
+            x_column='month',
+            y_column='quantity',
+            color_column='fruit',
+            stacked=True)
+        labels = [item.label['value'] for item in ch.figure.legend[0].items]
+        assert np.array_equal(labels,
+                              ['Apple', 'Banana', 'Grape', 'Orange'])
+        ch.set_legend_location('top_right', 'vertical')
+        labels = [item.label['value'] for item in ch.figure.legend[0].items]
+        assert np.array_equal(labels,
+                              ['Orange', 'Grape', 'Banana', 'Apple'])
+
+    def test_reverse_vertical_legend_bar(self):
+        data = chartify.examples.example_data()
+        quantity_by_fruit_and_country = (
+            data.groupby(['fruit', 'country'])['quantity'].sum().reset_index())
+
+        ch = chartify.Chart(blank_labels=True,
+                            x_axis_type='categorical')
+        ch.plot.bar_stacked(
+            data_frame=quantity_by_fruit_and_country,
+            categorical_columns=['fruit'],
+            numeric_column='quantity',
+            stack_column='country',
+            normalize=False)
+        labels = [item.label['value'] for item in ch.figure.legend[0].items]
+        assert np.array_equal(labels,
+                              ['BR', 'CA', 'GB', 'JP', 'US'])
+        ch.set_legend_location('top_right', 'vertical')
+        labels = [item.label['value'] for item in ch.figure.legend[0].items]
+        assert np.array_equal(labels,
+                              ['US', 'JP', 'GB', 'CA', 'BR'])
 
 
 class TestChart:

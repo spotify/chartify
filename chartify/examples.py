@@ -189,6 +189,46 @@ plot_scatter.__doc__ = _core.plot.PlotNumericXY.scatter.__doc__
 
 
 @_print_source
+def plot_scatter_categorical():
+    """Scatter example
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+    high_low = (data.groupby(['fruit'])['unit_price']
+                .agg(['max', 'min'])
+                .reset_index())
+    print(high_low.head())
+    """Print break"""
+    _scatter_categorical_example(high_low)
+
+
+@_print_source
+def _scatter_categorical_example(high_low):
+    """Scatter categorical example"""
+    # Plot the data
+    ch = chartify.Chart(blank_labels=True,
+                        y_axis_type='categorical')
+    ch.set_title("Scatter plot with categorical y-axis")
+    ch.plot.scatter(
+        data_frame=high_low,
+        categorical_columns='fruit',
+        numeric_column='max',
+        marker='circle',
+    )
+    ch.plot.scatter(
+        data_frame=high_low,
+        categorical_columns='fruit',
+        numeric_column='min',
+        marker='square',
+    )
+    ch.show(_OUTPUT_FORMAT)
+
+plot_scatter_categorical.__doc__ = _core.plot.PlotMixedTypeXY.scatter.__doc__
+
+
+@_print_source
 def plot_text():
     """
     Text example
