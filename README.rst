@@ -36,7 +36,7 @@ Installation
 
 ``pip3 install chartify``
 
-2. Install chromedriver requirement:
+2. Install chromedriver requirement (Optional. Needed for PNG output):
     - Install google chrome.
     - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
     - Copy the executable file to a directory within your PATH.
