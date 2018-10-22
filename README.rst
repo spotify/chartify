@@ -50,6 +50,11 @@ This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best plac
 
 From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots.
 
+Getting support
+---------------
+
+Join #chartify on spotify-foss.slack.com
+
 Code of Conduct
 ---------------
 
