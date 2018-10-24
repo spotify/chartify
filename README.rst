@@ -7,7 +7,7 @@ Chartify
 .. |release| image:: https://img.shields.io/badge/Release-2.3.2-blue.svg
 .. |python| image:: https://img.shields.io/badge/Python-3.6-blue.svg
 
-Chartify is a Python library that aims to make it as easy as possible for data scientists to create charts.
+Chartify is a Python library that makes it easy for data scientists to create charts.
 
 Why use Chartify?
 -----------------
