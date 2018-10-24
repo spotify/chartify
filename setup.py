@@ -30,7 +30,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'pandas>=0.21.0,<1.0.0',
     'jupyter>=1.0.0,<2.0.0',
-    'Pillow>=4.3.0,<5.0.0',
+    'Pillow>=4.3.0',
     # Avoid selenium bug:
     # https://github.com/SeleniumHQ/selenium/issues/5296
     'selenium>=3.7.0,<=3.8.0',
