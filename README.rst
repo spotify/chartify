@@ -55,6 +55,8 @@ Getting support
 
 Join #chartify on spotify-foss.slack.com
 
+Use the `chartify tag on StackOverflow <https://stackoverflow.com/questions/tagged/chartify>`_.
+
 Code of Conduct
 ---------------
 
