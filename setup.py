@@ -34,7 +34,7 @@ requirements = [
     # Avoid selenium bug:
     # https://github.com/SeleniumHQ/selenium/issues/5296
     'selenium>=3.7.0,<=3.8.0',
-    'bokeh>=0.12.15,<1.0.0',
+    'bokeh>=0.12.16,<2.0.0',
     'scipy>=1.0.0,<2.0.0',
     'colour>=0.1.5,<1.0.0'
 ]
