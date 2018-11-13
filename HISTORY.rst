@@ -2,6 +2,11 @@
 History
 =======
 
+2.3.4 (2018-11-13)
+------------------
+
+* Updated Bokeh version requirements to support 1.0
+
 2.3.3 (2018-10-24)
 ------------------
 
