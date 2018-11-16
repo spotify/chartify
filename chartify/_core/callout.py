@@ -40,7 +40,7 @@ class Callout:
 
         Args:
             location (numeric):
-            dimension (str, optional): (default: 'width')
+            orientation (str, optional): (default: 'width')
                 - 'width'
                 - 'height'
             line_color (str, optional): Color name or hex value.
