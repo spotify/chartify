@@ -109,7 +109,6 @@ class Callout:
             x_start = self._chart.axes._convert_timestamp_to_epoch_ms(x_start)
             x_end = self._chart.axes._convert_timestamp_to_epoch_ms(x_end)
         line_color = colors.Color(line_color).get_hex_l()
-        # line_width = '1px'
         segment = bokeh.models.Arrow(
             x_start=x_start,
             y_start=y_start,
@@ -117,7 +116,10 @@ class Callout:
             y_end=y_end,
             end=None,
             start=None,
-            line_color=line_color)
+            line_color=line_color,
+            line_width=line_width,
+            line_dash=line_dash,
+            line_alpha=line_alpha)
 
         self._chart.figure.add_layout(segment)
         return self._chart
