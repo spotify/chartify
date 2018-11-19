@@ -26,7 +26,6 @@ import warnings
 import bokeh
 import bokeh.plotting
 from bokeh.embed import file_html
-from bokeh.io.export import export_svgs
 
 from bokeh.resources import INLINE
 from IPython.display import display, SVG
@@ -588,60 +587,3 @@ class Logo:
         logo_image = self._resize_logo(logo_image)
 
         self._logo_image = logo_image
-
-
-import logging
-log = logging.getLogger(__name__)
-from six import raise_from, b
-
-
-_WAIT_SCRIPT = """
-// add private window prop to check that render is complete
-window._bokeh_render_complete = false;
-function done() {
-  window._bokeh_render_complete = true;
-}
-
-var doc = window.Bokeh.documents[0];
-
-if (doc.is_idle)
-  done();
-else
-  doc.idle.connect(done);
-"""
-
-def wait_until_render_complete(driver):
-    '''
-
-    '''
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.common.exceptions import TimeoutException
-
-    def is_bokeh_loaded(driver):
-        return driver.execute_script('''
-            const b = window.Bokeh;
-            return b && b.documents && b.documents.length > 0;
-        ''')
-
-    try:
-        WebDriverWait(driver, 5, poll_frequency=0.1).until(is_bokeh_loaded)
-    except TimeoutException as e:
-        raise_from(RuntimeError('Bokeh was not loaded in time. Something may have gone wrong.'), e)
-
-    driver.execute_script(_WAIT_SCRIPT)
-
-    def is_bokeh_render_complete(driver):
-        return driver.execute_script('return window._bokeh_render_complete;')
-
-    try:
-        WebDriverWait(driver, 15, poll_frequency=0.1).until(is_bokeh_render_complete)
-    except TimeoutException:
-        log.warning("The webdriver raised a TimeoutException while waiting for \
-                     a 'bokeh:idle' event to signify that the layout has rendered. \
-                     Something may have gone wrong.")
-    finally:
-        browser_logs = driver.get_log('browser')
-        severe_errors = [l for l in browser_logs if l.get('level') == 'SEVERE']
-        if len(severe_errors) > 0:
-            log.warning("There were severe browser errors that may have affected your export: {}".format(severe_errors))
-
