@@ -285,7 +285,6 @@ class Style:
                 'subtitle_text_color': '#666666',
                 'subtitle_location': 'above',
                 'subtitle_text_size': '12pt',
-                'subtitle_text_size': '100%',
                 'subtitle_text_font': 'helvetica'
             },
             'text_callout_and_plot': {

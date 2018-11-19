@@ -18,6 +18,7 @@
 
 """
 from collections import OrderedDict
+from functools import wraps
 from io import BytesIO
 import tempfile
 import warnings
@@ -25,9 +26,10 @@ import warnings
 import bokeh
 import bokeh.plotting
 from bokeh.embed import file_html
+from bokeh.io.export import export_svgs
 
 from bokeh.resources import INLINE
-from IPython.display import display
+from IPython.display import display, SVG
 from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -168,7 +170,8 @@ y_axis_type='{y_axis_type}')
             align=subtitle_settings['subtitle_align'],
             text_color=subtitle_settings['subtitle_text_color'],
             text_font_size=subtitle_settings['subtitle_text_size'],
-            text_font=subtitle_settings['subtitle_text_font'])
+            text_font=subtitle_settings['subtitle_text_font'],
+            )
         self.figure.add_layout(_subtitle_glyph,
                                subtitle_settings['subtitle_location'])
         return _subtitle_glyph
@@ -351,6 +354,9 @@ y_axis_type='{y_axis_type}')
             # Need to re-enable this when logos are added back.
             # image = self.logo._add_logo_to_image(image)
             return display(image)
+        elif format == 'svg':
+            image = self._figure_to_svg()
+            return display(SVG(data=image))
 
     def save(self, filename, format='html'):
         """Save the chart.
@@ -383,6 +389,8 @@ y_axis_type='{y_axis_type}')
             # Need to re-enable this when logos are added back.
             # image = self.logo._add_logo_to_image(image)
             image.save(filename)
+        elif format == 'svg':
+            self._save_svg(self.figure, filename)
 
         print('Saved to {filename}'.format(filename=filename))
 
@@ -391,7 +399,7 @@ y_axis_type='{y_axis_type}')
     def _set_toolbar_for_format(self, format):
         if format == 'html':
             self.figure.toolbar_location = 'right'
-        elif format == 'png':
+        elif format in ('png', 'svg'):
             self.figure.toolbar_location = None
         elif format is None:  # If format is None the chart won't be shown.
             pass
@@ -399,12 +407,8 @@ y_axis_type='{y_axis_type}')
             raise ValueError(
                 """Invalid format. Valid options are 'html' or 'png'.""")
 
-    def _figure_to_png(self):
-        """Convert figure object to PNG
-        Bokeh can only save figure objects as html.
-        To convert to PNG the HTML file is opened in a headless browser.
-        """
-        # Initialize headless browser options
+    def _initialize_webdriver(self):
+        """Initialize headless chrome browser"""
         options = Options()
         options.add_argument("window-size={width},{height}".format(
             width=self.style.plot_width, height=self.style.plot_height))
@@ -416,6 +420,14 @@ y_axis_type='{y_axis_type}')
         options.add_argument('--headless')
         options.add_argument('--hide-scrollbars')
         driver = webdriver.Chrome(options=options)
+        return driver
+
+    def _figure_to_png(self):
+        """Convert figure object to PNG
+        Bokeh can only save figure objects as html.
+        To convert to PNG the HTML file is opened in a headless browser.
+        """
+        driver = self._initialize_webdriver()
         # Save figure as HTML
         html = file_html(self.figure, resources=INLINE, title="")
         fp = tempfile.NamedTemporaryFile(
@@ -434,6 +446,82 @@ y_axis_type='{y_axis_type}')
         if image.size != target_dimensions:
             image = image.resize(target_dimensions, resample=Image.LANCZOS)
         return image
+
+    def _set_svg_backend_decorator(f):
+        """Sets the chart backend to svg and resets
+        after the function has run."""
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            old_backend = self.figure.output_backend
+            self.figure.output_backend = 'svg'
+            return f(self, *args, **kwargs)
+            self.figure.output_backend = old_backend
+        return wrapper
+
+    @_set_svg_backend_decorator
+    def _figure_to_svg(self):
+        driver = self._initialize_webdriver()
+        svgs = self._get_svgs(self.figure, driver=driver)
+        driver.quit()
+        return svgs[0]
+
+    @_set_svg_backend_decorator
+    def _save_svg(self, obj, filename):
+        self._export_svgs(obj=obj, filename=filename)
+
+    def _get_svgs(self, obj, driver=None, **kwargs):
+        '''
+        Copy of https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
+        with wait_until_render_complete disabled.
+        '''
+        from bokeh.io.export import _tmp_html, _SVG_SCRIPT
+        import io
+
+        with _tmp_html() as tmp:
+            html = file_html(obj, resources=INLINE, title="")
+            with io.open(tmp.path, mode="wb") as file:
+                file.write(b(html))
+
+            web_driver = driver
+
+            web_driver.get("file:///" + tmp.path)
+
+            # wait_until_render_complete(web_driver) goes here.
+
+            svgs = web_driver.execute_script(_SVG_SCRIPT)
+
+        return svgs
+
+    def _export_svgs(self, obj, filename=None):
+        ''' Copied from https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
+        '''
+        import io
+        from bokeh.io.util import default_filename
+        driver = self._initialize_webdriver()
+        svgs = self._get_svgs(obj, driver=driver)
+        driver.quit()
+        if len(svgs) == 0:
+            log.warning("No SVG Plots were found.")
+            return
+
+        if filename is None:
+            filename = default_filename("svg")
+
+        filenames = []
+
+        for i, svg in enumerate(svgs):
+            if i == 0:
+                filename = filename
+            else:
+                idx = filename.find(".svg")
+                filename = filename[:idx] + "_{}".format(i) + filename[idx:]
+
+            with io.open(filename, mode="w", encoding="utf-8") as f:
+                f.write(svg)
+
+            filenames.append(filename)
+
+        return filenames
 
 
 class Logo:
@@ -500,3 +588,60 @@ class Logo:
         logo_image = self._resize_logo(logo_image)
 
         self._logo_image = logo_image
+
+
+import logging
+log = logging.getLogger(__name__)
+from six import raise_from, b
+
+
+_WAIT_SCRIPT = """
+// add private window prop to check that render is complete
+window._bokeh_render_complete = false;
+function done() {
+  window._bokeh_render_complete = true;
+}
+
+var doc = window.Bokeh.documents[0];
+
+if (doc.is_idle)
+  done();
+else
+  doc.idle.connect(done);
+"""
+
+def wait_until_render_complete(driver):
+    '''
+
+    '''
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.common.exceptions import TimeoutException
+
+    def is_bokeh_loaded(driver):
+        return driver.execute_script('''
+            const b = window.Bokeh;
+            return b && b.documents && b.documents.length > 0;
+        ''')
+
+    try:
+        WebDriverWait(driver, 5, poll_frequency=0.1).until(is_bokeh_loaded)
+    except TimeoutException as e:
+        raise_from(RuntimeError('Bokeh was not loaded in time. Something may have gone wrong.'), e)
+
+    driver.execute_script(_WAIT_SCRIPT)
+
+    def is_bokeh_render_complete(driver):
+        return driver.execute_script('return window._bokeh_render_complete;')
+
+    try:
+        WebDriverWait(driver, 15, poll_frequency=0.1).until(is_bokeh_render_complete)
+    except TimeoutException:
+        log.warning("The webdriver raised a TimeoutException while waiting for \
+                     a 'bokeh:idle' event to signify that the layout has rendered. \
+                     Something may have gone wrong.")
+    finally:
+        browser_logs = driver.get_log('browser')
+        severe_errors = [l for l in browser_logs if l.get('level') == 'SEVERE']
+        if len(severe_errors) > 0:
+            log.warning("There were severe browser errors that may have affected your export: {}".format(severe_errors))
+
