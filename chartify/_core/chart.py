@@ -357,8 +357,6 @@ y_axis_type='{y_axis_type}')
             return display(image)
         elif format == 'svg':
             return self._show_svg()
-            # image = self._figure_to_svg()
-            # return display(SVG(data=image))
 
     def save(self, filename, format='html'):
         """Save the chart.
@@ -463,11 +461,14 @@ y_axis_type='{y_axis_type}')
 
     @_set_svg_backend_decorator
     def _show_svg(self):
+        """Show the chart figure with an svg output backend."""
         return bokeh.io.show(self.figure)
 
     @_set_svg_backend_decorator
     def _figure_to_svg(self):
-        """https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
+        """
+        Convert the figure to an svg so that it can be saved to a file.
+        https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
         """
         driver = self._initialize_webdriver()
         html = file_html(self.figure, resources=INLINE, title="")
@@ -483,80 +484,10 @@ y_axis_type='{y_axis_type}')
         driver.quit()
         return svgs[0]
 
-    # @_set_svg_backend_decorator
-    # def _save_svg(self, obj, filename):
-    #     self._export_svgs(obj=obj, filename=filename)
-
-    # def _get_svgs(self, obj, driver=None, **kwargs):
-    #     '''
-    #     Copy of https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
-    #     with wait_until_render_complete disabled.
-    #     '''
-
-    #     html = file_html(obj, resources=INLINE, title="")
-
-    #     fp = tempfile.NamedTemporaryFile(
-    #         'w', prefix='chartify', suffix='.html', encoding='utf-8')
-    #     fp.write(html)
-    #     fp.flush()
-    #     driver.get("file:///" + fp.name)
-    #     svgs = driver.execute_script(_SVG_SCRIPT)
-    #     fp.close()
-    #     return svgs
-
-        # from bokeh.io.export import _tmp_html, _SVG_SCRIPT
-        # import io
-        # with _tmp_html() as tmp:
-        #     html = file_html(obj, resources=INLINE, title="")
-        #     with io.open(tmp.path, mode="wb") as file:
-        #         file.write(b(html))
-
-        #     web_driver = driver
-
-        #     web_driver.get("file:///" + tmp.path)
-
-        #     # wait_until_render_complete(web_driver) goes here.
-
-        #     svgs = web_driver.execute_script(_SVG_SCRIPT)
-
-        # return svgs
-
     def _save_svg(self, svg, filename):
+        """Write the svg to a file"""
         with io.open(filename, mode="w", encoding="utf-8") as f:
                 f.write(svg)
-
-    # def _export_svgs(self, obj, filename=None):
-    #     ''' Copied from
-    #         https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
-    #     '''
-    #     import io
-    #     from bokeh.io.util import default_filename
-    #     driver = self._initialize_webdriver()
-    #     svgs = self._get_svgs(obj, driver=driver)
-    #     driver.quit()
-    #     if len(svgs) == 0:
-    #         log.warning("No SVG Plots were found.")
-    #         return
-
-    #     if filename is None:
-    #         filename = default_filename("svg")
-
-    #     filenames = []
-
-    #     for i, svg in enumerate(svgs):
-    #         if i == 0:
-    #             filename = filename
-    #         else:
-    #             idx = filename.find(".svg")
-    #             filename = filename[:idx] + "_{}".format(i) + filename[idx:]
-
-    #         with io.open(filename, mode="w", encoding="utf-8") as f:
-    #             f.write(svg)
-
-    #         filenames.append(filename)
-
-    #     return filenames
-
 
 class Logo:
 
