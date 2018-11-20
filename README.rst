@@ -53,7 +53,7 @@ From there, check out the `example notebook </examples/Examples.ipynb>`_ for a l
 Getting support
 ---------------
 
-Join #chartify on spotify-foss.slack.com
+Join #chartify on spotify-foss.slack.com (`Get an invite <https://slackin.spotify.com/>`_)
 
 Use the `chartify tag on StackOverflow <https://stackoverflow.com/questions/tagged/chartify>`_.
 
