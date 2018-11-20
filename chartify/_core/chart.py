@@ -489,6 +489,7 @@ y_axis_type='{y_axis_type}')
         with io.open(filename, mode="w", encoding="utf-8") as f:
                 f.write(svg)
 
+
 class Logo:
 
     def __init__(self, chart):
