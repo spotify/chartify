@@ -17,6 +17,7 @@ import chartify
 import numpy as np
 import pandas as pd
 import pytest
+from selenium.common.exceptions import WebDriverException
 
 
 class TestLegend:
@@ -128,5 +129,5 @@ class TestChart:
             try:
                 ch.save(filename=filename, format=filetype)
             # Occurs if chromedriver is not found
-            except FileNotFoundError:
+            except WebDriverException:
                 pytest.skip("Skipping save tests")
