@@ -89,3 +89,8 @@ ENV/
 .ropeproject
 
 .DS_Store
+
+# Test outputs
+tests/outputs/**/*.png
+tests/outputs/**/*.html
+tests/outputs/**/*.svg

@@ -18,11 +18,14 @@
 
 """
 from collections import OrderedDict
+from functools import wraps
+import io
 from io import BytesIO
 import tempfile
 import warnings
 
 import bokeh
+from bokeh.io.export import _SVG_SCRIPT
 import bokeh.plotting
 from bokeh.embed import file_html
 
@@ -168,7 +171,8 @@ y_axis_type='{y_axis_type}')
             align=subtitle_settings['subtitle_align'],
             text_color=subtitle_settings['subtitle_text_color'],
             text_font_size=subtitle_settings['subtitle_text_size'],
-            text_font=subtitle_settings['subtitle_text_font'])
+            text_font=subtitle_settings['subtitle_text_font'],
+            )
         self.figure.add_layout(_subtitle_glyph,
                                subtitle_settings['subtitle_location'])
         return _subtitle_glyph
@@ -351,6 +355,8 @@ y_axis_type='{y_axis_type}')
             # Need to re-enable this when logos are added back.
             # image = self.logo._add_logo_to_image(image)
             return display(image)
+        elif format == 'svg':
+            return self._show_svg()
 
     def save(self, filename, format='html'):
         """Save the chart.
@@ -383,6 +389,9 @@ y_axis_type='{y_axis_type}')
             # Need to re-enable this when logos are added back.
             # image = self.logo._add_logo_to_image(image)
             image.save(filename)
+        elif format == 'svg':
+            image = self._figure_to_svg()
+            self._save_svg(image, filename)
 
         print('Saved to {filename}'.format(filename=filename))
 
@@ -391,7 +400,7 @@ y_axis_type='{y_axis_type}')
     def _set_toolbar_for_format(self, format):
         if format == 'html':
             self.figure.toolbar_location = 'right'
-        elif format == 'png':
+        elif format in ('png', 'svg'):
             self.figure.toolbar_location = None
         elif format is None:  # If format is None the chart won't be shown.
             pass
@@ -399,12 +408,8 @@ y_axis_type='{y_axis_type}')
             raise ValueError(
                 """Invalid format. Valid options are 'html' or 'png'.""")
 
-    def _figure_to_png(self):
-        """Convert figure object to PNG
-        Bokeh can only save figure objects as html.
-        To convert to PNG the HTML file is opened in a headless browser.
-        """
-        # Initialize headless browser options
+    def _initialize_webdriver(self):
+        """Initialize headless chrome browser"""
         options = Options()
         options.add_argument("window-size={width},{height}".format(
             width=self.style.plot_width, height=self.style.plot_height))
@@ -416,6 +421,14 @@ y_axis_type='{y_axis_type}')
         options.add_argument('--headless')
         options.add_argument('--hide-scrollbars')
         driver = webdriver.Chrome(options=options)
+        return driver
+
+    def _figure_to_png(self):
+        """Convert figure object to PNG
+        Bokeh can only save figure objects as html.
+        To convert to PNG the HTML file is opened in a headless browser.
+        """
+        driver = self._initialize_webdriver()
         # Save figure as HTML
         html = file_html(self.figure, resources=INLINE, title="")
         fp = tempfile.NamedTemporaryFile(
@@ -434,6 +447,47 @@ y_axis_type='{y_axis_type}')
         if image.size != target_dimensions:
             image = image.resize(target_dimensions, resample=Image.LANCZOS)
         return image
+
+    def _set_svg_backend_decorator(f):
+        """Sets the chart backend to svg and resets
+        after the function has run."""
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            old_backend = self.figure.output_backend
+            self.figure.output_backend = 'svg'
+            return f(self, *args, **kwargs)
+            self.figure.output_backend = old_backend
+        return wrapper
+
+    @_set_svg_backend_decorator
+    def _show_svg(self):
+        """Show the chart figure with an svg output backend."""
+        return bokeh.io.show(self.figure)
+
+    @_set_svg_backend_decorator
+    def _figure_to_svg(self):
+        """
+        Convert the figure to an svg so that it can be saved to a file.
+        https://github.com/bokeh/bokeh/blob/master/bokeh/io/export.py
+        """
+        driver = self._initialize_webdriver()
+        html = file_html(self.figure, resources=INLINE, title="")
+
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        driver.get("file:///" + fp.name)
+        svgs = driver.execute_script(_SVG_SCRIPT)
+        fp.close()
+
+        driver.quit()
+        return svgs[0]
+
+    def _save_svg(self, svg, filename):
+        """Write the svg to a file"""
+        with io.open(filename, mode="w", encoding="utf-8") as f:
+                f.write(svg)
 
 
 class Logo:

@@ -16,6 +16,8 @@
 import chartify
 import numpy as np
 import pandas as pd
+import pytest
+from selenium.common.exceptions import WebDriverException
 
 
 class TestLegend:
@@ -93,7 +95,8 @@ class TestLegend:
 
 
 class TestChart:
-    def test_data(self):
+
+    def setup(self):
         data = chartify.examples.example_data()
         data = data.sort_values(['date', 'fruit'])
         color_order = data['fruit'].unique()
@@ -105,7 +108,26 @@ class TestChart:
             size_column='quantity',
             color_column='fruit',
             color_order=color_order)
+        self.chart = ch
+        self.data = data
+        self.color_order = color_order
+
+    def test_data(self):
+        data = self.data
+        color_order = self.color_order
         assert (np.array_equal(
             list(filter(lambda x: x['fruit'][0] == color_order[0],
-                        ch.data))[0]['unit_price'],
+                        self.chart.data))[0]['unit_price'],
             data[data['fruit'] == color_order[0]]['unit_price'].values))
+
+    def test_save(self):
+        ch = self.chart
+        output_path = './tests/outputs/chart/'
+        base_filename = 'test_save'
+        for filetype in ('png', 'svg', 'html'):
+            filename = output_path + base_filename + '.' + filetype
+            try:
+                ch.save(filename=filename, format=filetype)
+            # Occurs if chromedriver is not found
+            except WebDriverException:
+                pytest.skip("Skipping save tests")
