@@ -16,6 +16,7 @@
 import chartify
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestLegend:
@@ -124,4 +125,8 @@ class TestChart:
         base_filename = 'test_save'
         for filetype in ('png', 'svg', 'html'):
             filename = output_path + base_filename + '.' + filetype
-            ch.save(filename=filename, format=filetype)
+            try:
+                ch.save(filename=filename, format=filetype)
+            # Occurs if chromedriver is not found
+            except FileNotFoundError:
+                pytest.skip("Skipping save tests")
