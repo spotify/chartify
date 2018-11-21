@@ -191,8 +191,15 @@ class BaseAxes:
         level_3 = self._convert_subgroup_orientation_labels(level_3)
 
         self._chart.figure.xaxis.major_label_orientation = level_1
-        self._chart.figure.xaxis.subgroup_label_orientation = level_2
-        self._chart.figure.xaxis.group_label_orientation = level_3
+
+        xaxis = self._chart.figure.xaxis[0]
+        has_subgroup_label = getattr(xaxis, 'subgroup_label_orientation', None)
+        if has_subgroup_label is not None:
+            self._chart.figure.xaxis.subgroup_label_orientation = level_2
+
+        has_group_label = getattr(xaxis, 'group_label_orientation', None)
+        if has_group_label is not None:
+            self._chart.figure.xaxis.group_label_orientation = level_3
         return self._chart
 
 

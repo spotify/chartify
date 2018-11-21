@@ -104,3 +104,12 @@ class TestBaseAxes:
         assert ch.figure.yaxis[0].major_label_orientation == 'horizontal'
         assert ch.figure.yaxis[0].subgroup_label_orientation == 'normal'
         assert ch.figure.yaxis[0].group_label_orientation == 'normal'
+
+        quantity_by_date = data.groupby('date')['quantity'].sum().reset_index()
+        ch = chartify.Chart(x_axis_type='datetime')
+        ch.plot.line(df, 'date', 'quantity')
+        assert ch.figure.xaxis[0].major_label_orientation == 'horizontal'
+
+        ch.axes.set_xaxis_tick_orientation('vertical')
+        assert np.allclose(ch.figure.xaxis[0].major_label_orientation,
+                           1.5707963267948966)
