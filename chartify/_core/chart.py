@@ -186,7 +186,7 @@ y_axis_type='{y_axis_type}')
         source_font_size = '10px'
         _source = bokeh.models.Label(
             x=self.style.plot_width * .9,
-            y=-55,
+            y=0,
             x_units='screen',
             y_units='screen',
             level='overlay',
@@ -195,7 +195,7 @@ y_axis_type='{y_axis_type}')
             text_font_size=source_font_size,
             text_align='right',
             name='subtitle')
-        self.figure.add_layout(_source)
+        self.figure.add_layout(_source, 'below')
         return _source
 
     @property
