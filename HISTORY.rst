@@ -8,6 +8,8 @@ History
 Improvements:
 
 * Updated docstrings (Thanks @gregorybchris @ItsPugle!)
+* Added SVG output options to Chart.show() and Chart.save()
+  (Thanks for the suggestion @jdmendoza!)
 
 Bugfixes:
 
@@ -16,8 +18,6 @@ Bugfixes:
   with datetime axes (Thanks for finding @simonwongwong!)
 * Fixed bug that caused subtitle to disappear
   with `outside_top` legend location (Thanks for finding @simonwongwong!)
-* Added SVG output options to Chart.show() and Chart.save()
-  (Thanks for the suggestion @jdmendoza!)
 * Line segment callout properties will work
   correctly. (Thanks @gregorybchris!)
 
