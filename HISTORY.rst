@@ -6,18 +6,20 @@ History
 ------------------
 
 Improvements:
+
 * Updated docstrings (Thanks @gregorybchris @ItsPugle!)
 
 Bugfixes:
+
 * Fixed bug that caused source label to overlap with xaxis labels.
 * Fixed bug that prevented x axis orientation changes
-    with datetime axes (Thanks for finding @simonwongwong!)
+  with datetime axes (Thanks for finding @simonwongwong!)
 * Fixed bug that caused subtitle to disappear
-    with `outside_top` legend location (Thanks for finding @simonwongwong!)
+  with `outside_top` legend location (Thanks for finding @simonwongwong!)
 * Added SVG output options to Chart.show() and Chart.save()
-    (Thanks for the suggestion @jdmendoza!)
+  (Thanks for the suggestion @jdmendoza!)
 * Line segment callout properties will work
-    correctly. (Thanks @gregorybchris!)
+  correctly. (Thanks @gregorybchris!)
 
 2.3.4 (2018-11-13)
 ------------------
