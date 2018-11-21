@@ -162,9 +162,10 @@ y_axis_type='{y_axis_type}')
     def _add_subtitle_to_figure(self, subtitle_text=None):
         """Create the subtitle glyph and add it to the bokeh figure."""
         if subtitle_text is None:
-            subtitle_text = """ch.set_subtitle('Data Description')"""
-        if self._blank_labels:
-            subtitle_text = ""
+            if self._blank_labels:
+                subtitle_text = ""
+            else:
+                subtitle_text = """ch.set_subtitle('Data Description')"""
         subtitle_settings = self.style._get_settings('subtitle')
         _subtitle_glyph = bokeh.models.Title(
             text=subtitle_text,
