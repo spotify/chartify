@@ -30,8 +30,9 @@ from scipy.stats.kde import gaussian_kde
 class BasePlot:
     """Base for all plot classes."""
 
-    def __init__(self, chart):
+    def __init__(self, chart, y_range_name="default"):
         self._chart = chart
+        self._y_range_name = y_range_name
 
     @staticmethod
     def _axis_format_precision(max_value, min_value):
@@ -114,7 +115,9 @@ class BasePlot:
 
     @staticmethod
     def _named_column_data_source(data_frame, series_name):
-        """Ensure consistent naming of column data sources."""
+        """Ensure consistent naming of column data sources.
+        Naming ensures that Chart.data property will populate correctly.
+        """
         cannonical_series_name = BasePlot._cannonical_series_name(series_name)
         return bokeh.models.ColumnDataSource(
             data_frame, name=cannonical_series_name)
@@ -357,7 +360,8 @@ class PlotNumericXY(BasePlot):
                 line_cap=line_cap,
                 legend=color_value,
                 line_dash=line_dash,
-                alpha=alpha)
+                alpha=alpha,
+                y_range_name=self._y_range_name)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -431,7 +435,8 @@ class PlotNumericXY(BasePlot):
                 legend=color_value,
                 marker=marker,
                 line_color=color,
-                alpha=alpha)
+                alpha=alpha,
+                y_range_name=self._y_range_name)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -513,7 +518,8 @@ class PlotNumericXY(BasePlot):
                 x_offset=x_offset,
                 angle=angle,
                 angle_units='deg',
-                text_font=text_font)
+                text_font=text_font,
+                y_range_name=self._y_range_name)
         return self._chart
 
     def area(self,
@@ -618,7 +624,8 @@ class PlotNumericXY(BasePlot):
                     alpha=alpha,
                     source=source,
                     legend=color_value,
-                    color=color)
+                    color=color,
+                    y_range_name=self._y_range_name)
             else:
                 self._chart.figure.patch(
                     x=y_column,
@@ -626,7 +633,8 @@ class PlotNumericXY(BasePlot):
                     alpha=alpha,
                     source=source,
                     legend=color_value,
-                    color=color)
+                    color=color,
+                    y_range_name=self._y_range_name)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:

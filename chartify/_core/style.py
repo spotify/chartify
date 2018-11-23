@@ -304,6 +304,23 @@ class Style:
                 'line_join': 'round',
                 'line_width': 4,
                 'line_dash': 'solid'
+            },
+            'second_y_axis': {
+                'figure.yaxis[1].axis_label_text_color': "#666666",
+                'figure.yaxis[1].axis_line_color': "#C0C0C0",
+                'figure.yaxis[1].axis_line_width': 1,
+                'figure.yaxis[1].major_tick_line_color': "#C0C0C0",
+                'figure.yaxis[1].minor_tick_line_color': "#C0C0C0",
+                'figure.yaxis[1].major_label_text_color': '#898989',
+                'figure.yaxis[1].axis_label_text_font': 'helvetica',
+                'figure.yaxis[1].major_label_text_font': 'helvetica',
+                'figure.yaxis[1].axis_label_text_font_style': 'bold',
+                'figure.yaxis[1].axis_label_text_font_size': "11pt",
+                'figure.yaxis[1].major_label_text_font_size': "10pt",
+                'figure.yaxis[1].minor_tick_out': 1,
+                'figure.yaxis[1].major_tick_line_width': 1,
+                'figure.yaxis[1].major_tick_out': 4,
+                'figure.yaxis[1].major_tick_in': 0,
             }
         }
 
@@ -385,8 +402,20 @@ class Style:
             setattr(base_obj, attribute, value)
         else:
             for i, attr in enumerate(split_attribute):
+                # If the attribute contains a list, the slice the list.
+                list_split = attr.split('[')
+                list_index = None
+                if len(list_split) > 1:
+                    list_index = int(list_split[1].replace(']', ''))
+                    attr = list_split[0]
+
                 if i < len(split_attribute) - 1:
                     base_obj = getattr(base_obj, attr)
+                # Slice the list if list_index is not None
+                if list_index is not None:
+                    base_obj = base_obj[list_index]
+                # If the base object is a list, then apply settings to each
+                # element.
                 if isinstance(base_obj, (list, )):
                     for obj in base_obj:
                         self._apply_bokeh_setting(
