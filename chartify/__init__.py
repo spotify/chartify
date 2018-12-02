@@ -32,14 +32,18 @@ def set_display_settings():
     from ipykernel.zmqshell import ZMQInteractiveShell
     from bokeh.io import output_notebook
     from bokeh.resources import Resources
+    from bokeh.io.state import curstate
 
     ipython_instance = get_ipython()
     if ipython_instance is not None:
         if isinstance(ipython_instance, ZMQInteractiveShell):
             _IPYTHON_INSTANCE = True
-            # Inline resources uses bokeh.js from the local version.
-            # This enables offline usage.
-            output_notebook(Resources('inline'))
+            # Defer to previous call to ``output_notebook`` so that users
+            # can specify their own notebook type and Bokeh resources
+            if curstate().notebook_type is None:
+                # Inline resources uses bokeh.js from the local version.
+                # This enables offline usage.
+                output_notebook(Resources('inline'))
 
 
 set_display_settings()
