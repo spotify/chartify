@@ -39,7 +39,7 @@ def set_display_settings():
             _IPYTHON_INSTANCE = True
             # Inline resources uses bokeh.js from the local version.
             # This enables offline usage.
-            output_notebook(Resources('inline'))
+            output_notebook(Resources('inline'), hide_banner=True)
 
 
 set_display_settings()
