@@ -586,7 +586,7 @@ class CategoricalXYAxes(BaseAxes, CategoricalXMixin, CategoricalYMixin):
 
 
 class SecondYNumericalAxis(YAxisMixin, NumericalYMixin):
-
+    """Axis class for second Y numerical axes."""
     def __init__(self, chart):
         self._chart = chart
         self._y_range_name = 'second_y'
@@ -598,8 +598,12 @@ class SecondYNumericalAxis(YAxisMixin, NumericalYMixin):
         if self._chart._second_y_axis_type == 'log':
             axis_class = LogAxis
         self._chart.figure.add_layout(
-            axis_class(y_range_name="second_y"), 'right')
+            axis_class(y_range_name=self._y_range_name), 'right')
 
         self._y_axis_index = 1
         self._y_range = self._chart.figure.extra_y_ranges[self._y_range_name]
         self._chart.style._apply_settings('second_y_axis')
+
+
+class SecondAxis:
+    """Class for second axis."""

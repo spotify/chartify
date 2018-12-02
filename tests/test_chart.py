@@ -131,3 +131,39 @@ class TestChart:
             # Occurs if chromedriver is not found
             except WebDriverException:
                 pytest.skip("Skipping save tests")
+
+
+class TestSecondYChart:
+
+    def setup(self):
+        self.data = pd.DataFrame({
+            'category1': ['a', 'b', 'a', 'b', 'a', 'b'],
+            'number1': [1, 1, 2, 2, 3, 3],
+            'number2': [5, 4, 10, -3, 0, -10],
+            'datetimes': [
+                '2017-01-01', '2017-01-01', '2017-01-02', '2017-01-02',
+                '2017-01-03', '2017-01-03'
+            ],
+        })
+
+    def test_init(self):
+        with pytest.raises(ValueError):
+            chartify.Chart(y_axis_type='categorical', second_y_axis=True)
+        ch = chartify.Chart(y_axis_type='linear', second_y_axis=True)
+        assert ch._second_y_axis_type == 'linear'
+
+    def test_axes(self):
+        ch = chartify.Chart(second_y_axis=True)
+        test_value = "test value"
+        ch.second_axis.axes.set_yaxis_label(test_value)
+        assert test_value == ch.second_axis.axes.yaxis_label
+
+    def test_single_numeric_line(self):
+        """Single line test"""
+        single_line = self.data[self.data['category1'] == 'a']
+        ch = chartify.Chart(second_y_axis=True)
+        ch.second_axis.plot.line(single_line,
+                                 x_column='number1',
+                                 y_column='number2')
+        assert (np.array_equal(ch.data[0]['number1'], [1., 2., 3.]))
+        assert (np.array_equal(ch.data[0]['number2'], [5, 10, 0]))

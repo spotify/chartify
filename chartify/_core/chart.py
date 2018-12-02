@@ -36,7 +36,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 from chartify._core.style import Style
-from chartify._core.axes import BaseAxes, SecondYNumericalAxis
+from chartify._core.axes import BaseAxes, SecondYNumericalAxis, SecondAxis
 from chartify._core.plot import BasePlot
 from chartify._core.callout import Callout
 from chartify._core.options import options
@@ -58,7 +58,7 @@ class Chart:
                  layout='slide_100%',
                  x_axis_type='linear',
                  y_axis_type='linear',
-                 second_y_axis_type=None):
+                 second_y_axis=False):
         """Create a chart instance.
 
         Args:
@@ -92,20 +92,24 @@ class Chart:
             'linear', 'log', 'datetime', 'categorical', 'density'
         ]
         valid_y_axis_types = ['linear', 'log', 'categorical', 'density']
-        valid_second_y_axis_types = ['linear', 'log', None]
+        valid_second_y_axis_types = ['linear', 'log']
         if x_axis_type not in valid_x_axis_types:
             raise ValueError('x_axis_type must be one of {options}'.format(
                 options=valid_x_axis_types))
         if y_axis_type not in valid_y_axis_types:
             raise ValueError('y_axis_type must be one of {options}'.format(
                 options=valid_y_axis_types))
-        if second_y_axis_type not in valid_second_y_axis_types:
-            raise ValueError(
-                'second_y_axis_type must be one of {options}'.format(
-                    options=valid_y_axis_types))
+
+        self._second_y_axis_type = None
+        if second_y_axis:
+            self._second_y_axis_type = y_axis_type
+            if self._second_y_axis_type not in valid_second_y_axis_types:
+                raise ValueError(
+                    'second_y_axis can only be used when \
+                    y_axis_type is one of {options}'.format(
+                        options=valid_second_y_axis_types))
 
         self._x_axis_type, self._y_axis_type = x_axis_type, y_axis_type
-        self._second_y_axis_type = second_y_axis_type
 
         self._blank_labels = options._get_value(blank_labels)
         self.style = Style(self, layout)
@@ -118,11 +122,12 @@ class Chart:
         self.axes = BaseAxes._get_axis_class(self._x_axis_type,
                                              self._y_axis_type)(self)
 
-        if self._second_y_axis_type is not None:
-            self.second_axis = SecondYNumericalAxis(self)
-            self.plot_second_axis = BasePlot._get_plot_class(
+        if self._second_y_axis_type in valid_second_y_axis_types:
+            self.second_axis = SecondAxis()
+            self.second_axis.axes = SecondYNumericalAxis(self)
+            self.second_axis.plot = BasePlot._get_plot_class(
                 self._x_axis_type, self._second_y_axis_type)(
-                    self, self.second_axis._y_range_name)
+                    self, self.second_axis.axes._y_range_name)
         self._source = self._add_source_to_figure()
         self._subtitle_glyph = self._add_subtitle_to_figure()
         self.figure.toolbar.logo = None  # Remove bokeh logo from toolbar.
