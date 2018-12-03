@@ -32,11 +32,14 @@ Examples
 Installation
 ------------
 
-1. Chartify can be installed via pip:
+Chartify can be installed via pip:
 
 ``pip3 install chartify``
 
-2. Install chromedriver requirement (Optional. Needed for PNG output):
+
+Chartify depends on Google Chrome and chromedriver for PNG output. In
+most cases no additional steps are needed, but you can do the following
+if you experience any errors:
     - Install google chrome.
     - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
     - Copy the executable file to a directory within your PATH.

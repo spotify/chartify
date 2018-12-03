@@ -2,6 +2,13 @@
 History
 =======
 
+2.4.0 (YYYY-MM-DD)
+
+Improvements:
+
+* Added chromedriver-installer requirement to remove
+  the manual installation process of chromedriver.
+
 2.3.5 (2018-11-21)
 ------------------
 
