@@ -46,7 +46,7 @@ Installation
 Getting started
 ---------------
 
-This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify.
+This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify. Run this tutorial interactively using `this link <https://notebooks.rmotr.com/spotify/interactive-chartify-tutorial-2fc5958b>`_.
 
 From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots.
 
