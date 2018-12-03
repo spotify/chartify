@@ -40,11 +40,11 @@ Chartify can be installed via pip:
 Chartify depends on Google Chrome and chromedriver for PNG output. In
 most cases no additional steps are needed, but you can do the following
 if you experience any errors:
-    - Install google chrome.
-    - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
-    - Copy the executable file to a directory within your PATH.
-	- View directorys in your PATH variable: ``echo $PATH``
-	- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
+- Install google chrome.
+- Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
+- Copy the executable file to a directory within your PATH.
+- View directorys in your PATH variable: ``echo $PATH``
+- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
 
 Getting started
 ---------------
