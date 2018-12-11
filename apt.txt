@@ -1,2 +1,2 @@
-# Used to configure binder environment.
+# Used to apt-install packages to the binder environment.
 chromium-browser
