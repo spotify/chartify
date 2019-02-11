@@ -43,6 +43,10 @@ Installation
 	- View directorys in your PATH variable: ``echo $PATH``
 	- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
 
+3. Save PNG output:
+
+``chartify.Chart().save('foo.png', format='png')``
+
 Getting started
 ---------------
 
