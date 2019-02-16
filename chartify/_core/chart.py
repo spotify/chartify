@@ -364,6 +364,8 @@ y_axis_type='{y_axis_type}')
                     Easy to copy+paste into slides.
                     Will render logos.
                     Recommended when the plot is in a finished state.
+
+                - 'svg': Output as SVG.
                 """
         self._set_toolbar_for_format(format)
 
@@ -394,6 +396,8 @@ y_axis_type='{y_axis_type}')
                     Easy to paste into google slides.
                     Recommended when the plot is in a finished state.
                     Will render logos.
+
+                - 'svg': Output as SVG.
         """
         self._set_toolbar_for_format(format)
 

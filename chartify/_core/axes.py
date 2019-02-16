@@ -59,9 +59,12 @@ class YAxisMixin:
         removed with .axes.set_yaxis_label("")
         """
         self._chart.figure.yaxis[self._y_axis_index].axis_line_alpha = 0
-        self._chart.figure.yaxis[self._y_axis_index].major_tick_line_color = None
-        self._chart.figure.yaxis[self._y_axis_index].minor_tick_line_color = None
-        self._chart.figure.yaxis[self._y_axis_index].major_label_text_color = None
+        self._chart.figure.yaxis[
+            self._y_axis_index].major_tick_line_color = None
+        self._chart.figure.yaxis[
+            self._y_axis_index].minor_tick_line_color = None
+        self._chart.figure.yaxis[
+            self._y_axis_index].major_label_text_color = None
         return self._chart
 
 
@@ -72,7 +75,6 @@ class BaseAxes(YAxisMixin):
         self._chart = chart
         super(BaseAxes, self).__init__()
         self._initialize_defaults()
-
 
     @classmethod
     def _get_axis_class(cls, x_axis_type, y_axis_type):

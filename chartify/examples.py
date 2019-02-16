@@ -1448,3 +1448,19 @@ def chart_show():
     ch.show('png')  # Show with PNG
 
 chart_show.__doc__ = _core.chart.Chart.show.__doc__
+
+
+@_print_source
+def chart_save():
+    """
+    Docstring
+    """
+    import chartify
+
+    # Plot the data
+    ch = chartify.Chart(blank_labels=True)
+    ch.set_title(
+        'ch.show(): Save chart to html, png, or svg.')
+    ch.save('saved_chart_example.html', format='html')  # Save to html
+
+chart_save.__doc__ = _core.chart.Chart.save.__doc__
