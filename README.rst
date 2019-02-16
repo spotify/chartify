@@ -50,7 +50,7 @@ if you experience any errors:
 Getting started
 ---------------
 
-This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify. `Click here to launch the tutorial notebook with Binder <https://mybinder.org/v2/gh/spotify/chartify/master?filepath=examples%2FChartify%20Tutorial.ipynb>`_.
+This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify. `Click here to launch the tutorial notebook in a preconfigured Jupyter notebook with Binder <https://mybinder.org/v2/gh/spotify/chartify/master?filepath=examples%2FChartify%20Tutorial.ipynb>`_.
 
 
 From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots. `Click here to launch the example notebook with Binder <https://mybinder.org/v2/gh/spotify/chartify/master?filepath=examples%2FExamples.ipynb>`_.
