@@ -491,6 +491,7 @@ class TestAxisFormatPrecision:
 
     def setup(self):
         self.tests = {
+            (0, 0): "0,0.[0]",
             (0, 0.004): "0,0.[0000]",
             (0, 0.04): "0,0.[000]",
             (0, 0.4): "0,0.[00]",

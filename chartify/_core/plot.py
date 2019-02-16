@@ -37,11 +37,8 @@ class BasePlot:
     @staticmethod
     def _axis_format_precision(max_value, min_value):
         difference = abs(max_value - min_value)
-        if difference:
-            precision = abs(int(np.floor(np.log10(difference)))) + 1
-        else:
-            precision = 1
-        print(precision)
+        precision = abs(int(np.floor(
+            np.log10(difference if difference else 1)))) + 1
         zeros = ''.join(['0']*precision)
         return "0,0.[{}]".format(zeros)
 
