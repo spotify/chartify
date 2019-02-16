@@ -961,6 +961,58 @@ plot_heatmap.__doc__ = _core.plot.PlotCategoricalXY.heatmap.__doc__
 
 
 @_print_source
+def chart_second_axis():
+    """
+    Docstring
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+
+    # Sum price grouped by date
+    price_by_date = (
+        data.groupby('date')['total_price'].sum()
+        .reset_index()  # Move 'date' from index to column
+        )
+    price_by_date['triple_total_price'] = price_by_date['total_price'] * 3
+    price_by_date = price_by_date.sort_values('date')
+    print(price_by_date.head())
+    """Print break"""
+    _second_axis_example(price_by_date)
+
+
+@_print_source
+def _second_axis_example(price_by_date):
+    """Docstring"""
+    # Initialize chart with second_y_axis=True
+    ch = chartify.Chart(blank_labels=True,
+                        x_axis_type='datetime',
+                        y_axis_type='linear',
+                        second_y_axis=True)
+    ch.set_title("Second Y axis")
+    # Plot the first axis
+    ch.plot.line(
+        data_frame=price_by_date,
+        x_column='date',
+        y_column='total_price')
+    ch.axes.set_yaxis_range(0, 50)
+    ch.axes.set_yaxis_label('First axis label')
+    ch.axes.set_yaxis_tick_format('0a')
+
+    # Plot the second axis
+    ch.second_axis.axes.set_yaxis_range(0, 80)
+    ch.second_axis.axes.set_yaxis_label('Second axis label')
+    ch.second_axis.plot.line(
+        # Data must be sorted by x column
+        data_frame=price_by_date,
+        x_column='date',
+        y_column='triple_total_price')
+    ch.second_axis.axes.set_yaxis_tick_format('0.0')
+    ch.show(_OUTPUT_FORMAT)
+
+
+@_print_source
 def style_color_palette_accent():
     """
     Color palette
