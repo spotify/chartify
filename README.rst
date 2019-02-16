@@ -32,23 +32,28 @@ Examples
 Installation
 ------------
 
-1. Chartify can be installed via pip:
+Chartify can be installed via pip:
 
 ``pip3 install chartify``
 
-2. Install chromedriver requirement (Optional. Needed for PNG output):
-    - Install google chrome.
-    - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
-    - Copy the executable file to a directory within your PATH.
-	- View directorys in your PATH variable: ``echo $PATH``
-	- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
+
+Chartify depends on Google Chrome and chromedriver for PNG output. In
+most cases no additional steps are needed, but you can do the following
+if you experience any errors:
+
+- Install google chrome.
+- Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
+- Copy the executable file to a directory within your PATH.
+- View directorys in your PATH variable: ``echo $PATH``
+- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
 
 Getting started
 ---------------
 
-This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify.
+This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify. `Click here to launch the tutorial notebook in a preconfigured Jupyter notebook with Binder <https://mybinder.org/v2/gh/spotify/chartify/master?filepath=examples%2FChartify%20Tutorial.ipynb>`_.
 
-From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots.
+
+From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots. `Click here to launch the example notebook with Binder <https://mybinder.org/v2/gh/spotify/chartify/master?filepath=examples%2FExamples.ipynb>`_.
 
 Getting support
 ---------------

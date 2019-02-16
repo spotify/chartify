@@ -2,6 +2,14 @@
 History
 =======
 
+2.4.0 (YYYY-MM-DD)
+
+Improvements:
+
+* Added chromedriver-installer requirement to remove
+  the manual installation process of chromedriver.
+* Added README links to launch tutorial and example notebooks with Binder.
+
 2.3.5 (2018-11-21)
 ------------------
 

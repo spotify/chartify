@@ -1,0 +1,2 @@
+# Used to apt-install packages to the binder environment.
+chromium-browser
