@@ -36,7 +36,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 from chartify._core.style import Style
-from chartify._core.axes import BaseAxes
+from chartify._core.axes import BaseAxes, SecondYNumericalAxis, SecondAxis
 from chartify._core.plot import BasePlot
 from chartify._core.callout import Callout
 from chartify._core.options import options
@@ -57,7 +57,8 @@ class Chart:
                  blank_labels=options.get_option('chart.blank_labels'),
                  layout='slide_100%',
                  x_axis_type='linear',
-                 y_axis_type='linear'):
+                 y_axis_type='linear',
+                 second_y_axis=False):
         """Create a chart instance.
 
         Args:
@@ -91,12 +92,22 @@ class Chart:
             'linear', 'log', 'datetime', 'categorical', 'density'
         ]
         valid_y_axis_types = ['linear', 'log', 'categorical', 'density']
+        valid_second_y_axis_types = ['linear', 'log']
         if x_axis_type not in valid_x_axis_types:
             raise ValueError('x_axis_type must be one of {options}'.format(
                 options=valid_x_axis_types))
         if y_axis_type not in valid_y_axis_types:
             raise ValueError('y_axis_type must be one of {options}'.format(
                 options=valid_y_axis_types))
+
+        self._second_y_axis_type = None
+        if second_y_axis:
+            self._second_y_axis_type = y_axis_type
+            if self._second_y_axis_type not in valid_second_y_axis_types:
+                raise ValueError(
+                    'second_y_axis can only be used when \
+                    y_axis_type is one of {options}'.format(
+                        options=valid_second_y_axis_types))
 
         self._x_axis_type, self._y_axis_type = x_axis_type, y_axis_type
 
@@ -110,6 +121,13 @@ class Chart:
         self.callout = Callout(self)
         self.axes = BaseAxes._get_axis_class(self._x_axis_type,
                                              self._y_axis_type)(self)
+
+        if self._second_y_axis_type in valid_second_y_axis_types:
+            self.second_axis = SecondAxis()
+            self.second_axis.axes = SecondYNumericalAxis(self)
+            self.second_axis.plot = BasePlot._get_plot_class(
+                self._x_axis_type, self._second_y_axis_type)(
+                    self, self.second_axis.axes._y_range_name)
         self._source = self._add_source_to_figure()
         self._subtitle_glyph = self._add_subtitle_to_figure()
         self.figure.toolbar.logo = None  # Remove bokeh logo from toolbar.
@@ -346,6 +364,8 @@ y_axis_type='{y_axis_type}')
                     Easy to copy+paste into slides.
                     Will render logos.
                     Recommended when the plot is in a finished state.
+
+                - 'svg': Output as SVG.
                 """
         self._set_toolbar_for_format(format)
 
@@ -376,6 +396,8 @@ y_axis_type='{y_axis_type}')
                     Easy to paste into google slides.
                     Recommended when the plot is in a finished state.
                     Will render logos.
+
+                - 'svg': Output as SVG.
         """
         self._set_toolbar_for_format(format)
 

@@ -21,14 +21,59 @@ Module for logic related to chart axes.
 import pandas as pd
 import bokeh
 from bokeh.models.tickers import FixedTicker
+from bokeh.models import LinearAxis, LogAxis, DataRange1d
 from math import pi
 
 
-class BaseAxes:
+class YAxisMixin:
+
+    def __init__(self):
+        self._y_axis_index = 0
+        self._y_range = self._chart.figure.y_range
+
+    @property
+    def yaxis_label(self):
+        """Return y-axis label.
+
+        Returns:
+            y-axis label text
+        """
+        return self._chart.figure.yaxis[self._y_axis_index].axis_label
+
+    def set_yaxis_label(self, label):
+        """Set y-axis label text.
+
+        Args:
+            label (string): the text for the y-axis label
+
+        Returns:
+            Current chart object
+        """
+        self._chart.figure.yaxis[self._y_axis_index].axis_label = label
+        return self._chart
+
+    def hide_yaxis(self):
+        """Hide the tick labels, ticks, and axis lines of the y-axis.
+
+        The y-axis label will remain visible, but can be
+        removed with .axes.set_yaxis_label("")
+        """
+        self._chart.figure.yaxis[self._y_axis_index].axis_line_alpha = 0
+        self._chart.figure.yaxis[
+            self._y_axis_index].major_tick_line_color = None
+        self._chart.figure.yaxis[
+            self._y_axis_index].minor_tick_line_color = None
+        self._chart.figure.yaxis[
+            self._y_axis_index].major_label_text_color = None
+        return self._chart
+
+
+class BaseAxes(YAxisMixin):
     """Base class for axes."""
 
     def __init__(self, chart):
         self._chart = chart
+        super(BaseAxes, self).__init__()
         self._initialize_defaults()
 
     @classmethod
@@ -119,27 +164,6 @@ class BaseAxes:
         self._chart.figure.xaxis.axis_label = label
         return self._chart
 
-    @property
-    def yaxis_label(self):
-        """Return y-axis label.
-
-        Returns:
-            y-axis label text
-        """
-        return self._chart.figure.yaxis.axis_label
-
-    def set_yaxis_label(self, label):
-        """Set y-axis label text.
-
-        Args:
-            label (string): the text for the y-axis label
-
-        Returns:
-            Current chart object
-        """
-        self._chart.figure.yaxis.axis_label = label
-        return self._chart
-
     def hide_xaxis(self):
         """Hide the tick labels, ticks, and axis lines of the x-axis.
 
@@ -153,19 +177,6 @@ class BaseAxes:
         self._chart.figure.xaxis.major_tick_line_color = None
         self._chart.figure.xaxis.minor_tick_line_color = None
         self._chart.figure.xaxis.major_label_text_color = None
-
-        return self._chart
-
-    def hide_yaxis(self):
-        """Hide the tick labels, ticks, and axis lines of the y-axis.
-
-        The y-axis label will remain visible, but can be
-        removed with .axes.set_yaxis_label("")
-        """
-        self._chart.figure.yaxis.axis_line_alpha = 0
-        self._chart.figure.yaxis.major_tick_line_color = None
-        self._chart.figure.yaxis.minor_tick_line_color = None
-        self._chart.figure.yaxis.major_label_text_color = None
 
         return self._chart
 
@@ -266,6 +277,7 @@ class NumericalXMixin:
 
 
 class NumericalYMixin:
+
     def set_yaxis_range(self, start=None, end=None):
         """Set y-axis range.
 
@@ -276,8 +288,8 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.y_range.end = end
-        self._chart.figure.y_range.start = start
+        self._y_range.end = end
+        self._y_range.start = start
         return self._chart
 
     def set_yaxis_tick_values(self, values):
@@ -289,7 +301,8 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.yaxis.ticker = FixedTicker(ticks=values)
+        self._chart.figure.yaxis[
+            self._y_axis_index].ticker = FixedTicker(ticks=values)
         return self._chart
 
     def set_yaxis_tick_format(self, num_format):
@@ -321,8 +334,8 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.yaxis[
-            0].formatter = bokeh.models.NumeralTickFormatter(format=num_format)
+        self._chart.figure.yaxis[self._y_axis_index].formatter = (
+                bokeh.models.NumeralTickFormatter(format=num_format))
         return self._chart
 
 
@@ -572,3 +585,31 @@ class CategoricalXYAxes(BaseAxes, CategoricalXMixin, CategoricalYMixin):
     def __init__(self, chart):
         super(CategoricalXYAxes, self).__init__(chart)
         self._chart.style._apply_settings('categorical_xyaxis')
+
+
+class SecondYNumericalAxis(YAxisMixin, NumericalYMixin):
+    """Axis class for second Y numerical axes."""
+    def __init__(self, chart):
+        self._chart = chart
+        self._y_range_name = 'second_y'
+        self._chart.figure.extra_y_ranges = {
+            self._y_range_name: DataRange1d(bounds='auto')
+        }
+        # Add the appropriate axis type to the figure.
+        axis_class = LinearAxis
+        if self._chart._second_y_axis_type == 'log':
+            axis_class = LogAxis
+        self._chart.figure.add_layout(
+            axis_class(y_range_name=self._y_range_name), 'right')
+
+        self._y_axis_index = 1
+        self._y_range = self._chart.figure.extra_y_ranges[self._y_range_name]
+        self._chart.style._apply_settings('second_y_axis')
+
+
+class SecondAxis:
+    """Class for second axis.
+
+    - Plotting (.plot)
+    - Axes (.axes)
+    """
