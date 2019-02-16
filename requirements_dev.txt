@@ -23,6 +23,6 @@ pylint==1.7.4
 Pillow==5.3.0
 selenium==3.8.0
 bokeh==1.0.1
-scipy==1.0.0
 colour==0.1.5
 numpy==1.15.1
+scipy==1.0.0
