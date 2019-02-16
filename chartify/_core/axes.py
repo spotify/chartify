@@ -608,4 +608,8 @@ class SecondYNumericalAxis(YAxisMixin, NumericalYMixin):
 
 
 class SecondAxis:
-    """Class for second axis."""
+    """Class for second axis.
+
+    - Plotting (.plot)
+    - Axes (.axes)
+    """

@@ -2,6 +2,22 @@
 History
 =======
 
+2.4.0 (2019-02-16)
+------------------
+
+Improvements:
+
+* Added second Y axis plotting.
+* Removed Bokeh loading notification on import (Thanks @canavandl!)
+* Added support for custom Bokeh resource loading (Thanks @canavandl!)
+* Added example for Chart.save() method (Thanks @david30907d!)
+
+Bugfixes:
+
+* Updated documentation for saving and showing svgs.
+* Fixed bug that broke plots with no difference between min and max
+  points. (Thanks for finding @fabioconcina!)
+
 2.3.5 (2018-11-21)
 ------------------
 
