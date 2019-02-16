@@ -11,7 +11,6 @@ Sphinx==1.7.7
 commonmark==0.5.4
 recommonmark==0.4.0
 
-prompt-toolkit==1.0.15
 ipython==7.2.0
 pytest==3.2.3
 pytest-cov==2.5.1
