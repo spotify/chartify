@@ -961,6 +961,83 @@ plot_heatmap.__doc__ = _core.plot.PlotCategoricalXY.heatmap.__doc__
 
 
 @_print_source
+def plot_radar_area():
+    """Radar area example
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+    total_by_fruit_and_country = data.groupby(['fruit', 'country'])['quantity'].sum().reset_index()
+    print(total_by_fruit_and_country.head())
+    """Print break"""
+    _radar_area_example_1(total_by_fruit_and_country)
+
+
+@_print_source
+def _radar_area_example_1(total_by_fruit_and_country):
+    """# Basic Scatter"""
+    ch = chartify.RadarChart(True, layout='slide_50%')
+    ch.set_title('Radar Area Chart')
+    ch.set_subtitle("Each vertex plotted counterclockwise starting from top")
+    ch.plot.text(total_by_fruit_and_country.groupby('country')['quantity'].max().reset_index(),
+                 'quantity',
+                 text_column='country',
+                 text_align='center')
+    ch.plot.area(total_by_fruit_and_country, 'quantity', color_column='fruit')
+    ch.axes.hide_yaxis()
+    ch.axes.hide_xaxis()
+    ch.set_legend_location('outside_bottom')
+    ch.show(_OUTPUT_FORMAT)
+
+
+@_print_source
+def plot_radar_radius():
+    """Radar area example
+    """
+    import chartify
+    from itertools import product
+    # Generate example data
+    data = chartify.examples.example_data()
+
+    total_by_country = data.groupby(['country'])['quantity'].sum().reset_index()
+    countries = total_by_country.country.unique()
+    grid_values = product(range(0, 1200, 200), countries)
+    grid_df = pd.DataFrame.from_records(grid_values, columns=['quantity', 'country'])
+    quantity_label = grid_df.groupby('quantity')[['quantity']].min().reset_index(drop=True)
+
+    ch = chartify.RadarChart(True, layout='slide_50%')
+    ch.set_title('Radar Radius Chart')
+
+    ch.style.set_color_palette('categorical', ['grey'])
+    # Plot quantity labels
+    ch.plot.text(quantity_label,
+                 'quantity',
+                 text_column='quantity',
+                 color_column='quantity',
+                 font_size='8pt')
+    # Plot perimeter grid
+    ch.plot.perimeter(grid_df,
+                      radius_column='quantity',
+                      color_column='quantity',
+                      line_width=1)
+    ch.style.set_color_palette('categorical')
+
+    # Plot text labels
+    ch.plot.text(total_by_country,
+                 'quantity',
+                 text_column='country',
+                 text_align='center')
+    ch.style.color_palette.reset_palette_order()
+    # Plot the radius
+    ch.plot.radius(total_by_country, 'quantity')
+    ch.axes.hide_yaxis()
+    ch.axes.hide_xaxis()
+    ch.set_legend_location(None)
+    ch.show(_OUTPUT_FORMAT)
+
+
+@_print_source
 def chart_second_axis():
     """
     Docstring

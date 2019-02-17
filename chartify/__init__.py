@@ -15,13 +15,14 @@
 # limitations under the License.
 """Top-level package for chartify."""
 from chartify._core.chart import Chart
+from chartify._core.radar_chart import RadarChart
 from chartify._core.colors import color_palettes
 from chartify._core.options import options
 from chartify import examples
 
 __author__ = """Chris Halpert"""
 __email__ = 'chalpert@spotify.com'
-__version__ = '2.4.0'
+__version__ = '2.5.0'
 
 _IPYTHON_INSTANCE = False
 
