@@ -192,7 +192,7 @@ class PlotRadar(BasePlot):
                   line_dash='solid',
                   line_width=4,
                   alpha=1.0):
-        """Line Chart.
+        """Perimeter line plot.
 
         Args:
             data_frame (pandas.DataFrame): Data source for the plot.
@@ -330,7 +330,7 @@ class PlotRadar(BasePlot):
                line_dash='solid',
                line_width=4,
                alpha=1.0):
-        """Radius Chart.
+        """Radius line plot.
 
         Args:
             data_frame (pandas.DataFrame): Data source for the plot.
