@@ -90,17 +90,22 @@ class BasePlot:
             if categorical_columns is None:  # Numeric data
                 colors = next_colors
             else:
-                # Color column must be in the categorical_columns
-                try:
-                    color_index = categorical_columns.index(color_column)
-                except ValueError:
-                    raise ValueError(
-                        '''`color_column` must be present
-                         in the `categorical_columns`'''
-                    )
+                # # Color column must be in the categorical_columns
+                # try:
+                #     color_index = categorical_columns.index(color_column)
+                #     color_label = 'factors'
+                # except ValueError:
+                #     color_label = 'color_column'
+                #     color_index = 0
+                #     raise ValueError(
+                #         '''`color_column` must be present
+                #          in the `categorical_columns`'''
+                #     )
+                color_label = 'color_column'
+                color_index = 0
                 color_order = [str(factor) for factor in color_order]
                 colors = bokeh.transform.factor_cmap(
-                    'factors',
+                    color_label,
                     palette=next_colors,
                     factors=color_order,
                     start=color_index,
@@ -964,7 +969,8 @@ class PlotMixedTypeXY(BasePlot):
                           stack_column=None,
                           normalize=False,
                           categorical_order_by=None,
-                          categorical_order_ascending=False):
+                          categorical_order_ascending=False,
+                          color_column=None):
         """Constructs ColumnDataSource
 
         Returns:
@@ -1003,8 +1009,18 @@ class PlotMixedTypeXY(BasePlot):
                 columns=stack_column,
                 index=categorical_columns,
                 values=numeric_column,
-                aggfunc='sum').fillna(0)  # NA columns break the stacks
+                aggfunc='sum')
         )
+        # NA columns break the stacks
+        # Might want to make this conditional in the future for parallel plots.
+        source = source.fillna(0)
+
+        if color_column:
+            # Merge color column
+            color_df = data_frame.astype(type_map)
+            color_df['color_column'] = color_df[color_column].astype(str)
+            color_df = color_df.set_index(categorical_columns)['color_column']
+            source = source.join(color_df)
 
         # Normalize values at the grouped levels.
         # Only relevant for stacked objects
@@ -1152,14 +1168,15 @@ class PlotMixedTypeXY(BasePlot):
                 numeric_column,
                 categorical_order_by=categorical_order_by,
                 categorical_order_ascending=categorical_order_ascending)
-            sliced_data = (sliced_data.set_index(categorical_columns)
+            sliced_data = (sliced_data.astype(str)
+                           .set_index(categorical_columns)
                            .reindex(source.data['factors']).reset_index())
             # Text column isn't in the source so it needs to be added.
-            if text_column != numeric_column:
-                source.add(sliced_data[text_column], name=text_column)
+            sliced_data['text_column'] = sliced_data[text_column]
+            source.add(sliced_data['text_column'], name='text_column')
 
             self._chart.figure.text(
-                text=text_column,
+                text='text_column',
                 x=x_value,
                 y=y_value,
                 text_font_size=font_size,
@@ -1285,7 +1302,7 @@ class PlotMixedTypeXY(BasePlot):
                            .reindex(index=factors).reset_index())
 
             text_values = np.where(sliced_data[text_column].isna(), '',
-                                   sliced_data[text_column])
+                                   sliced_data[text_column].astype(str))
 
             if cumulative_numeric_value is not None:
                 cumulative_numeric_value = (
@@ -1363,10 +1380,12 @@ class PlotMixedTypeXY(BasePlot):
             categorical_columns,
             numeric_column,
             categorical_order_by=categorical_order_by,
-            categorical_order_ascending=categorical_order_ascending)
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
 
-        colors, _ = self._get_color_and_order(data_frame, color_column,
-                                              color_order, categorical_columns)
+        colors, color_values = self._get_color_and_order(
+            data_frame, color_column, color_order, categorical_columns)
+
         if color_column is None:
             colors = colors[0]
 
@@ -1374,6 +1393,12 @@ class PlotMixedTypeXY(BasePlot):
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
         bar_width = self._get_bar_width(factors)
+
+        if color_column:
+            legend = bokeh.core.properties.field('color_column')
+        else:
+            legend = None
+
         if vertical:
             self._chart.figure.vbar(
                 x='factors',
@@ -1382,7 +1407,8 @@ class PlotMixedTypeXY(BasePlot):
                 bottom=0,
                 line_color='white',
                 source=source,
-                fill_color=colors)
+                fill_color=colors,
+                legend=legend)
         else:
             self._chart.figure.hbar(
                 y='factors',
@@ -1391,7 +1417,11 @@ class PlotMixedTypeXY(BasePlot):
                 left=0,
                 line_color='white',
                 source=source,
-                fill_color=colors)
+                fill_color=colors,
+                legend=legend)
+        # Set legend defaults if there are multiple series.
+        if color_column is not None:
+            self._chart.style._apply_settings('legend')
         return self._chart
 
     def interval(self,
@@ -1708,16 +1738,22 @@ class PlotMixedTypeXY(BasePlot):
             categorical_columns,
             numeric_column,
             categorical_order_by=categorical_order_by,
-            categorical_order_ascending=categorical_order_ascending)
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
 
-        colors, _ = self._get_color_and_order(data_frame, color_column,
-                                              color_order, categorical_columns)
+        colors, color_values = self._get_color_and_order(
+            data_frame, color_column, color_order, categorical_columns)
         if color_column is None:
             colors = colors[0]
 
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(vertical, data_frame,
                                                  numeric_column)
+
+        if color_column:
+            legend = bokeh.core.properties.field('color_column')
+        else:
+            legend = None
 
         if vertical:
             self._chart.figure.segment(
@@ -1735,7 +1771,8 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
-                source=source)
+                source=source,
+                legend=legend)
         else:
             self._chart.figure.segment(
                 0,
@@ -1752,7 +1789,13 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 line_color=colors,
                 line_width=3,
-                source=source)
+                source=source,
+                legend=legend)
+
+        # Set legend defaults if there are multiple series.
+        if color_column is not None:
+            self._chart.style._apply_settings('legend')
+
         return self._chart
 
     def parallel(self,

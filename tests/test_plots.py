@@ -220,6 +220,20 @@ class TestText:
             chart_data(ch, '')['text'], ['a', 'b', 'a', 'b']))
 
 
+class CategoricalTextTest:
+    def test_float_labels(self):
+        label_test = pd.DataFrame(
+            {'value': [.20, .40, .05, .6, .2, .8],
+             'bucket': [1, 2, 3, 1, 2, 3],
+             'platform': ['android', 'android', 'android', 'ios', 'ios', 'ios'],
+             'value2': [1.0, 2.0, 3, 6., 8., 10.]})
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.text(label_test, ['bucket', 'platform'], 'value', 'value')
+        assert (np.array_equal(
+            ch.data[0]['text_column'].values,
+            ['0.8', '0.05', '0.6', '0.2', '0.4', '0.2']))
+
+
 class TestAreaPlot:
     """Area plot tests.
 
@@ -341,6 +355,7 @@ class TestBarLollipopParallel:
         self.data = pd.DataFrame({
             'category1': ['a', 'b', 'a', 'b', 'a'],
             'category2': [1, 1, 2, 2, 3],
+            'color': ['c', 'd', 'e', 'f', 'g'],
             'number': [5, 4, 10, -3, 0],
         })
         self.plot_methods = ['bar', 'lollipop', 'parallel']
@@ -452,6 +467,16 @@ class TestBarLollipopParallel:
         assert (np.array_equal(chart_data(ch, '')['1'], [5, 4]))
         assert (np.array_equal(chart_data(ch, '')['2'], [10, -3]))
         assert (np.array_equal(chart_data(ch, '')['3'], [0, 0]))
+
+    def test_bar_color(self):
+        ch = chartify.Chart(blank_labels=True, x_axis_type='categorical')
+        ch.plot.bar(
+            data_frame=self.data,
+            categorical_columns=['category1', 'category2'],
+            numeric_column='number',
+            color_column='color')
+        assert np.array_equal(
+            ch.data[0]['color_column'], ['e', 'c', 'g', 'd', 'f'])
 
 
 class TestBarNumericSort:
