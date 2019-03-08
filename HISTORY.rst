@@ -15,6 +15,7 @@ Bugfixes:
 
 * Fixed bug that caused float types to break when plotted with categorical
   text plots (Thanks for finding @danela!)
+* Fixed broken readme links.
 
 2.5.0 (2019-02-17)
 ------------------
