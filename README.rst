@@ -4,7 +4,7 @@ Chartify
 |status|  |release|  |python|
 
 .. |status| image:: https://img.shields.io/badge/Status-Beta-blue.svg
-.. |release| image:: https://img.shields.io/badge/Release-2.5.0-blue.svg
+.. |release| image:: https://img.shields.io/badge/Release-2.6.0-blue.svg
 .. |python| image:: https://img.shields.io/badge/Python-3.6-blue.svg
 
 Chartify is a Python library that makes it easy for data scientists to create charts.
@@ -46,9 +46,9 @@ Installation
 Getting started
 ---------------
 
-This `tutorial notebook </examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify.
+This `tutorial notebook <https://github.com/spotify/chartify/blob/master/examples/Chartify%20Tutorial.ipynb>`_ is the best place to get started with a guided tour of the core concepts of Chartify.
 
-From there, check out the `example notebook </examples/Examples.ipynb>`_ for a list of all the available plots.
+From there, check out the `example notebook <https://github.com/spotify/chartify/blob/master/examples/Examples.ipynb>`_ for a list of all the available plots.
 
 Getting support
 ---------------
