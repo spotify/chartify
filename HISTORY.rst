@@ -2,6 +2,20 @@
 History
 =======
 
+2.6.0 (2019-03-08)
+------------------
+
+Improvements:
+
+* Allows users to plot colors on bar charts that aren't contained in the
+  categorical axis.
+
+
+Bugfixes:
+
+* Fixed bug that caused float types to break when plotted with categorical
+  text plots (Thanks for finding @danela!)
+
 2.5.0 (2019-02-17)
 ------------------
 
