@@ -18,8 +18,10 @@
 import codecs
 import os
 import re
-
+from codecs import open
 from setuptools import setup, find_packages
+
+here = os.path.abspath(os.path.dirname(__file__))
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -27,17 +29,24 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'pandas>=0.21.0,<1.0.0',
-    'jupyter>=1.0.0,<2.0.0',
-    'Pillow>=4.3.0',
-    # Avoid selenium bug:
-    # https://github.com/SeleniumHQ/selenium/issues/5296
-    'selenium>=3.7.0,<=3.8.0',
-    'bokeh>=0.12.16,<2.0.0',
-    'scipy>=1.0.0,<2.0.0',
-    'colour>=0.1.5,<1.0.0'
-]
+
+# requirements
+def package_is_pinned(name):
+    """quick check to make sure packages are pinned"""
+    for pin in ['>', '<', '==']:
+        if pin in name:
+            return True
+    return False
+
+
+with open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+    requirements = []
+    for line in f.readlines():
+        line = line.strip()
+        if line and line[0] != '#':
+            requirements.append(line)
+    if not all(map(package_is_pinned, requirements)):
+        raise RuntimeError("All Packages in requirements.txt must be pinned")
 
 setup_requirements = [
 
