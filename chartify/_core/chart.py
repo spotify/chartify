@@ -319,7 +319,6 @@ y_axis_type='{y_axis_type}')
                     """, UserWarning)
                 return self
             new_legend = self.figure.legend[0]
-            new_legend.plot = None
             new_legend.orientation = orientation
             self.figure.add_layout(new_legend, layout_location)
 
