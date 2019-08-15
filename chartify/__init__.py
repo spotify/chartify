@@ -22,7 +22,7 @@ from chartify import examples
 
 __author__ = """Chris Halpert"""
 __email__ = 'chalpert@spotify.com'
-__version__ = '2.6.0'
+__version__ = '2.6.1'
 
 _IPYTHON_INSTANCE = False
 
