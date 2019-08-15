@@ -2,6 +2,15 @@
 History
 =======
 
+2.6.1 (2019-08-15)
+------------------
+
+Bugfixes:
+
+* Moved package requirements and fixed bug that occured with
+  latest version of Bokeh (Thanks @emschuch & @mollymzhu!)
+* Fixed bug in README while generating docs (Thanks @Bharat123rox!)
+
 2.6.0 (2019-03-08)
 ------------------
 
