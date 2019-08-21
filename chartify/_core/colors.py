@@ -41,7 +41,7 @@ class CustomColors:
 
     def from_yaml(self, filename):
         """Load colors from yaml file"""
-        return yaml.load(open(filename))
+        return yaml.load(open(filename), Loader=yaml.FullLoader)
 
     def overwrite_colors(self):
         """Overwrite colors in the colour module with custom colors."""
@@ -272,7 +272,7 @@ class ColorPalettes:
 
     def _from_yaml(self, filename):
         """Load color palettes from a yaml file"""
-        palette_list = yaml.load(open(filename))
+        palette_list = yaml.load(open(filename), Loader=yaml.FullLoader)
         for palette in palette_list:
             hex_color_list, palette_type, name = palette
             self._add_palette(
