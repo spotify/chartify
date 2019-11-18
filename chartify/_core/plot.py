@@ -114,6 +114,19 @@ class BasePlot:
         return colors, color_order
 
     @staticmethod
+    def _plot_with_legend(method, legend, **kwargs):
+        """Call plotting method with the associated kwargs.
+        
+        Omit legend parameter if it is set to None.
+        
+        Bokeh breaks if None is passed to a legend parameter
+        """
+        if legend is not None:
+            return method(**kwargs, legend_label=legend)
+        else:
+            return method(**kwargs)
+
+    @staticmethod
     def _cannonical_series_name(series_name):
         if series_name is None:
             series_name = ''
@@ -364,7 +377,7 @@ class PlotNumericXY(BasePlot):
                 color=color,
                 line_join=line_join,
                 line_cap=line_cap,
-                legend=color_value,
+                legend_label=color_value,
                 line_dash=line_dash,
                 alpha=alpha,
                 y_range_name=self._y_range_name)
@@ -432,13 +445,14 @@ class PlotNumericXY(BasePlot):
             color_value = str(
                 color_value) if color_value is not None else color_value
 
-            self._chart.figure.scatter(
+            self._plot_with_legend(
+                self._chart.figure.scatter,
+                color_value,
                 x=x_column,
                 y=y_column,
                 size=size_column,
                 source=source,
                 fill_color=color,
-                legend=color_value,
                 marker=marker,
                 line_color=color,
                 alpha=alpha,
@@ -629,7 +643,7 @@ class PlotNumericXY(BasePlot):
                     y=y_column,
                     alpha=alpha,
                     source=source,
-                    legend=color_value,
+                    legend_label=color_value,
                     color=color,
                     y_range_name=self._y_range_name)
             else:
@@ -638,7 +652,7 @@ class PlotNumericXY(BasePlot):
                     y=x_column,
                     alpha=alpha,
                     source=source,
-                    legend=color_value,
+                    legend_label=color_value,
                     color=color,
                     y_range_name=self._y_range_name)
 
@@ -762,7 +776,7 @@ class PlotNumericDensityXY(BasePlot):
                     fill_color=color,
                     line_color=color,
                     alpha=.3,
-                    legend=color_value)
+                    legend_label=color_value)
             else:
                 self._chart.figure.quad(
                     top='max_edge',
@@ -773,7 +787,7 @@ class PlotNumericDensityXY(BasePlot):
                     fill_color=color,
                     line_color=color,
                     alpha=.3,
-                    legend=color_value)
+                    legend_label=color_value)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -1408,7 +1422,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color='white',
                 source=source,
                 fill_color=colors,
-                legend=legend)
+                legend_label=legend)
         else:
             self._chart.figure.hbar(
                 y='factors',
@@ -1418,7 +1432,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color='white',
                 source=source,
                 fill_color=colors,
-                legend=legend)
+                legend_label=legend)
         # Set legend defaults if there are multiple series.
         if color_column is not None:
             self._chart.style._apply_settings('legend')
@@ -1680,7 +1694,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color='white',
                 source=source,
                 fill_color=colors,
-                legend=legend)
+                legend_label=legend)
         else:
             self._chart.figure.hbar_stack(
                 stack_values,
@@ -1689,7 +1703,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color='white',
                 source=source,
                 fill_color=colors,
-                legend=legend)
+                legend_label=legend)
         self._chart.style._apply_settings('legend')
         # Reverse order of vertical legends to ensure that the order
         # is consistent with the stack order.
@@ -1772,7 +1786,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color=colors,
                 line_width=3,
                 source=source,
-                legend=legend)
+                legend_label=legend)
         else:
             self._chart.figure.segment(
                 0,
@@ -1790,7 +1804,7 @@ class PlotMixedTypeXY(BasePlot):
                 line_color=colors,
                 line_width=3,
                 source=source,
-                legend=legend)
+                legend_label=legend)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -1883,7 +1897,7 @@ class PlotMixedTypeXY(BasePlot):
                 color=color,
                 line_join=line_join,
                 line_cap=line_cap,
-                legend=legend,
+                legend_label=legend,
                 line_dash=line_dash,
                 alpha=alpha)
 
@@ -1993,7 +2007,7 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=color,
                 line_color=color,
                 source=source,
-                legend=legend,
+                legend_label=legend,
                 marker=marker,
                 alpha=alpha
                 )
