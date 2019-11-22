@@ -116,13 +116,13 @@ class BasePlot:
     @staticmethod
     def _plot_with_legend(method, **kwargs):
         """Call plotting method with the associated kwargs.
-        
+
         Removes the legend parameter if it is set to None because
         Bokeh breaks if None is passed to a legend parameter
-        
+
         """
         legend_label = kwargs.pop('legend_label', None)
-        legend_group= kwargs.pop('legend_group', None)
+        legend_group = kwargs.pop('legend_group', None)
 
         if legend_label is not None:
             return method(**kwargs, legend_label=legend_label)
@@ -373,19 +373,6 @@ class PlotNumericXY(BasePlot):
 
             color_value = str(
                 color_value) if color_value is not None else color_value
-
-            # self._chart.figure.line(
-            #     x=x_column,
-            #     y=y_column,
-            #     source=source,
-            #     line_width=line_width,
-            #     color=color,
-            #     line_join=line_join,
-            #     line_cap=line_cap,
-            #     legend_label=color_value,
-            #     line_dash=line_dash,
-            #     alpha=alpha,
-            #     y_range_name=self._y_range_name)
 
             self._plot_with_legend(
                 self._chart.figure.line,
@@ -669,14 +656,6 @@ class PlotNumericXY(BasePlot):
                     y_range_name=self._y_range_name
                     )
 
-                # self._chart.figure.patch(
-                #     x=x_column,
-                #     y=y_column,
-                #     alpha=alpha,
-                #     source=source,
-                #     legend_label=color_value,
-                #     color=color,
-                #     y_range_name=self._y_range_name)
             else:
                 self._plot_with_legend(
                     self._chart.figure.patch,
@@ -688,15 +667,6 @@ class PlotNumericXY(BasePlot):
                     color=color,
                     y_range_name=self._y_range_name
                     )
-
-                # self._chart.figure.patch(
-                #     x=y_column,
-                #     y=x_column,
-                #     alpha=alpha,
-                #     source=source,
-                #     legend_label=color_value,
-                #     color=color,
-                #     y_range_name=self._y_range_name)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -822,16 +792,6 @@ class PlotNumericDensityXY(BasePlot):
                     alpha=.3
                     )
 
-                # self._chart.figure.quad(
-                #     top='values',
-                #     bottom=0,
-                #     left='min_edge',
-                #     right='max_edge',
-                #     source=source,
-                #     fill_color=color,
-                #     line_color=color,
-                #     alpha=.3,
-                #     legend_label=color_value)
             else:
                 self._plot_with_legend(
                     self._chart.figure.quad,
@@ -845,17 +805,6 @@ class PlotNumericDensityXY(BasePlot):
                     line_color=color,
                     alpha=.3,
                     )
-
-                # self._chart.figure.quad(
-                #     top='max_edge',
-                #     bottom='min_edge',
-                #     left=0,
-                #     right='values',
-                #     source=source,
-                #     fill_color=color,
-                #     line_color=color,
-                #     alpha=.3,
-                #     legend_label=color_value)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -1495,15 +1444,6 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 )
 
-            # self._chart.figure.vbar(
-            #     x='factors',
-            #     width=bar_width,
-            #     top=numeric_column,
-            #     bottom=0,
-            #     line_color='white',
-            #     source=source,
-            #     fill_color=colors,
-            #     legend_label=legend)
         else:
 
             self._plot_with_legend(
@@ -1517,16 +1457,6 @@ class PlotMixedTypeXY(BasePlot):
                 source=source,
                 fill_color=colors,
                 )
-
-            # self._chart.figure.hbar(
-            #     y='factors',
-            #     height=bar_width,
-            #     right=numeric_column,
-            #     left=0,
-            #     line_color='white',
-            #     source=source,
-            #     fill_color=colors,
-            #     legend_label=legend)
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -1793,15 +1723,6 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 )
 
-
-            # self._chart.figure.vbar_stack(
-            #     stack_values,
-            #     x='factors',
-            #     width=bar_width,
-            #     line_color='white',
-            #     source=source,
-            #     fill_color=colors,
-            #     legend_label=legend)
         else:
             self._plot_with_legend(
                 self._chart.figure.hbar_stack,
@@ -1814,14 +1735,6 @@ class PlotMixedTypeXY(BasePlot):
                 fill_color=colors,
                 )
 
-            # self._chart.figure.hbar_stack(
-            #     stack_values,
-            #     y='factors',
-            #     height=bar_width,
-            #     line_color='white',
-            #     source=source,
-            #     fill_color=colors,
-            #     legend_label=legend)
         self._chart.style._apply_settings('legend')
         # Reverse order of vertical legends to ensure that the order
         # is consistent with the stack order.
@@ -2138,18 +2051,6 @@ class PlotMixedTypeXY(BasePlot):
                 marker=marker,
                 alpha=alpha
                 )
-
-            # self._chart.figure.scatter(
-            #     x=x_value,
-            #     y=y_value,
-            #     size=size_column,
-            #     fill_color=color,
-            #     line_color=color,
-            #     source=source,
-            #     legend_label=legend,
-            #     marker=marker,
-            #     alpha=alpha
-            #     )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
