@@ -2,11 +2,17 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
-include README.md
+include README.rst
 
-recursive-include tests *
+include Makefile
+include requirements*.txt
+include tox.ini
+
+graft docs
+graft examples
+graft tests
+
+recursive-include chartify *
+
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
-
-recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif *.py
-recursive-include chartify/_core docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif *.py
