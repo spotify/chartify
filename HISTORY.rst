@@ -13,6 +13,7 @@ Bugfixes:
   in recent versions of Bokeh (Thanks for reporting @jpkoc)
 * Updated license in setup.py (Thanks for reporting @jsignell)
 * Bump base Pillow dependency to avoid insecure version.
+* Update MANIFEST to include missing files (Thanks @toddrme2178!)
 
 2.6.1 (2019-08-15)
 ------------------
