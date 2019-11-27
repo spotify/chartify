@@ -242,7 +242,9 @@ class PlotRadar(BasePlot):
             color_value = str(
                 color_value) if color_value is not None else color_value
 
-            self._chart.figure.line(
+            self._plot_with_legend(
+                self._chart.figure.line,
+                legend_label=color_value,
                 x=self._X_COLUMN,
                 y=self._Y_COLUMN,
                 source=source,
@@ -250,10 +252,10 @@ class PlotRadar(BasePlot):
                 color=color,
                 line_join=line_join,
                 line_cap=line_cap,
-                legend=color_value,
                 line_dash=line_dash,
                 alpha=alpha,
-                y_range_name=self._y_range_name)
+                y_range_name=self._y_range_name
+                )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -306,15 +308,17 @@ class PlotRadar(BasePlot):
             color_value = str(
                 color_value) if color_value is not None else color_value
 
-            self._chart.figure.patch(
+            self._plot_with_legend(
+                self._chart.figure.patch,
+                legend_label=color_value,
                 x=self._X_COLUMN,
                 y=self._Y_COLUMN,
                 source=source,
                 color=color,
-                legend=color_value,
                 line_width=0,
                 alpha=alpha,
-                y_range_name=self._y_range_name)
+                y_range_name=self._y_range_name
+                )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
@@ -374,17 +378,20 @@ class PlotRadar(BasePlot):
                 color_value) if color_value is not None else color_value
 
             for i, r in coord_df.iterrows():
-                self._chart.figure.line(
+
+                self._plot_with_legend(
+                    self._chart.figure.line,
+                    legend_label=color_value,
                     x=[0, r[self._X_COLUMN]],
                     y=[0, r[self._Y_COLUMN]],
                     line_width=line_width,
                     color=color,
                     line_join=line_join,
                     line_cap=line_cap,
-                    legend=color_value,
                     line_dash=line_dash,
                     alpha=alpha,
-                    y_range_name=self._y_range_name)
+                    y_range_name=self._y_range_name
+                    )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
