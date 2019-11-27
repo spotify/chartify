@@ -107,7 +107,7 @@ class ChartifyOptions:
 
         Overwrites any options that are specified in the yaml file.
         """
-        yaml_options = yaml.load(open(filename))
+        yaml_options = yaml.load(open(filename), Loader=yaml.FullLoader)
         self._options.update(yaml_options)
 
 
