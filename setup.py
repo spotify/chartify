@@ -106,8 +106,10 @@ setup(
         'Natural Language :: English',
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "License :: OSI Approved :: Apache Software License"
     ],
     test_suite='tests',
     tests_require=test_requirements,
     setup_requires=setup_requirements,
-    python_requires='>=3.5,<4')
+    python_requires='>=3.5,<4',
+    license="Apache 2")
