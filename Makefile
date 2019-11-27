@@ -82,3 +82,6 @@ release-dev: clean ## package and upload a release
 release-prod: clean ## package and upload a release
 	python3 setup.py sdist bdist_wheel --universal
 	twine upload dist/*
+
+install-from-test-pypi:
+	pip3 install --index-url https://test.pypi.org/simple/ chartify
