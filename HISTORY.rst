@@ -2,6 +2,18 @@
 History
 =======
 
+2.7.0 (2019-11-27)
+------------------
+
+Bugfixes:
+
+* Updated default yaml loader to move off of
+  deprecated method (Thanks @vh920!)
+* Updated legend handling to adjust for deprecated methods
+  in recent versions of Bokeh (Thanks for reporting @jpkoc)
+* Updated license in setup.py (Thanks for reporting @jsignell)
+* Bump base Pillow dependency to avoid insecure version.
+
 2.6.1 (2019-08-15)
 ------------------
 
