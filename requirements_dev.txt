@@ -1,3 +1,5 @@
+-r requirements.txt
+
 -e .
 twine==1.11.0
 watchdog==0.8.3
@@ -14,11 +16,4 @@ pytest==3.2.3
 pytest-cov==2.5.1
 coverage-badge==0.2.0
 pytest-runner==2.11.1
-pandas==0.23.4
-jupyter==1.0.0
 pylint==1.7.4
-Pillow==6.2.0
-selenium==3.8.0
-bokeh==1.4.0
-scipy==1.3.0
-colour==0.1.5
