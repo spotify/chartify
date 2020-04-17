@@ -1,4 +1,4 @@
-pandas>=0.21.0,<1.0.0
+pandas>=1.0.0<2.0.0
 jupyter>=1.0.0,<2.0.0
 Pillow>=6.2.0
 # Avoid selenium bug:
