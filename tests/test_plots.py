@@ -412,7 +412,7 @@ class TestBarLollipopParallel:
                 chart_data(ch, '')['number'], [10, 5, 0, 4, -3]))
             multi_index = pd.MultiIndex(
                 levels=[['a', 'b'], ['1', '2', '3']],
-                labels=[[0, 0, 0, 1, 1], [1, 0, 2, 0, 1]],
+                codes=[[0, 0, 0, 1, 1], [1, 0, 2, 0, 1]],
                 names=['category1', 'category2'])
             assert (np.array_equal(chart_data(ch, '')['factors'], multi_index))
 
@@ -426,7 +426,7 @@ class TestBarLollipopParallel:
                 chart_data(ch, '')['number'], [5, 4, 10, -3, 0]))
             multi_index = pd.MultiIndex(
                 levels=[['1', '2', '3'], ['a', 'b']],
-                labels=[[0, 0, 1, 1, 2], [0, 1, 0, 1, 0]],
+                codes=[[0, 0, 1, 1, 2], [0, 1, 0, 1, 0]],
                 names=['category2', 'category1'])
             assert (np.array_equal(chart_data(ch, '')['factors'], multi_index))
 
