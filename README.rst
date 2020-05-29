@@ -53,7 +53,7 @@ From there, check out the `example notebook <https://github.com/spotify/chartify
 Docs
 ---------------
 
-Documentation available on `chartify.readthedocs.io <https://chartify.readthedocs.io/en/latest/index.html/>`_
+Documentation available on `chartify.readthedocs.io <https://chartify.readthedocs.io/en/latest/>`_
 
 Getting support
 ---------------
