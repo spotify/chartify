@@ -3,7 +3,7 @@
 -e .
 twine==1.11.0
 watchdog==0.8.3
-flake8==2.6.0
+flake8==3.8.2
 tox>=3.13.2
 coverage==4.1
 Sphinx==1.7.7
@@ -11,7 +11,7 @@ commonmark==0.5.4
 recommonmark==0.4.0
 
 jupyter-console==6.0.0
-ipython==7.2.0
+ipython==7.12.0
 pytest==3.2.3
 pytest-cov==2.5.1
 coverage-badge==0.2.0
