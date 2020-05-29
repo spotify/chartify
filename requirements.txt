@@ -4,5 +4,5 @@ Pillow>=6.2.0
 # Avoid selenium bug:
 # https://github.com/SeleniumHQ/selenium/issues/5296
 selenium>=3.7.0,<=3.8.0
-bokeh>=1.4.0,<2.0.0
+bokeh>=2.0.0,<3.0.0
 scipy>=1.0.0,<2.0.0
