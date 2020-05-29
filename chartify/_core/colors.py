@@ -16,10 +16,11 @@
 from collections import OrderedDict
 from bokeh import palettes
 from IPython.core.display import HTML
-import colour
+
 import yaml
 
 from chartify._core.options import options
+from chartify._core import colour
 
 
 class CustomColors:
