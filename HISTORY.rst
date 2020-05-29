@@ -6,6 +6,7 @@ History
 ------------------
 
 * Updated Python to 3.6+ and Pandas to 1.0+ (Thanks @tomasaschan!)
+* Updated Bokeh to 2.0+
 
 2.7.0 (2019-11-27)
 ------------------
