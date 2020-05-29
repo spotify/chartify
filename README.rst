@@ -4,7 +4,7 @@ Chartify
 |status|  |release|  |python|
 
 .. |status| image:: https://img.shields.io/badge/Status-Beta-blue.svg
-.. |release| image:: https://img.shields.io/badge/Release-2.7.0-blue.svg
+.. |release| image:: https://img.shields.io/badge/Release-3.0.0-blue.svg
 .. |python| image:: https://img.shields.io/badge/Python-3.6-blue.svg
 
 Chartify is a Python library that makes it easy for data scientists to create charts.
