@@ -509,7 +509,7 @@ y_axis_type='{y_axis_type}')
     def _save_svg(self, svg, filename):
         """Write the svg to a file"""
         with io.open(filename, mode="w", encoding="utf-8") as f:
-                f.write(svg)
+            f.write(svg)
 
 
 class Logo:

@@ -374,7 +374,7 @@ class CategoricalXMixin:
         try:
             self._chart.figure.xaxis.subgroup_text_color = None
             self._chart.figure.xaxis.group_text_color = None
-        except:
+        except AttributeError:
             pass
         return self._chart
 
@@ -416,7 +416,7 @@ class CategoricalYMixin:
         try:
             self._chart.figure.yaxis.subgroup_text_color = None
             self._chart.figure.yaxis.group_text_color = None
-        except:
+        except AttributeError:
             pass
         return self._chart
 
