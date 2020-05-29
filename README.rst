@@ -50,6 +50,11 @@ This `tutorial notebook <https://github.com/spotify/chartify/blob/master/example
 
 From there, check out the `example notebook <https://github.com/spotify/chartify/blob/master/examples/Examples.ipynb>`_ for a list of all the available plots.
 
+Docs
+---------------
+
+Documentation available on `chartify.readthedocs.io <https://chartify.readthedocs.io/en/latest/>`_
+
 Getting support
 ---------------
 
