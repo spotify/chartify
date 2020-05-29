@@ -3,7 +3,7 @@
 -e .
 twine==1.11.0
 watchdog==0.8.3
-flake8==2.6.0
+flake8==3.8.2
 tox>=3.13.2
 coverage==4.1
 Sphinx==1.7.7
