@@ -17,3 +17,4 @@ pytest-cov==2.5.1
 coverage-badge==0.2.0
 pytest-runner==2.11.1
 pylint==1.7.4
+pyflakes==2.2.0
