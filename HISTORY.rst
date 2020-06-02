@@ -2,6 +2,11 @@
 History
 =======
 
+3.0.1 (2020-06-02)
+------------------
+
+* Reduce dependencies by switching from Jupyter to IPython.
+
 3.0.0 (2020-05-29)
 ------------------
 
