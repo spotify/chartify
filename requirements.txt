@@ -7,3 +7,4 @@ bokeh>=2.0.0,<3.0.0
 scipy>=1.0.0,<2.0.0
 ipykernel>=5.0
 ipython>=7.0
+pyyaml>=5.3.1
