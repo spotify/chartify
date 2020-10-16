@@ -49,10 +49,14 @@ def test_options_config(monkeypatch):
     with TemporaryDirectory() as tmp:
         with open(os.path.join(tmp, 'options_config.yaml'), 'w') as options_config_file:
             options_config_file.write(OPTIONS_CONFIG)
+
         # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
         monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
-        import chartify
+
+        # (re-)import options module to reload configuration
+        import chartify._core.options
+        import importlib
+        chartify = importlib.reload(chartify._core.options)
+
         config = {key: chartify.options.get_option(key) for key in EXPECTED_CONFIG}
         assert config == EXPECTED_CONFIG
-
-
