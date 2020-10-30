@@ -36,7 +36,7 @@ EXPECTED_COLOR_PALETTES = {
 }
 
 
-def test_colors_config(monkeypatch):
+def test_color_palettes_config(monkeypatch):
     with TemporaryDirectory() as tmp:
         with open(os.path.join(tmp, 'color_palettes_config.yaml'), 'w') as f:
             f.write(COLOR_PALETTES_CONFIG)

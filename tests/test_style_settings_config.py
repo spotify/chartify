@@ -26,7 +26,7 @@ bar:
 '''
 
 
-def test_colors_config(monkeypatch):
+def test_style_settings_config(monkeypatch):
     with TemporaryDirectory() as tmp:
         with open(os.path.join(tmp, 'style_settings_config.yaml'), 'w') as f:
             f.write(STYLE_SETTINGS_CONFIG)
