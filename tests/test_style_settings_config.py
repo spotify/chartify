@@ -44,4 +44,3 @@ def test_colors_config(monkeypatch):
         for key, expected_value in expected_settings.items():
             actual_value = style.settings[key]
             assert expected_value == actual_value
-

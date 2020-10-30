@@ -43,7 +43,7 @@ class CustomColors:
     def from_yaml(self, filename):
         """Load colors from yaml file"""
         # Note: We assume that the contents of the config file are trusted
-        # TODO: Change this file format to be plain yaml so we can use SafeLoader
+        # TODO: Change this file format to be plain yaml and use SafeLoader
         return yaml.load(open(filename), Loader=yaml.UnsafeLoader)
 
     def overwrite_colors(self):
