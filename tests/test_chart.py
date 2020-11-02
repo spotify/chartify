@@ -120,14 +120,13 @@ class TestChart:
                         self.chart.data))[0]['unit_price'],
             data[data['fruit'] == color_order[0]]['unit_price'].values))
 
-    def test_save(self):
+    def test_save(self, tmpdir):
         ch = self.chart
-        output_path = './tests/outputs/chart/'
         base_filename = 'test_save'
         for filetype in ('png', 'svg', 'html'):
-            filename = output_path + base_filename + '.' + filetype
+            filename = tmpdir.join(base_filename + '.' + filetype)
             try:
-                ch.save(filename=filename, format=filetype)
+                ch.save(filename=str(filename), format=filetype)
             # Occurs if chromedriver is not found
             except WebDriverException:
                 pytest.skip("Skipping save tests")

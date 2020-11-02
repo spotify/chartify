@@ -25,7 +25,7 @@ import tempfile
 import warnings
 
 import bokeh
-from bokeh.io.export import _SVG_SCRIPT
+from bokeh.io.export import _SVG_SCRIPT, wait_until_render_complete
 import bokeh.plotting
 from bokeh.embed import file_html
 
@@ -428,7 +428,7 @@ y_axis_type='{y_axis_type}')
             pass
         else:
             raise ValueError(
-                """Invalid format. Valid options are 'html' or 'png'.""")
+                """Invalid format. Valid options are 'html', 'png' or 'svg'.""")
 
     def _initialize_webdriver(self):
         """Initialize headless chrome browser"""
@@ -500,6 +500,7 @@ y_axis_type='{y_axis_type}')
         fp.write(html)
         fp.flush()
         driver.get("file:///" + fp.name)
+        wait_until_render_complete(driver, 5)
         svgs = driver.execute_script(_SVG_SCRIPT)
         fp.close()
 
