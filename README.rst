@@ -6,7 +6,8 @@ Chartify
 .. |status| image:: https://img.shields.io/badge/Status-Beta-blue.svg
 .. |release| image:: https://img.shields.io/badge/Release-3.0.0-blue.svg
 .. |python| image:: https://img.shields.io/badge/Python-3.6-blue.svg
-.. |CI| image:: [https://github.com/spotify/chartify/workflows/Python%20package/badge.svg](https://github.com/spotify/chartify/actions)
+.. |CI| image:: https://github.com/spotify/chartify/workflows/Python%20package/badge.svg
+        :target: https://github.com/spotify/chartify/actions
 
 Chartify is a Python library that makes it easy for data scientists to create charts.
 
