@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib
 import os
 from tempfile import TemporaryDirectory
 
@@ -53,11 +54,10 @@ def test_options_config(monkeypatch):
         # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
         monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
 
-        # (re-)import options module to reload configuration
+        # reload modules to reload configuration
         import chartify._core.options
-        import importlib
-        chartify = importlib.reload(chartify._core.options)
+        options = importlib.reload(chartify._core.options)
 
-        config = {key: chartify.options.get_option(key)
+        config = {key: options.options.get_option(key)
                   for key in EXPECTED_CONFIG}
         assert config == EXPECTED_CONFIG

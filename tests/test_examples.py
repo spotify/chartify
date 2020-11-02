@@ -16,9 +16,13 @@
 """Tests for `chartify` package."""
 
 import chartify
+import importlib
 
 
 def test_examples():
+    # reload configuration
+    importlib.reload(chartify)
+
     excluded_examples = ['chart_show']
     public_examples = [
         attr for attr in dir(chartify.examples) if

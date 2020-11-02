@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib
 import os
 from tempfile import TemporaryDirectory
 
@@ -52,10 +53,13 @@ def test_colors_config(monkeypatch):
         # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
         monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
 
-        # (re-)import options module to reload configuration
+        # reload modules to reload configuration
+        import chartify._core.options
         import chartify._core.colors
-        import importlib
+        import chartify._core.style
+        importlib.reload(chartify._core.options)
         importlib.reload(chartify._core.colors)
+
         import chartify._core.colour as colour
         assert colour.COLOR_NAME_TO_RGB['foo'] == (0, 100, 80)
         assert colour.COLOR_NAME_TO_RGB['bar'] == (25, 20, 20)

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib
 import os
 from tempfile import TemporaryDirectory
 
@@ -44,9 +45,10 @@ def test_color_palettes_config(monkeypatch):
         # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
         monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
 
-        # (re-)import options module to reload configuration
+        # reload modules to reload configuration
+        import chartify._core.options
         import chartify._core.colors
-        import importlib
+        importlib.reload(chartify._core.options)
         importlib.reload(chartify._core.colors)
 
         # Check that the expected palettes are loaded
