@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import chartify
+import importlib
 import numpy as np
 
 
@@ -25,6 +26,9 @@ class TestColor:
 
 class TestColorPalettes:
     def test_getitem(self):
+        # reload configuration
+        importlib.reload(chartify)
+
         palette = chartify.color_palettes['Category20']
         assert (isinstance(palette, chartify._core.colors.ColorPalette))
         assert (palette.name == 'Category20')
