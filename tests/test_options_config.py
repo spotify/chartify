@@ -16,7 +16,6 @@
 
 import importlib
 import os
-from tempfile import TemporaryDirectory
 
 OPTIONS_CONFIG = '''\
 !!python/object/apply:collections.OrderedDict
@@ -46,18 +45,17 @@ EXPECTED_CONFIG = {
 }
 
 
-def test_options_config(monkeypatch):
-    with TemporaryDirectory() as tmp:
-        with open(os.path.join(tmp, 'options_config.yaml'), 'w') as f:
-            f.write(OPTIONS_CONFIG)
+def test_options_config(monkeypatch, tmpdir):
+    f = tmpdir.join('options_config.yaml')
+    f.write(OPTIONS_CONFIG)
 
-        # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-        monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
+    # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
+    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
 
-        # reload modules to reload configuration
-        import chartify._core.options
-        options = importlib.reload(chartify._core.options)
+    # reload modules to reload configuration
+    import chartify._core.options
+    options = importlib.reload(chartify._core.options)
 
-        config = {key: options.options.get_option(key)
-                  for key in EXPECTED_CONFIG}
-        assert config == EXPECTED_CONFIG
+    config = {key: options.options.get_option(key)
+              for key in EXPECTED_CONFIG}
+    assert config == EXPECTED_CONFIG

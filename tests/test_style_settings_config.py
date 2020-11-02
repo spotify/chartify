@@ -16,7 +16,6 @@
 
 import importlib
 import os
-from tempfile import TemporaryDirectory
 
 STYLE_SETTINGS_CONFIG = '''\
 foo:
@@ -27,26 +26,25 @@ bar:
 '''
 
 
-def test_style_settings_config(monkeypatch):
-    with TemporaryDirectory() as tmp:
-        with open(os.path.join(tmp, 'style_settings_config.yaml'), 'w') as f:
-            f.write(STYLE_SETTINGS_CONFIG)
+def test_style_settings_config(monkeypatch, tmpdir):
+    f = tmpdir.join('style_settings_config.yaml')
+    f.write(STYLE_SETTINGS_CONFIG)
 
-        # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-        monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
+    # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
+    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
 
-        # reload modules to reload configuration
-        import chartify._core.options
-        import chartify._core.style
-        importlib.reload(chartify._core.options)
-        importlib.reload(chartify._core.style)
+    # reload modules to reload configuration
+    import chartify._core.options
+    import chartify._core.style
+    importlib.reload(chartify._core.options)
+    importlib.reload(chartify._core.style)
 
-        # Check that the expected style is loaded
-        style = chartify._core.style.Style(None, '')
+    # Check that the expected style is loaded
+    style = chartify._core.style.Style(None, '')
 
-        import yaml
-        expected_settings = yaml.safe_load(STYLE_SETTINGS_CONFIG)
+    import yaml
+    expected_settings = yaml.safe_load(STYLE_SETTINGS_CONFIG)
 
-        for key, expected_value in expected_settings.items():
-            actual_value = style.settings[key]
-            assert expected_value == actual_value
+    for key, expected_value in expected_settings.items():
+        actual_value = style.settings[key]
+        assert expected_value == actual_value

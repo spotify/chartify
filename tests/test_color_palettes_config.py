@@ -16,7 +16,6 @@
 
 import importlib
 import os
-from tempfile import TemporaryDirectory
 
 COLOR_PALETTES_CONFIG = '''\
 - - - '#5ff550'
@@ -37,21 +36,20 @@ EXPECTED_COLOR_PALETTES = {
 }
 
 
-def test_color_palettes_config(monkeypatch):
-    with TemporaryDirectory() as tmp:
-        with open(os.path.join(tmp, 'color_palettes_config.yaml'), 'w') as f:
-            f.write(COLOR_PALETTES_CONFIG)
+def test_color_palettes_config(monkeypatch, tmpdir):
+    f = tmpdir.join('color_palettes_config.yaml')
+    f.write(COLOR_PALETTES_CONFIG)
 
-        # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-        monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(tmp, ''))
+    # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
+    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
 
-        # reload modules to reload configuration
-        import chartify._core.options
-        import chartify._core.colors
-        importlib.reload(chartify._core.options)
-        importlib.reload(chartify._core.colors)
+    # reload modules to reload configuration
+    import chartify._core.options
+    import chartify._core.colors
+    importlib.reload(chartify._core.options)
+    importlib.reload(chartify._core.colors)
 
-        # Check that the expected palettes are loaded
-        color_palettes = chartify._core.colors.color_palettes
-        for name, palette in EXPECTED_COLOR_PALETTES.items():
-            assert color_palettes[name].to_hex_list() == palette
+    # Check that the expected palettes are loaded
+    color_palettes = chartify._core.colors.color_palettes
+    for name, palette in EXPECTED_COLOR_PALETTES.items():
+        assert color_palettes[name].to_hex_list() == palette
