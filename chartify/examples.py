@@ -695,7 +695,7 @@ def _bar_stacked_example_2(quantity_by_fruit_and_country):
 @_print_source
 def _bar_stacked_example_3(quantity_by_fruit_and_country):
     """Docstring"""
-    # Get the ordered list of quanity by country to order the stacks.
+    # Get the ordered list of quantity by country to order the stacks.
     country_order = (
         quantity_by_fruit_and_country.groupby('country')['quantity'].sum()
         .sort_values(ascending=False).index)
