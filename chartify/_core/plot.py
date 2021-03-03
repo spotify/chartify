@@ -2020,7 +2020,7 @@ class PlotMixedTypeXY(BasePlot):
                 legend = None
                 sliced_data = data_frame
             else:
-                legend = bokeh.core.properties.value(str(color_value))
+                legend = str(color_value)
                 sliced_data = data_frame[data_frame[color_column] ==
                                          color_value]
             # Filter to only relevant columns.
