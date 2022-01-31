@@ -67,7 +67,7 @@ Use the `chartify tag on StackOverflow <https://stackoverflow.com/questions/tagg
 Resources
 ---------------
 
-Data Visualization with `Chartify <https://www.section.io/engineering-education/data-viz-chartify/>`_
+- Data Visualization with `Chartify <https://www.section.io/engineering-education/data-viz-chartify/>`_
 
 Code of Conduct
 ---------------
