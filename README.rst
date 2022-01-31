@@ -64,6 +64,11 @@ Join #chartify on spotify-foss.slack.com (`Get an invite <https://slackin.spotif
 
 Use the `chartify tag on StackOverflow <https://stackoverflow.com/questions/tagged/chartify>`_.
 
+Resources
+---------------
+
+Data Visualization with `Chartify <https://www.section.io/engineering-education/data-viz-chartify/>`_
+
 Code of Conduct
 ---------------
 
