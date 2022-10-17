@@ -1,7 +1,6 @@
 -r requirements.txt
 
 -e .
-setuptools==65.5.0
 twine==1.11.0
 watchdog==0.8.3
 flake8==3.8.2
