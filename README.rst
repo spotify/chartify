@@ -40,7 +40,7 @@ Installation
 
 2. Install chromedriver requirement (Optional. Needed for PNG output):
     - Install google chrome.
-    - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/a/chromium.org/chromedriver/downloads>`_.
+    - Download the appropriate version of chromedriver for your OS `here <https://sites.google.com/chromium.org/driver/>`_.
     - Copy the executable file to a directory within your PATH.
 	- View directorys in your PATH variable: ``echo $PATH``
 	- Copy chromedriver to the appropriate directory, e.g.: ``cp chromedriver /usr/local/bin``
