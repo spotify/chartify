@@ -1,16 +1,17 @@
 -r requirements.txt
 
 -e .
+setuptools==65.5.0
 twine==1.11.0
 watchdog==0.8.3
 flake8==3.8.2
 tox>=3.13.2
-coverage==4.1
+coverage==4.5.1
 Sphinx==1.7.7
 commonmark==0.5.4
 recommonmark==0.4.0
 
-pytest==3.2.3
+pytest==7.0.1
 pytest-cov==2.5.1
 coverage-badge==0.2.0
 pytest-runner==2.11.1
