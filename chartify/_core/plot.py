@@ -24,7 +24,7 @@ import numpy as np
 from chartify._core.colors import Color, color_palettes
 from chartify._core.axes import NumericalYMixin, NumericalXMixin
 
-from scipy.stats.kde import gaussian_kde
+from scipy.stats import gaussian_kde
 
 
 class BasePlot:
@@ -1062,7 +1062,7 @@ class PlotMixedTypeXY(BasePlot):
         # Sort the categories
         if categorical_order_by == 'values':
             # Recursively sort values within each level of the index.
-            row_totals = source.sum(axis=1)
+            row_totals = source.sum(axis=1, numeric_only=True)
             row_totals.name = 'sum'
             old_index = row_totals.index
             row_totals = row_totals.reset_index()
@@ -1082,7 +1082,7 @@ class PlotMixedTypeXY(BasePlot):
             source = source.reindex(row_totals.index)
         elif categorical_order_by == 'labels':
             source = source.sort_index(
-                0, ascending=categorical_order_ascending)
+                axis=0, ascending=categorical_order_ascending)
         # Manual sort
         elif order_length is not None:
             source = source.reindex(categorical_order_by, axis='index')
@@ -2020,7 +2020,7 @@ class PlotMixedTypeXY(BasePlot):
                 legend = None
                 sliced_data = data_frame
             else:
-                legend = bokeh.core.properties.value(str(color_value))
+                legend = str(color_value)
                 sliced_data = data_frame[data_frame[color_column] ==
                                          color_value]
             # Filter to only relevant columns.

@@ -2,6 +2,13 @@
 History
 =======
 
+3.0.3 (2022-10-18)
+------------------
+
+* Updated package requirements
+* Got rid of future deprecation warnings
+* Bugfix related to legend for graphs with multiple groups and colors
+
 3.0.2 (2020-10-21)
 ------------------
 

@@ -93,6 +93,17 @@ class TestLegend:
         assert np.array_equal(labels,
                               ['US', 'JP', 'GB', 'CA', 'BR'])
 
+    def test_legen_with_grouping_and_color(self):
+        df = pd.DataFrame.from_dict({"data": [1, 1, 2, 2, 3, 3],
+                                     "group": ["a", "a", "a", "b", "b", "b"]})
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.scatter(
+            data_frame=df,
+            categorical_columns="group",
+            numeric_column="data",
+            color_column="group",
+        )
+
 
 class TestChart:
 
