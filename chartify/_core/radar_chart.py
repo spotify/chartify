@@ -234,7 +234,7 @@ class PlotRadar(BasePlot):
             coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
                 coord_df, radius_column, self._THETA_COLUMN)
             # Add endpoint
-            coord_df = coord_df.append(coord_df.iloc[0])
+            coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
             source = self._named_column_data_source(
                 coord_df, series_name=color_value)
@@ -300,7 +300,7 @@ class PlotRadar(BasePlot):
             coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
                 coord_df, radius_column, self._THETA_COLUMN)
             # Add endpoint
-            coord_df = coord_df.append(coord_df.iloc[0])
+            coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
             source = self._named_column_data_source(
                 coord_df, series_name=color_value)
