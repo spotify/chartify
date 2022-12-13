@@ -4,7 +4,7 @@ Chartify
 |status|  |release|  |python|  |CI|
 
 .. |status| image:: https://img.shields.io/badge/Status-Beta-blue.svg
-.. |release| image:: https://img.shields.io/badge/Release-3.0.0-blue.svg
+.. |release| image:: https://img.shields.io/badge/Release-3.0.5-blue.svg
 .. |python| image:: https://img.shields.io/badge/Python-3.6-blue.svg
 .. |CI| image:: https://github.com/spotify/chartify/workflows/Tox/badge.svg
         :target: https://github.com/spotify/chartify/actions

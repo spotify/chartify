@@ -1,4 +1,4 @@
-pandas>=1.0.0<2.0.0
+pandas>=1.0.0,<2.0.0
 Pillow>=8.4.0
 # Avoid selenium bug:
 # https://github.com/SeleniumHQ/selenium/issues/5296
