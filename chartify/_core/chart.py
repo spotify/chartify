@@ -31,7 +31,7 @@ from bokeh.embed import file_html
 
 from bokeh.resources import INLINE
 from IPython.display import display
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -191,7 +191,7 @@ y_axis_type='{y_axis_type}')
             text_color=subtitle_settings['subtitle_text_color'],
             text_font_size=subtitle_settings['subtitle_text_size'],
             text_font=subtitle_settings['subtitle_text_font'],
-            )
+        )
         self.figure.add_layout(_subtitle_glyph,
                                subtitle_settings['subtitle_location'])
         return _subtitle_glyph
@@ -347,25 +347,25 @@ y_axis_type='{y_axis_type}')
                     reversed(self.figure.legend[0].items))
         return self
 
-    def show(self, format='html'):
+    def show(self, format='html', type='color', filter='detail'):
         """Show the chart.
 
-        Args:
-            format (str):
-                - 'html': Output chart as HTML.
-                    Renders faster and allows for interactivity.
-                    Charts saved as HTML in a Jupyter notebooks
-                    WILL NOT display on Github.
-                    Logos will not display on HTML charts.
-                    Recommended when drafting plots.
+          Args:
+              format (str):
+                  - 'html': Output chart as HTML.
+                      Renders faster and allows for interactivity.
+                      Charts saved as HTML in a Jupyter notebooks
+                      WILL NOT display on Github.
+                      Logos will not display on HTML charts.
+                      Recommended when drafting plots.
 
-                - 'png': Output chart as PNG.
-                    Easy to copy+paste into slides.
-                    Will render logos.
-                    Recommended when the plot is in a finished state.
+                  - 'png': Output chart as PNG.
+                      Easy to copy+paste into slides.
+                      Will render logos.
+                      Recommended when the plot is in a finished state.
 
-                - 'svg': Output as SVG.
-                """
+                  - 'svg': Output as SVG.
+                  """
         self._set_toolbar_for_format(format)
 
         if format == 'html':
@@ -377,6 +377,52 @@ y_axis_type='{y_axis_type}')
             return display(image)
         elif format == 'svg':
             return self._show_svg()
+
+        type = None
+        if format == 'png' and type == 'color':
+            image = self._color_enhance()
+            return display(image)
+        elif format == 'png' and type == 'contrast':
+            image = self._contrast_enhance()
+            return display(image)
+        elif format == 'png' and type == 'brightness':
+            image = self._brightness_enhance()
+            return display(image)
+        elif format == 'png' and type == 'sharpness':
+            image = self._sharpness_enhance()
+            return display(image)
+
+        filter = None
+        if format == 'png' and filter == 'detail':
+            image = self._detail_filter()
+            return display(image)
+        elif format == 'png' and filter == 'blur':
+            image = self._blur_filter()
+            return display(image)
+        elif format == 'png' and filter == 'contour':
+            image = self._contour_filter()
+            return display(image)
+        elif format == 'png' and filter == 'edge enhance':
+            image = self._edge_enhance_filter()
+            return display(image)
+        elif format == 'png' and filter == 'edge enhance more':
+            image = self._edge_enhance_more_filter()
+            return display(image)
+        elif format == 'png' and filter == 'emboss':
+            image = self._emboss_filter()
+            return display(image)
+        elif format == 'png' and filter == 'find edges':
+            image = self._find_edges_filter()
+            return display(image)
+        elif format == 'png' and filter == 'sharpen':
+            image = self._sharpen_filter()
+            return display(image)
+        elif format == 'png' and filter == 'smooth':
+            image = self._smooth_filter()
+            return display(image)
+        elif format == 'png' and filter == 'smooth more':
+            image = self._smooth_more_filter()
+            return display(image)
 
     def save(self, filename, format='html'):
         """Save the chart.
@@ -442,6 +488,9 @@ y_axis_type='{y_axis_type}')
         options.add_argument("--disable-extensions")
         options.add_argument('--headless')
         options.add_argument('--hide-scrollbars')
+        # 10 seconds -  Required for images which take time to render.
+        options.add_argument('--virtual-time-budget=10000')
+
         driver = webdriver.Chrome(options=options)
         return driver
 
@@ -511,6 +560,267 @@ y_axis_type='{y_axis_type}')
         """Write the svg to a file"""
         with io.open(filename, mode="w", encoding="utf-8") as f:
             f.write(svg)
+
+    def _color_enhance(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        # color_enhancer
+        color_enhancer = ImageEnhance.Color(png)
+        enhanced_image = color_enhancer.enhance(2)
+        enhanced_image.show()
+
+    def _contrast_enhance(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        contrast_enhancer = ImageEnhance.Contrast(png)
+        enhanced_image = contrast_enhancer.enhance(2)
+        enhanced_image.show()
+
+    def _brightness_enhance(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        brightness_enhancer = ImageEnhance.Brightness(png)
+        enhanced_image = brightness_enhancer.enhance(2)
+        enhanced_image.show()
+
+    def _sharpness_enhance(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        sharpness_enhancer = ImageEnhance.Brightness(png)
+        enhanced_image = sharpness_enhancer.enhance(2)
+        enhanced_image.show()
+
+    def _detail_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.DETAIL)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _blur_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.BLUR)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _contour_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.CONTOUR)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _edge_enhance_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.EDGE_ENHANCE)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _edge_enhance_more_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.EDGE_ENHANCE_MORE)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _emboss_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.EMBOSS)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _find_edges_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.FIND_EDGES)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _sharpen_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.SHARPEN)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _smooth_filter(self):
+        driver = self._initialize_webdriver()
+        # Save figure as HTML
+        html = file_html(self.figure, resources=INLINE, title="")
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.SMOOTH)
+        im2.save('edgeenchance.png')
+        im2.show()
+
+    def _smooth_more_filter(self):
+        driver = self._initialize_webdriver()
+        fp = tempfile.NamedTemporaryFile(
+            'w', prefix='chartify', suffix='.html', encoding='utf-8')
+        fp.write(html)
+        fp.flush()
+        # Open html file in the browser.
+        driver.get("file:///" + fp.name)
+        driver.execute_script("document.body.style.margin = '0px';")
+        png = driver.get_screenshot_as_png()
+        driver.quit()
+        fp.close()
+        image = Image.open(BytesIO(png))
+        im2 = image.filter(ImageFilter.SMOOTH_MORE)
+        im2.save('edgeenchance.png')
+        im2.show()
 
 
 class Logo:
