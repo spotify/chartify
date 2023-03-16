@@ -1107,6 +1107,56 @@ class PlotMixedTypeXY(BasePlot):
 
         return source, factors, stack_values
 
+    @staticmethod
+    def _compute_boxplot_df(data_frame, categorical_columns, numeric_column):
+        # compute quantiles
+        q_frame = data_frame.groupby(categorical_columns)[
+            numeric_column].quantile([0.25, 0.5, 0.75])
+        q_frame = q_frame.unstack().reset_index()
+        q_frame.columns = categorical_columns + \
+            ['q1', 'q2', 'q3']
+        df_with_quantiles = pd.merge(
+            data_frame, q_frame, on=categorical_columns, how="left")
+
+        # compute IQR outlier bounds
+        iqr = df_with_quantiles.q3 - df_with_quantiles.q1
+        df_with_quantiles['upper'] = df_with_quantiles.q3 + 1.5 * iqr
+        df_with_quantiles['lower'] = df_with_quantiles.q1 - 1.5 * iqr
+
+        # adjust outlier bounds to closest observations still within bounds
+        # for upper bound
+        le_upper = df_with_quantiles[df_with_quantiles[numeric_column].le(
+            df_with_quantiles.upper)]
+        group_max_le_upper = le_upper.groupby(
+            categorical_columns, as_index=False)[numeric_column].max()
+        group_max_le_upper.columns = categorical_columns + ['upper']
+
+        df_with_quantiles.drop('upper', axis=1, inplace=True)
+        df_with_quantiles = pd.merge(
+            df_with_quantiles,
+            group_max_le_upper,
+            on=categorical_columns,
+            how='left')
+
+        # for lower bound
+        ge_lower = df_with_quantiles[df_with_quantiles[numeric_column].ge(
+            df_with_quantiles.lower)]
+        group_min_ge_lower = ge_lower.groupby(
+            categorical_columns, as_index=False)[numeric_column].min()
+        group_min_ge_lower.columns = categorical_columns + ['lower']
+        df_with_quantiles.drop('lower', axis=1, inplace=True)
+        df_with_quantiles = pd.merge(df_with_quantiles,
+                                     group_min_ge_lower,
+                                     on=categorical_columns,
+                                     how='left')
+
+        quantiles_and_bounds = df_with_quantiles.groupby(categorical_columns)[
+            'q1', 'q2', 'q3', 'lower', 'upper'].first().reset_index()
+
+        outliers = df_with_quantiles[~df_with_quantiles[numeric_column].between(df_with_quantiles.lower, df_with_quantiles.upper)]
+
+        return quantiles_and_bounds, outliers
+
     def text(self,
              data_frame,
              categorical_columns,
