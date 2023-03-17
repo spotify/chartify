@@ -1108,6 +1108,29 @@ class PlotMixedTypeXY(BasePlot):
         return source, factors, stack_values
 
     @staticmethod
+    def _sort_categories(data_frame,
+                         categorical_columns,
+                         categorical_order_by,
+                         categorical_order_ascending):
+        axis_factors = data_frame.groupby(categorical_columns).size()
+
+        order_length = getattr(categorical_order_by, "__len__", None)
+        if categorical_order_by == 'labels':
+            axis_factors = axis_factors.sort_index(
+                ascending=categorical_order_ascending).index
+        elif categorical_order_by == 'count':
+            axis_factors = axis_factors.sort_values(
+                ascending=categorical_order_ascending).index
+        # User-specified order.
+        elif order_length is not None:
+            axis_factors = categorical_order_by
+        else:
+            raise ValueError(
+                """Must be 'count', 'labels', or a list of values.""")
+
+        return axis_factors
+
+    @staticmethod
     def _compute_boxplot_df(data_frame, categorical_columns, numeric_column):
         # compute quantiles
         q_frame = data_frame.groupby(categorical_columns)[
@@ -2043,21 +2066,10 @@ class PlotMixedTypeXY(BasePlot):
         if size_column is None:
             size_column = 15
 
-        axis_factors = data_frame.groupby(categorical_columns).size()
-
-        order_length = getattr(categorical_order_by, "__len__", None)
-        if categorical_order_by == 'labels':
-            axis_factors = axis_factors.sort_index(
-                ascending=categorical_order_ascending).index
-        elif categorical_order_by == 'count':
-            axis_factors = axis_factors.sort_values(
-                ascending=categorical_order_ascending).index
-        # User-specified order.
-        elif order_length is not None:
-            axis_factors = categorical_order_by
-        else:
-            raise ValueError(
-                """Must be 'count', 'labels', or a list of values.""")
+        axis_factors = self._sort_categories(data_frame,
+                                             categorical_columns,
+                                             categorical_order_by,
+                                             categorical_order_ascending)
 
         colors, color_values = self._get_color_and_order(
             data_frame, color_column, color_order)
@@ -2105,5 +2117,150 @@ class PlotMixedTypeXY(BasePlot):
         # Set legend defaults if there are multiple series.
         if color_column is not None:
             self._chart.style._apply_settings('legend')
+
+        return self._chart
+
+    def boxplot(self,
+                data_frame,
+                categorical_columns,
+                numeric_column,
+                color_column=None,
+                color_order=None,
+                categorical_order_by='labels',
+                categorical_order_ascending=False,
+                outlier_marker='circle',
+                outlier_color='black',
+                outlier_alpha=0.3,
+                outlier_size=15):
+
+        df_intervals_and_floating_bars, outliers = self._compute_boxplot_df(
+            data_frame, categorical_columns, numeric_column)
+
+        # upper and lower bound
+        self.interval(df_intervals_and_floating_bars,
+                      categorical_columns,
+                      'lower',
+                      'upper',
+                      categorical_order_by=categorical_order_by,
+                      categorical_order_ascending=categorical_order_ascending)
+
+        # boxes for q1 to q2 and q2 to q3
+        vertical = self._chart.axes._vertical
+
+        source_low, _, _ = self._construct_source(
+            df_intervals_and_floating_bars,
+            categorical_columns,
+            ['q1', 'q2'],
+            categorical_order_by=categorical_order_by,
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
+
+        source_high, factors, _ = self._construct_source(
+            df_intervals_and_floating_bars,
+            categorical_columns,
+            ['q2', 'q3'],
+            categorical_order_by=categorical_order_by,
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
+
+        colors, _ = self._get_color_and_order(
+            df_intervals_and_floating_bars, color_column, color_order, categorical_columns)
+
+        if color_column is None:
+            colors = colors[0]
+
+        self._set_categorical_axis_default_factors(vertical, factors)
+        self._set_categorical_axis_default_range(
+            vertical, df_intervals_and_floating_bars, 'q3')
+        bar_width = self._get_bar_width(factors)
+
+        if color_column:
+            legend = bokeh.core.properties.field('color_column')
+            legend = 'color_column'
+        else:
+            legend = None
+
+        if vertical:
+            self._plot_with_legend(
+                self._chart.figure.vbar,
+                legend_group=None,
+                x='factors',
+                width=bar_width,
+                top='q2',
+                bottom='q1',
+                line_color='white',
+                source=source_low,
+                fill_color=colors,
+            )
+            self._plot_with_legend(
+                self._chart.figure.vbar,
+                legend_group=legend,
+                x='factors',
+                width=bar_width,
+                top='q3',
+                bottom='q2',
+                line_color='white',
+                source=source_high,
+                fill_color=colors,
+            )
+
+        else:
+
+            self._plot_with_legend(
+                self._chart.figure.vbar,
+                legend_group=None,
+                x='factors',
+                width=bar_width,
+                right='q2',
+                left='q1',
+                line_color='white',
+                source=source_low,
+                fill_color=colors,
+            )
+            self._plot_with_legend(
+                self._chart.figure.hbar,
+                legend_group=legend,
+                y='factors',
+                height=bar_width,
+                right='q3',
+                left='q2',
+                line_color='white',
+                source=source_high,
+                fill_color=colors,
+            )
+
+        # outliers
+        axis_factors = self._sort_categories(outliers, categorical_columns, categorical_order_by, categorical_order_ascending)
+
+        self._set_categorical_axis_default_factors(vertical, axis_factors)
+
+        factors = outliers.set_index(categorical_columns).index
+        outliers = (
+            outliers[
+                [col for col in outliers.columns if col == numeric_column]])
+
+        source_outliers = self._named_column_data_source(
+            outliers, series_name=None)
+        source_outliers.add(factors, 'factors')
+
+        if vertical:
+            x_value, y_value = 'factors', numeric_column
+        else:
+            y_value, x_value = 'factors', numeric_column
+
+        self._plot_with_legend(
+                self._chart.figure.scatter,
+                legend_label=None,
+                x=x_value,
+                y=y_value,
+                size=outlier_size,
+                fill_color=outlier_color,
+                line_color=outlier_color,
+                source=source_outliers,
+                marker=outlier_marker,
+                alpha=outlier_alpha
+            )
+
+        self._chart.show()
 
         return self._chart
