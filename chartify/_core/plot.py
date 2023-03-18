@@ -2127,7 +2127,7 @@ class PlotMixedTypeXY(BasePlot):
                 color_column=None,
                 color_order=None,
                 categorical_order_by='labels',
-                categorical_order_ascending=False,
+                categorical_order_ascending=True,
                 outlier_marker='circle',
                 outlier_color='black',
                 outlier_alpha=0.3,
