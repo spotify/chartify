@@ -2268,6 +2268,4 @@ class PlotMixedTypeXY(BasePlot):
                 alpha=outlier_alpha
             )
 
-        self._chart.show()
-
         return self._chart
