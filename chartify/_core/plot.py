@@ -2133,6 +2133,13 @@ class PlotMixedTypeXY(BasePlot):
                 outlier_alpha=0.3,
                 outlier_size=15):
 
+        # check categorical_order_by value
+        order_length = getattr(categorical_order_by, "__len__", None)
+        if ((not isinstance(categorical_order_by, str) and order_length is None)
+            or (isinstance(categorical_order_by, str) and categorical_order_by != 'labels')):
+            raise ValueError(
+                """Argument categorical_order_by must be 'labels', or a list of values.""")
+
         df_intervals_and_floating_bars, outliers = self._compute_boxplot_df(
             data_frame, categorical_columns, numeric_column)
 
