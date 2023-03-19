@@ -1108,29 +1108,6 @@ class PlotMixedTypeXY(BasePlot):
         return source, factors, stack_values
 
     @staticmethod
-    def _sort_categories(data_frame,
-                         categorical_columns,
-                         categorical_order_by,
-                         categorical_order_ascending):
-        axis_factors = data_frame.groupby(categorical_columns).size()
-
-        order_length = getattr(categorical_order_by, "__len__", None)
-        if categorical_order_by == 'labels':
-            axis_factors = axis_factors.sort_index(
-                ascending=categorical_order_ascending).index
-        elif categorical_order_by == 'count':
-            axis_factors = axis_factors.sort_values(
-                ascending=categorical_order_ascending).index
-        # User-specified order.
-        elif order_length is not None:
-            axis_factors = categorical_order_by
-        else:
-            raise ValueError(
-                """Must be 'count', 'labels', or a list of values.""")
-
-        return axis_factors
-
-    @staticmethod
     def _compute_boxplot_df(data_frame, categorical_columns, numeric_column):
         # compute quantiles
         q_frame = data_frame.groupby(categorical_columns)[
@@ -2066,10 +2043,21 @@ class PlotMixedTypeXY(BasePlot):
         if size_column is None:
             size_column = 15
 
-        axis_factors = self._sort_categories(data_frame,
-                                             categorical_columns,
-                                             categorical_order_by,
-                                             categorical_order_ascending)
+        axis_factors = data_frame.groupby(categorical_columns).size()
+
+        order_length = getattr(categorical_order_by, "__len__", None)
+        if categorical_order_by == 'labels':
+            axis_factors = axis_factors.sort_index(
+                ascending=categorical_order_ascending).index
+        elif categorical_order_by == 'count':
+            axis_factors = axis_factors.sort_values(
+                ascending=categorical_order_ascending).index
+        # User-specified order.
+        elif order_length is not None:
+            axis_factors = categorical_order_by
+        else:
+            raise ValueError(
+                """Must be 'count', 'labels', or a list of values.""")
 
         colors, color_values = self._get_color_and_order(
             data_frame, color_column, color_order)
@@ -2238,10 +2226,6 @@ class PlotMixedTypeXY(BasePlot):
             )
 
         # outliers
-        axis_factors = self._sort_categories(outliers, categorical_columns, categorical_order_by, categorical_order_ascending)
-
-        self._set_categorical_axis_default_factors(vertical, axis_factors)
-
         factors = outliers.set_index(categorical_columns).index
         outliers = (
             outliers[
