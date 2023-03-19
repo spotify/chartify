@@ -501,6 +501,148 @@ class TestBarNumericSort:
             chart_data(ch, '')['index'], [0, 1, 2, 3, 4, 5]))
 
 
+class TestBoxplot:
+    def _clean_data(self, chart_data):
+        """Gets rid of {} elements in chart data."""
+        return [x for x in chart_data if x]
+
+    def _assert_grouped_chart_data(self, chart_data):
+        clean_data = self._clean_data(chart_data)
+        # loop because the order of elements varies
+        for i in range(3):
+            # q2-q3 boxes
+            if 'q2' in clean_data[i] and 'q3' in clean_data[i]:
+                multi_index = pd.MultiIndex.from_tuples(
+                    [('a', 'd'), ('a', 'e'), ('b', 'd'), ('c', 'e')],
+                    names=('category', 'sub-category'))
+
+                assert clean_data[i]['factors'].equals(multi_index)
+                assert clean_data[i]['factors'].equal_levels(multi_index)
+                assert np.array_equal(clean_data[i]['q3'],
+                                      [46, 205.25, 79, 98.5])
+                assert np.array_equal(clean_data[i]['q2'],
+                                      [35, 184, 68, 79.5])
+            # q1-q2 boxes
+            elif 'q1' in clean_data[i] and 'q2' in clean_data[i]:
+                multi_index = pd.MultiIndex.from_tuples(
+                    [('a', 'd'), ('a', 'e'), ('b', 'd'), ('c', 'e')],
+                    names=('category', 'sub-category'))
+                assert clean_data[i]['factors'].equals(multi_index)
+                assert clean_data[i]['factors'].equal_levels(multi_index)
+                assert np.array_equal(clean_data[i]['q2'],
+                                      [35, 184, 68, 79.5])
+                assert np.array_equal(clean_data[i]['q1'],
+                                      [23, 123.5, 58, 55.75])
+            # outliers
+            elif 'numeric' in clean_data[i]:
+                multi_index = pd.MultiIndex.from_tuples(
+                    [('a', 'd'), ('b', 'd'), ('b', 'd'),
+                     ('b', 'd'), ('c', 'e'), ('c', 'e')],
+                    names=('category', 'sub-category'))
+                assert clean_data[i]['factors'].equals(multi_index)
+                assert clean_data[i]['factors'].equal_levels(multi_index)
+                assert np.array_equal(clean_data[i]['numeric'],
+                                      [120, 15, 20, 130, -20, 170])
+
+    def setup(self):
+        np.random.seed(10)
+        random_series_1 = pd.Series(list(np.random.randint(10, 60, 50))+[120])
+        random_series_2 = pd.Series(list(np.random.randint(40, 200, 50))
+                                    + list(np.random.randint(180, 225, 50)))
+        df1 = pd.DataFrame({'category': 'a',
+                            'sub-category': 'd',
+                            'numeric': random_series_1.values})
+        df2 = pd.DataFrame({'category': 'a',
+                            'sub-category': 'e',
+                            'numeric': random_series_2.values})
+
+        random_series_3 = pd.Series(
+            list(np.random.randint(50, 90, 50)) + [15, 20, 130])
+        df3 = pd.DataFrame({'category': 'b',
+                            'sub-category': 'd',
+                            'numeric': random_series_3.values})
+
+        random_series_4 = pd.Series(
+            list(np.random.randint(40, 120, 50)) + [-20, 170])
+        df4 = pd.DataFrame({'category': 'c',
+                            'sub-category': 'e',
+                            'numeric': random_series_4.values})
+
+        self.data = pd.concat([df1, df2, df3, df4])
+
+    def test_standard(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.boxplot(self.data, ['category'], 'numeric')
+
+        clean_data = self._clean_data(ch.data)
+
+        # loop because the order of elements varies
+        for i in range(3):
+            # q2-q3 boxes
+            if 'q2' in clean_data[i] and 'q3' in clean_data[i]:
+                assert clean_data[i]['factors'].equals(
+                    pd.Index(['a', 'b', 'c'], name='category'))
+                assert np.array_equal(clean_data[i]['q3'], [196, 79, 98.5])
+                assert np.array_equal(clean_data[i]['q2'], [122, 68, 79.5])
+            # q1-q2 boxes
+            elif 'q1' in clean_data[i] and 'q2' in clean_data[i]:
+                assert clean_data[i]['factors'].equals(
+                    pd.Index(['a', 'b', 'c'], name='category'))
+                assert np.array_equal(clean_data[i]['q2'],
+                                      [122, 68, 79.5])
+                assert np.array_equal(clean_data[i]['q1'],
+                                      [43.5, 58, 55.75])
+            # outliers
+            elif 'numeric' in clean_data[i]:
+                assert clean_data[i]['factors'].equals(
+                    pd.Index(['b', 'b', 'b', 'c', 'c'], name='category'))
+                assert np.array_equal(clean_data[i]['numeric'],
+                                      [15, 20, 130, -20, 170])
+
+    def test_grouped_vertical(self):
+        ch = chartify.Chart(x_axis_type='categorical', y_axis_type='linear')
+        ch.plot.boxplot(self.data,
+                        ['category', 'sub-category'],
+                        'numeric',
+                        color_column='category',
+                        categorical_order_by='labels')
+        self._assert_grouped_chart_data(ch.data)
+
+    def test_grouped_horizontal(self):
+        ch = chartify.Chart(x_axis_type='linear', y_axis_type='categorical')
+        ch.plot.boxplot(self.data,
+                        ['category', 'sub-category'],
+                        'numeric',
+                        color_column='category',
+                        categorical_order_by='labels')
+        self._assert_grouped_chart_data(ch.data)
+
+    def test_color(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.boxplot(self.data,
+                        ['category', 'sub-category'],
+                        'numeric',
+                        color_column='sub-category',
+                        categorical_order_by='labels')
+
+        self._assert_grouped_chart_data(ch.data)
+
+        clean_data = self._clean_data(ch.data)
+        for i in range(3):
+            if 'q2' in clean_data[i] and 'q3' in clean_data[i]:
+                assert np.array_equal(clean_data[i]['color_column'],
+                                      ['d', 'e', 'd', 'e'])
+            elif 'q1' in clean_data[i] and 'q2' in clean_data[i]:
+                assert np.array_equal(clean_data[i]['color_column'],
+                                      ['d', 'e', 'd', 'e'])
+
+    def test_error(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+        with pytest.raises(ValueError):
+            ch.plot.boxplot(self.data, ['category'], 'numeric',
+                            categorical_order_by='count')
+
+
 class TestBarStacked:
     """Tests for stacked bar plots"""
 
