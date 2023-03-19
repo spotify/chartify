@@ -2178,7 +2178,8 @@ class PlotMixedTypeXY(BasePlot):
 
         self._set_categorical_axis_default_factors(vertical, factors)
         self._set_categorical_axis_default_range(
-            vertical, df_intervals_and_floating_bars, 'q3')
+            vertical, data_frame, numeric_column)
+
         bar_width = self._get_bar_width(factors)
 
         if color_column:
