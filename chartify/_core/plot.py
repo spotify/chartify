@@ -2214,10 +2214,10 @@ class PlotMixedTypeXY(BasePlot):
         else:
 
             self._plot_with_legend(
-                self._chart.figure.vbar,
+                self._chart.figure.hbar,
                 legend_group=None,
-                x='factors',
-                width=bar_width,
+                y='factors',
+                height=bar_width,
                 right='q2',
                 left='q1',
                 line_color='white',
