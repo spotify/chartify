@@ -570,7 +570,7 @@ class TestBoxplot:
 
         self.data = pd.concat([df1, df2, df3, df4])
 
-    def test_standard(self):
+    def test_default(self):
         ch = chartify.Chart(x_axis_type='categorical')
         ch.plot.boxplot(self.data, ['category'], 'numeric')
 
