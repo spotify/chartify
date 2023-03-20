@@ -1153,7 +1153,8 @@ class PlotMixedTypeXY(BasePlot):
         quantiles_and_bounds = df_with_quantiles.groupby(categorical_columns)[[
             'q1', 'q2', 'q3', 'lower', 'upper']].first().reset_index()
 
-        outliers = df_with_quantiles[~df_with_quantiles[numeric_column].between(df_with_quantiles.lower, df_with_quantiles.upper)]
+        outliers = df_with_quantiles[~df_with_quantiles[numeric_column].between(
+            df_with_quantiles.lower, df_with_quantiles.upper)]
 
         return quantiles_and_bounds, outliers
 
@@ -2123,10 +2124,11 @@ class PlotMixedTypeXY(BasePlot):
 
         # check categorical_order_by value
         order_length = getattr(categorical_order_by, "__len__", None)
-        if ((not isinstance(categorical_order_by, str) and order_length is None)
-            or (isinstance(categorical_order_by, str) and categorical_order_by != 'labels')):
-            raise ValueError(
-                """Argument categorical_order_by must be 'labels', or a list of values.""")
+        is_string = isinstance(categorical_order_by, str)
+        if ((not is_string and order_length is None)
+                or (is_string and categorical_order_by != 'labels')):
+            raise ValueError("""Argument categorical_order_by must be 'labels',
+                             or a list of values.""")
 
         df_intervals_and_floating_bars, outliers = self._compute_boxplot_df(
             data_frame, categorical_columns, numeric_column)
@@ -2158,8 +2160,10 @@ class PlotMixedTypeXY(BasePlot):
             categorical_order_ascending=categorical_order_ascending,
             color_column=color_column)
 
-        colors, _ = self._get_color_and_order(
-            df_intervals_and_floating_bars, color_column, color_order, categorical_columns)
+        colors, _ = self._get_color_and_order(df_intervals_and_floating_bars,
+                                              color_column,
+                                              color_order,
+                                              categorical_columns)
 
         if color_column is None:
             colors = colors[0]
@@ -2241,16 +2245,16 @@ class PlotMixedTypeXY(BasePlot):
             y_value, x_value = 'factors', numeric_column
 
         self._plot_with_legend(
-                self._chart.figure.scatter,
-                legend_label=None,
-                x=x_value,
-                y=y_value,
-                size=outlier_size,
-                fill_color=outlier_color,
-                line_color=outlier_color,
-                source=source_outliers,
-                marker=outlier_marker,
-                alpha=outlier_alpha
-            )
+            self._chart.figure.scatter,
+            legend_label=None,
+            x=x_value,
+            y=y_value,
+            size=outlier_size,
+            fill_color=outlier_color,
+            line_color=outlier_color,
+            source=source_outliers,
+            marker=outlier_marker,
+            alpha=outlier_alpha
+        )
 
         return self._chart
