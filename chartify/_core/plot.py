@@ -1150,8 +1150,8 @@ class PlotMixedTypeXY(BasePlot):
                                      on=categorical_columns,
                                      how='left')
 
-        quantiles_and_bounds = df_with_quantiles.groupby(categorical_columns)[
-            'q1', 'q2', 'q3', 'lower', 'upper'].first().reset_index()
+        quantiles_and_bounds = df_with_quantiles.groupby(categorical_columns)[[
+            'q1', 'q2', 'q3', 'lower', 'upper']].first().reset_index()
 
         outliers = df_with_quantiles[~df_with_quantiles[numeric_column].between(df_with_quantiles.lower, df_with_quantiles.upper)]
 
