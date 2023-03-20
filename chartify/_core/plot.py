@@ -1109,6 +1109,13 @@ class PlotMixedTypeXY(BasePlot):
 
     @staticmethod
     def _compute_boxplot_df(data_frame, categorical_columns, numeric_column):
+        """Computes the data frames for a boxplot.
+
+        Returns:
+            quantlies_and_bounds: data frame for the boxes and whiskers of a
+                boxplot
+            outliers: data frame with outliers
+        """
         # compute quantiles
         q_frame = data_frame.groupby(categorical_columns)[
             numeric_column].quantile([0.25, 0.5, 0.75])
