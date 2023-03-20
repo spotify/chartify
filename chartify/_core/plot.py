@@ -2121,6 +2121,41 @@ class PlotMixedTypeXY(BasePlot):
                 outlier_color='black',
                 outlier_alpha=0.3,
                 outlier_size=15):
+        """Box-and-whisker plot.
+
+        Note:
+            To change the orientation set x_axis_type or y_axis_type
+            argument of the Chart object.
+
+        Args:
+            data_frame (pandas.DataFrame): Data source for the plot.
+            categorical_columns (str or list): Column name to plot on
+                the categorical axis.
+            numeric_column (str): Column name to plot on the numerical axis.
+            color_column (str, optional): Column name to group by on
+                the color dimension.
+            color_order (list, optional):
+                List of values within the 'color_column' for
+                    specific color sort.
+            categorical_order_by (str or array-like, optional):
+                Dimension for ordering the categorical axis. Default 'labels'.
+                - 'labels': Order categorical axis by the categorical labels.
+                - array-like object (list, tuple, np.array): New labels
+                    to conform the categorical axis to.
+            categorical_order_ascending (bool, optional):
+                Sort order of the categorical axis. Default True.
+            outlier_marker (str, optional): Outlier marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+' Default 'circle'
+            outlier_color (str, optional): Color name or hex value.
+                See chartify.color_palettes.show() for available color names.
+                Default 'black'
+            outlier_alpha (float, optional): Alpha value. Default 0.3
+            outlier_size (float, optional): Size of outlier markers.
+                Default 15
+        """
 
         # check categorical_order_by value
         order_length = getattr(categorical_order_by, "__len__", None)
