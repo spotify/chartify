@@ -154,24 +154,23 @@ y_axis_type='{y_axis_type}')
            y_axis_type=self._y_axis_type)
 
     def _initialize_figure(self, x_axis_type, y_axis_type):
-        x_range, y_range = None, None
+        range_args = {}
         if x_axis_type == 'categorical':
-            x_range = []
+            range_args['x_range'] = []
             x_axis_type = 'auto'
         if y_axis_type == 'categorical':
-            y_range = []
+            range_args['y_range'] = []
             y_axis_type = 'auto'
         if x_axis_type == 'density':
             x_axis_type = 'linear'
         if y_axis_type == 'density':
             y_axis_type = 'linear'
         figure = bokeh.plotting.figure(
-            x_range=x_range,
-            y_range=y_range,
+            **range_args,
             y_axis_type=y_axis_type,
             x_axis_type=x_axis_type,
-            plot_width=self.style.plot_width,
-            plot_height=self.style.plot_height,
+            width=self.style.plot_width,
+            height=self.style.plot_height,
             tools='save',
             # toolbar_location='right',
             active_drag=None)
