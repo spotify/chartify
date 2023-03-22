@@ -21,6 +21,8 @@ import pandas as pd
 import numpy as np
 import bokeh
 
+from packaging import version
+
 
 def chart_data(chart_object, series_name):
     """Retrieve data from chart object based on series name.
@@ -438,10 +440,20 @@ class TestBarLollipopParallel:
             categorical_columns='category2',
             numeric_column='number',
             color_column='category2')
+
+        if version.parse(bokeh.__version__) < version.parse("3.0"):
+            assert (np.array_equal(
+                chart_color_mapper(ch).factors, ['1', '2', '3']))
+            assert (np.array_equal(chart_color_mapper(ch).palette,
+                                   ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            return
+
+        vbar_glyph = ch.figure.renderers[0].glyph
         assert (np.array_equal(
-            chart_color_mapper(ch).factors, ['1', '2', '3']))
-        assert (np.array_equal(
-            chart_color_mapper(ch).palette, ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            vbar_glyph.fill_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(vbar_glyph.fill_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        assert vbar_glyph.line_color == 'white'
 
     def test_lollipop_color_column(self):
         sliced_data = self.data[self.data['category1'] == 'a']
@@ -451,10 +463,30 @@ class TestBarLollipopParallel:
             categorical_columns='category2',
             numeric_column='number',
             color_column='category2')
+
+        if version.parse(bokeh.__version__) < version.parse("3.0"):
+            assert (np.array_equal(
+                chart_color_mapper(ch).factors, ['1', '2', '3']))
+            assert (np.array_equal(chart_color_mapper(ch).palette,
+                                   ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            return
+
+        segment_glyph = ch.figure.renderers[0].glyph
+        circle_glyph = ch.figure.renderers[1].glyph
+        # check segment colors
         assert (np.array_equal(
-            chart_color_mapper(ch).factors, ['1', '2', '3']))
+            segment_glyph.line_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(segment_glyph.line_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        # check circle colors
         assert (np.array_equal(
-            chart_color_mapper(ch).palette, ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            circle_glyph.line_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(circle_glyph.line_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        assert (np.array_equal(
+            circle_glyph.fill_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(circle_glyph.fill_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
 
     def test_bar_parallel_color_column(self):
         ch = chartify.Chart(x_axis_type='categorical')
