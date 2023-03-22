@@ -2,6 +2,11 @@
 History
 =======
 
+3.1.0 (2023-03-22)
+------------------
+
+* Added Boxplot Chart including example in examples notebook
+
 3.0.5 (2022-12-13)
 ------------------
 

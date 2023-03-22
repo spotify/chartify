@@ -1107,6 +1107,64 @@ class PlotMixedTypeXY(BasePlot):
 
         return source, factors, stack_values
 
+    @staticmethod
+    def _compute_boxplot_df(data_frame, categorical_columns, numeric_column):
+        """Computes the data frames for a boxplot.
+
+        Returns:
+            quantlies_and_bounds: data frame for the boxes and whiskers of a
+                boxplot
+            outliers: data frame with outliers
+        """
+        # compute quantiles
+        q_frame = data_frame.groupby(categorical_columns)[
+            numeric_column].quantile([0.25, 0.5, 0.75])
+        q_frame = q_frame.unstack().reset_index()
+        q_frame.columns = categorical_columns + \
+            ['q1', 'q2', 'q3']
+        df_with_quantiles = pd.merge(
+            data_frame, q_frame, on=categorical_columns, how="left")
+
+        # compute IQR outlier bounds
+        iqr = df_with_quantiles.q3 - df_with_quantiles.q1
+        df_with_quantiles['upper'] = df_with_quantiles.q3 + 1.5 * iqr
+        df_with_quantiles['lower'] = df_with_quantiles.q1 - 1.5 * iqr
+
+        # adjust outlier bounds to closest observations still within bounds
+        # for upper bound
+        le_upper = df_with_quantiles[df_with_quantiles[numeric_column].le(
+            df_with_quantiles.upper)]
+        group_max_le_upper = le_upper.groupby(
+            categorical_columns, as_index=False)[numeric_column].max()
+        group_max_le_upper.columns = categorical_columns + ['upper']
+
+        df_with_quantiles.drop('upper', axis=1, inplace=True)
+        df_with_quantiles = pd.merge(
+            df_with_quantiles,
+            group_max_le_upper,
+            on=categorical_columns,
+            how='left')
+
+        # for lower bound
+        ge_lower = df_with_quantiles[df_with_quantiles[numeric_column].ge(
+            df_with_quantiles.lower)]
+        group_min_ge_lower = ge_lower.groupby(
+            categorical_columns, as_index=False)[numeric_column].min()
+        group_min_ge_lower.columns = categorical_columns + ['lower']
+        df_with_quantiles.drop('lower', axis=1, inplace=True)
+        df_with_quantiles = pd.merge(df_with_quantiles,
+                                     group_min_ge_lower,
+                                     on=categorical_columns,
+                                     how='left')
+
+        quantiles_and_bounds = df_with_quantiles.groupby(categorical_columns)[[
+            'q1', 'q2', 'q3', 'lower', 'upper']].first().reset_index()
+
+        outliers = df_with_quantiles[~df_with_quantiles[numeric_column].between(
+            df_with_quantiles.lower, df_with_quantiles.upper)]
+
+        return quantiles_and_bounds, outliers
+
     def text(self,
              data_frame,
              categorical_columns,
@@ -2055,5 +2113,190 @@ class PlotMixedTypeXY(BasePlot):
         # Set legend defaults if there are multiple series.
         if color_column is not None:
             self._chart.style._apply_settings('legend')
+
+        return self._chart
+
+    def boxplot(self,
+                data_frame,
+                categorical_columns,
+                numeric_column,
+                color_column=None,
+                color_order=None,
+                categorical_order_by='labels',
+                categorical_order_ascending=True,
+                outlier_marker='circle',
+                outlier_color='black',
+                outlier_alpha=0.3,
+                outlier_size=15):
+        """Box-and-whisker plot.
+
+        Note:
+            To change the orientation set x_axis_type or y_axis_type
+            argument of the Chart object.
+
+        Args:
+            data_frame (pandas.DataFrame): Data source for the plot.
+            categorical_columns (str or list): Column name to plot on
+                the categorical axis.
+            numeric_column (str): Column name to plot on the numerical axis.
+            color_column (str, optional): Column name to group by on
+                the color dimension.
+            color_order (list, optional):
+                List of values within the 'color_column' for
+                    specific color sort.
+            categorical_order_by (str or array-like, optional):
+                Dimension for ordering the categorical axis. Default 'labels'.
+                - 'labels': Order categorical axis by the categorical labels.
+                - array-like object (list, tuple, np.array): New labels
+                    to conform the categorical axis to.
+            categorical_order_ascending (bool, optional):
+                Sort order of the categorical axis. Default True.
+            outlier_marker (str, optional): Outlier marker type. Valid types:
+                'asterisk', 'circle', 'circle_cross', 'circle_x', 'cross',
+                'diamond', 'diamond_cross', 'hex', 'inverted_triangle',
+                'square', 'square_x', 'square_cross', 'triangle',
+                'x', '*', '+', 'o', 'ox', 'o+' Default 'circle'
+            outlier_color (str, optional): Color name or hex value.
+                See chartify.color_palettes.show() for available color names.
+                Default 'black'
+            outlier_alpha (float, optional): Alpha value. Default 0.3
+            outlier_size (float, optional): Size of outlier markers.
+                Default 15
+        """
+
+        # check categorical_order_by value
+        order_length = getattr(categorical_order_by, "__len__", None)
+        is_string = isinstance(categorical_order_by, str)
+        if ((not is_string and order_length is None)
+                or (is_string and categorical_order_by != 'labels')):
+            raise ValueError("""Argument categorical_order_by must be 'labels',
+                             or a list of values.""")
+
+        df_intervals_and_floating_bars, outliers = self._compute_boxplot_df(
+            data_frame, categorical_columns, numeric_column)
+
+        # upper and lower bound
+        self.interval(df_intervals_and_floating_bars,
+                      categorical_columns,
+                      'lower',
+                      'upper',
+                      categorical_order_by=categorical_order_by,
+                      categorical_order_ascending=categorical_order_ascending)
+
+        # boxes for q1 to q2 and q2 to q3
+        vertical = self._chart.axes._vertical
+
+        source_low, _, _ = self._construct_source(
+            df_intervals_and_floating_bars,
+            categorical_columns,
+            ['q1', 'q2'],
+            categorical_order_by=categorical_order_by,
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
+
+        source_high, factors, _ = self._construct_source(
+            df_intervals_and_floating_bars,
+            categorical_columns,
+            ['q2', 'q3'],
+            categorical_order_by=categorical_order_by,
+            categorical_order_ascending=categorical_order_ascending,
+            color_column=color_column)
+
+        colors, _ = self._get_color_and_order(df_intervals_and_floating_bars,
+                                              color_column,
+                                              color_order,
+                                              categorical_columns)
+
+        if color_column is None:
+            colors = colors[0]
+
+        self._set_categorical_axis_default_factors(vertical, factors)
+        self._set_categorical_axis_default_range(
+            vertical, data_frame, numeric_column)
+
+        bar_width = self._get_bar_width(factors)
+
+        if color_column:
+            legend = bokeh.core.properties.field('color_column')
+            legend = 'color_column'
+        else:
+            legend = None
+
+        if vertical:
+            self._plot_with_legend(
+                self._chart.figure.vbar,
+                legend_group=None,
+                x='factors',
+                width=bar_width,
+                top='q2',
+                bottom='q1',
+                line_color='white',
+                source=source_low,
+                fill_color=colors,
+            )
+            self._plot_with_legend(
+                self._chart.figure.vbar,
+                legend_group=legend,
+                x='factors',
+                width=bar_width,
+                top='q3',
+                bottom='q2',
+                line_color='white',
+                source=source_high,
+                fill_color=colors,
+            )
+
+        else:
+
+            self._plot_with_legend(
+                self._chart.figure.hbar,
+                legend_group=None,
+                y='factors',
+                height=bar_width,
+                right='q2',
+                left='q1',
+                line_color='white',
+                source=source_low,
+                fill_color=colors,
+            )
+            self._plot_with_legend(
+                self._chart.figure.hbar,
+                legend_group=legend,
+                y='factors',
+                height=bar_width,
+                right='q3',
+                left='q2',
+                line_color='white',
+                source=source_high,
+                fill_color=colors,
+            )
+
+        # outliers
+        factors = outliers.set_index(categorical_columns).index
+        outliers = (
+            outliers[
+                [col for col in outliers.columns if col == numeric_column]])
+
+        source_outliers = self._named_column_data_source(
+            outliers, series_name=None)
+        source_outliers.add(factors, 'factors')
+
+        if vertical:
+            x_value, y_value = 'factors', numeric_column
+        else:
+            y_value, x_value = 'factors', numeric_column
+
+        self._plot_with_legend(
+            self._chart.figure.scatter,
+            legend_label=None,
+            x=x_value,
+            y=y_value,
+            size=outlier_size,
+            fill_color=outlier_color,
+            line_color=outlier_color,
+            source=source_outliers,
+            marker=outlier_marker,
+            alpha=outlier_alpha
+        )
 
         return self._chart
