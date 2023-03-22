@@ -23,9 +23,12 @@ from itertools import cycle
 import yaml
 
 import bokeh
+from bokeh.core.properties import value as bokeh_value
 
 from chartify._core import colors
 from chartify._core.options import options
+
+from packaging import version
 
 
 class BasePalette:
@@ -288,7 +291,7 @@ class Style:
                 'subtitle_text_font': 'helvetica'
             },
             'text_callout_and_plot': {
-                'font': 'helvetica',
+                'font': self._font_value('helvetica'),
             },
             'interval_plot': {
                 'space_between_bars': .25,
@@ -330,6 +333,14 @@ class Style:
                 config_filename, apply_chart_settings=False)
         except FileNotFoundError:
             pass
+
+    @staticmethod
+    def _font_value(text_font):
+        # https://github.com/bokeh/bokeh/issues/11044
+        if version.parse(bokeh.__version__) < version.parse("2.3"):
+            return text_font
+        else:  # >= 2.3
+            return bokeh_value(text_font)
 
     def _set_width_and_height(self, layout='slide_100%'):
         """Set plot width and height based on the layout"""
