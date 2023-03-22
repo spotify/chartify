@@ -483,6 +483,38 @@ plot_bar.__doc__ = _core.plot.PlotMixedTypeXY.bar.__doc__
 
 
 @_print_source
+def plot_boxplot():
+    """
+    Interval example
+    """
+    import chartify
+
+    # Generate example data
+    data = chartify.examples.example_data()
+    """Print Break"""
+    _boxplot_example_1(data)
+
+
+@_print_source
+def _boxplot_example_1(quantity_by_fruit_and_country):
+    """# Plot the data with labels"""
+    ch = chartify.Chart(x_axis_type='categorical')
+    ch.plot.boxplot(
+        data_frame=quantity_by_fruit_and_country,
+        categorical_columns=['fruit', 'country'],
+        numeric_column='quantity',
+        color_column='country'
+    )
+    ch.set_title('Distribution of number of fruits by day')
+    ch.set_subtitle('split by fruit type and country')
+    ch.axes.set_xaxis_label('Fruit and country')
+    ch.axes.set_yaxis_label('Distribution of number of fruits by day')
+    ch.show(_OUTPUT_FORMAT)
+
+plot_boxplot.__doc__ = _core.plot.PlotMixedTypeXY.boxplot.__doc__
+
+
+@_print_source
 def plot_interval():
     """
     Interval example
