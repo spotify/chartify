@@ -21,38 +21,28 @@ import yaml
 
 class ChartifyOptions:
     def __init__(self):
-
         try:
-            options_path = os.environ['CHARTIFY_CONFIG_DIR']
+            options_path = os.environ["CHARTIFY_CONFIG_DIR"]
         except KeyError:
             home_path = str(Path.home())
-            options_path = home_path + '/.chartify/'
-        self._options = OrderedDict({
-            'style.color_palette_categorical':
-            OptionValue('Category20'),
-            'style.color_palette_sequential':
-            OptionValue('Blues'),
-            'style.color_palette_diverging':
-            OptionValue('RdBu'),
-            'style.color_palette_accent':
-            OptionValue('Category20'),
-            'style.color_palette_accent_default_color':
-            OptionValue('grey'),
-            'chart.blank_labels':
-            OptionValue(False),
-            'config.logos_path':
-            OptionValue(options_path + 'logos/'),
-            'config.options':
-            OptionValue(options_path + 'options_config.yaml'),
-            'config.style_settings':
-            OptionValue(options_path + 'style_settings_config.yaml'),
-            'config.colors':
-            OptionValue(options_path + 'colors_config.yaml'),
-            'config.color_palettes':
-            OptionValue(options_path + 'color_palettes_config.yaml')
-        })
+            options_path = home_path + "/.chartify/"
+        self._options = OrderedDict(
+            {
+                "style.color_palette_categorical": OptionValue("Category20"),
+                "style.color_palette_sequential": OptionValue("Blues"),
+                "style.color_palette_diverging": OptionValue("RdBu"),
+                "style.color_palette_accent": OptionValue("Category20"),
+                "style.color_palette_accent_default_color": OptionValue("grey"),
+                "chart.blank_labels": OptionValue(False),
+                "config.logos_path": OptionValue(options_path + "logos/"),
+                "config.options": OptionValue(options_path + "options_config.yaml"),
+                "config.style_settings": OptionValue(options_path + "style_settings_config.yaml"),
+                "config.colors": OptionValue(options_path + "colors_config.yaml"),
+                "config.color_palettes": OptionValue(options_path + "color_palettes_config.yaml"),
+            }
+        )
 
-        config_filename = self.get_option('config.options')
+        config_filename = self.get_option("config.options")
         try:
             self._from_yaml(config_filename)
         except FileNotFoundError:
@@ -99,7 +89,7 @@ class ChartifyOptions:
 
     def _to_yaml(self, filename):
         """Write the options to a yaml file"""
-        with open(filename, 'w') as outfile:
+        with open(filename, "w") as outfile:
             yaml.dump(self._options, outfile, default_flow_style=False)
 
     def _from_yaml(self, filename):
@@ -118,7 +108,7 @@ class OptionValue:
         self.value = value
 
     def __repr__(self):
-        return '%s' % self.value
+        return "%s" % self.value
 
 
 options = ChartifyOptions()

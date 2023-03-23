@@ -25,7 +25,7 @@ class TestBaseAxes:
         price_by_date = (
             data.groupby('date')['total_price'].sum()
             .reset_index()  # Move 'date' from index to column
-            )
+        )
 
         # Plot the data
         ch = chartify.Chart(blank_labels=True, x_axis_type='datetime')

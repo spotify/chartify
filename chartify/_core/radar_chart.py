@@ -28,10 +28,7 @@ import pandas as pd
 
 
 class RadarChart(Chart):
-
-    def __init__(self,
-                 blank_labels=options.get_option('chart.blank_labels'),
-                 layout='slide_50%'):
+    def __init__(self, blank_labels=options.get_option("chart.blank_labels"), layout="slide_50%"):
         """Create a Radar Chart instance.
 
         Note:
@@ -50,22 +47,17 @@ class RadarChart(Chart):
                 - 'slide_25%'
         """
         # Validate axis type input
-        valid_axis_types = [
-            'linear', 'log'
-        ]
-        self._axis_type = 'linear'
+        valid_axis_types = ["linear", "log"]
+        self._axis_type = "linear"
         self._x_axis_type, self._y_axis_type = self._axis_type, self._axis_type
         if self._axis_type not in valid_axis_types:
-            raise ValueError('axis_type must be one of {options}'.format(
-                options=valid_axis_types))
+            raise ValueError("axis_type must be one of {options}".format(options=valid_axis_types))
         self._blank_labels = options._get_value(blank_labels)
         self.style = Style(self, layout)
-        self.figure = self._initialize_figure(self._axis_type,
-                                              self._axis_type)
-        self.style._apply_settings('chart')
+        self.figure = self._initialize_figure(self._axis_type, self._axis_type)
+        self.style._apply_settings("chart")
         self.callout = Callout(self)
-        self.axes = BaseAxes._get_axis_class(self._axis_type,
-                                             self._axis_type)(self)
+        self.axes = BaseAxes._get_axis_class(self._axis_type, self._axis_type)(self)
         self.plot = PlotRadar(self)
         self._source = self._add_source_to_figure()
         self._subtitle_glyph = self._add_subtitle_to_figure()
@@ -83,40 +75,41 @@ class RadarChart(Chart):
 
 
 class PlotRadar(BasePlot):
-
-    _X_COLUMN = '__xs'
-    _Y_COLUMN = '__ys'
-    _THETA_COLUMN = '__theta'
+    _X_COLUMN = "__xs"
+    _Y_COLUMN = "__ys"
+    _THETA_COLUMN = "__theta"
 
     @staticmethod
     def _get_thetas(num_vars):
-        thetas = np.linspace(0, 2*np.pi, num_vars, endpoint=False)
+        thetas = np.linspace(0, 2 * np.pi, num_vars, endpoint=False)
         # rotate theta such that the first axis is at the top
-        thetas += np.pi/2
+        thetas += np.pi / 2
         return thetas
 
     @staticmethod
     def _to_xy_coords(df, r, theta, center=0, offset=0.00):
-        """ Returns the x and y coordinates corresponding to the magnitudes of
+        """Returns the x and y coordinates corresponding to the magnitudes of
         each variable displayed in the radar plot
         """
         # offset from center of circle
         ys = (df[r] + offset) * np.sin(df[theta]) + center
         xs = (df[r] + offset) * np.cos(df[theta]) + center
-        return pd.DataFrame({'xs': xs, 'ys': ys})
+        return pd.DataFrame({"xs": xs, "ys": ys})
 
-    def text(self,
-             data_frame,
-             radius_column,
-             text_column,
-             color_column=None,
-             color_order=None,
-             font_size='1em',
-             x_offset=0,
-             y_offset=0,
-             angle=0,
-             text_color=None,
-             text_align='left'):
+    def text(
+        self,
+        data_frame,
+        radius_column,
+        text_column,
+        color_column=None,
+        color_order=None,
+        font_size="1em",
+        x_offset=0,
+        y_offset=0,
+        angle=0,
+        text_color=None,
+        text_align="left",
+    ):
         """Text plot.
 
         Args:
@@ -139,34 +132,26 @@ class PlotRadar(BasePlot):
                 current color palette.
             text_align (str): 'left', 'right', or 'center'
         """
-        text_font = self._chart.style._get_settings('text_callout_and_plot')[
-            'font']
+        text_font = self._chart.style._get_settings("text_callout_and_plot")["font"]
         if text_color:
             text_color = Color(text_color).get_hex_l()
             colors, color_values = [text_color], [None]
         else:
-            colors, color_values = self._get_color_and_order(
-                data_frame, color_column, color_order)
+            colors, color_values = self._get_color_and_order(data_frame, color_column, color_order)
 
-        self._set_numeric_axis_default_format(data_frame,
-                                              radius_column,
-                                              radius_column)
+        self._set_numeric_axis_default_format(data_frame, radius_column, radius_column)
 
         for color_value, color in zip(color_values, colors):
-
             if color_column is None:  # Single series
                 sliced_data = data_frame
             else:
-                sliced_data = data_frame[
-                    data_frame[color_column] == color_value]
+                sliced_data = data_frame[data_frame[color_column] == color_value]
 
             coord_df = sliced_data.copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
-                coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
 
-            source = self._named_column_data_source(
-                coord_df, series_name=color_value)
+            source = self._named_column_data_source(coord_df, series_name=color_value)
 
             self._chart.figure.text(
                 text=text_column,
@@ -178,20 +163,23 @@ class PlotRadar(BasePlot):
                 y_offset=y_offset,
                 x_offset=x_offset,
                 angle=angle,
-                angle_units='deg',
+                angle_units="deg",
                 text_font=text_font,
                 y_range_name=self._y_range_name,
-                text_align=text_align)
+                text_align=text_align,
+            )
         return self._chart
 
-    def perimeter(self,
-                  data_frame,
-                  radius_column,
-                  color_column=None,
-                  color_order=None,
-                  line_dash='solid',
-                  line_width=4,
-                  alpha=1.0):
+    def perimeter(
+        self,
+        data_frame,
+        radius_column,
+        color_column=None,
+        color_order=None,
+        line_dash="solid",
+        line_width=4,
+        alpha=1.0,
+    ):
         """Perimeter line plot.
 
         Args:
@@ -210,37 +198,29 @@ class PlotRadar(BasePlot):
             line_width (int, optional): Width of the line
             alpha (float): Alpha value.
         """
-        settings = self._chart.style._get_settings('line_plot')
-        line_cap = settings['line_cap']
-        line_join = settings['line_join']
+        settings = self._chart.style._get_settings("line_plot")
+        line_cap = settings["line_cap"]
+        line_join = settings["line_join"]
 
-        colors, color_values = self._get_color_and_order(
-            data_frame, color_column, color_order)
+        colors, color_values = self._get_color_and_order(data_frame, color_column, color_order)
 
-        self._set_numeric_axis_default_format(data_frame,
-                                              radius_column,
-                                              radius_column)
+        self._set_numeric_axis_default_format(data_frame, radius_column, radius_column)
 
         for color_value, color in zip(color_values, colors):
-
             if color_column is None:  # Single line
                 sliced_data = data_frame
             else:
-                sliced_data = data_frame[
-                    data_frame[color_column] == color_value]
+                sliced_data = data_frame[data_frame[color_column] == color_value]
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
-                coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
             # Add endpoint
             coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
-            source = self._named_column_data_source(
-                coord_df, series_name=color_value)
+            source = self._named_column_data_source(coord_df, series_name=color_value)
 
-            color_value = str(
-                color_value) if color_value is not None else color_value
+            color_value = str(color_value) if color_value is not None else color_value
 
             self._plot_with_legend(
                 self._chart.figure.line,
@@ -254,21 +234,16 @@ class PlotRadar(BasePlot):
                 line_cap=line_cap,
                 line_dash=line_dash,
                 alpha=alpha,
-                y_range_name=self._y_range_name
-                )
+                y_range_name=self._y_range_name,
+            )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
-            self._chart.style._apply_settings('legend')
+            self._chart.style._apply_settings("legend")
 
         return self._chart
 
-    def area(self,
-             data_frame,
-             radius_column,
-             color_column=None,
-             color_order=None,
-             alpha=.2):
+    def area(self, data_frame, radius_column, color_column=None, color_order=None, alpha=0.2):
         """Area plot.
 
         Args:
@@ -280,33 +255,25 @@ class PlotRadar(BasePlot):
                 'color_column' for specific sorting of the colors.
             alpha (float): Alpha value.
         """
-        colors, color_values = self._get_color_and_order(
-            data_frame, color_column, color_order)
+        colors, color_values = self._get_color_and_order(data_frame, color_column, color_order)
 
-        self._set_numeric_axis_default_format(data_frame,
-                                              radius_column,
-                                              radius_column)
+        self._set_numeric_axis_default_format(data_frame, radius_column, radius_column)
 
         for color_value, color in zip(color_values, colors):
-
             if color_column is None:  # Single line
                 sliced_data = data_frame
             else:
-                sliced_data = data_frame[
-                    data_frame[color_column] == color_value]
+                sliced_data = data_frame[data_frame[color_column] == color_value]
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
-                coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
             # Add endpoint
             coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
-            source = self._named_column_data_source(
-                coord_df, series_name=color_value)
+            source = self._named_column_data_source(coord_df, series_name=color_value)
 
-            color_value = str(
-                color_value) if color_value is not None else color_value
+            color_value = str(color_value) if color_value is not None else color_value
 
             self._plot_with_legend(
                 self._chart.figure.patch,
@@ -317,23 +284,25 @@ class PlotRadar(BasePlot):
                 color=color,
                 line_width=0,
                 alpha=alpha,
-                y_range_name=self._y_range_name
-                )
+                y_range_name=self._y_range_name,
+            )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
-            self._chart.style._apply_settings('legend')
+            self._chart.style._apply_settings("legend")
 
         return self._chart
 
-    def radius(self,
-               data_frame,
-               radius_column,
-               color_column=None,
-               color_order=None,
-               line_dash='solid',
-               line_width=4,
-               alpha=1.0):
+    def radius(
+        self,
+        data_frame,
+        radius_column,
+        color_column=None,
+        color_order=None,
+        line_dash="solid",
+        line_width=4,
+        alpha=1.0,
+    ):
         """Radius line plot.
 
         Args:
@@ -352,33 +321,27 @@ class PlotRadar(BasePlot):
             line_width (int, optional): Width of the line
             alpha (float): Alpha value.
         """
-        settings = self._chart.style._get_settings('line_plot')
-        line_cap = settings['line_cap']
-        line_join = settings['line_join']
+        settings = self._chart.style._get_settings("line_plot")
+        line_cap = settings["line_cap"]
+        line_join = settings["line_join"]
 
-        colors, color_values = self._get_color_and_order(
-            data_frame, color_column, color_order)
+        colors, color_values = self._get_color_and_order(data_frame, color_column, color_order)
 
-        self._set_numeric_axis_default_format(
-            data_frame, radius_column, radius_column)
+        self._set_numeric_axis_default_format(data_frame, radius_column, radius_column)
 
         for color_value, color in zip(color_values, colors):
             if color_column is None:  # Single line
                 sliced_data = data_frame
             else:
-                sliced_data = data_frame[
-                    data_frame[color_column] == color_value]
+                sliced_data = data_frame[data_frame[color_column] == color_value]
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
-                coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
 
-            color_value = str(
-                color_value) if color_value is not None else color_value
+            color_value = str(color_value) if color_value is not None else color_value
 
             for i, r in coord_df.iterrows():
-
                 self._plot_with_legend(
                     self._chart.figure.line,
                     legend_label=color_value,
@@ -390,11 +353,11 @@ class PlotRadar(BasePlot):
                     line_cap=line_cap,
                     line_dash=line_dash,
                     alpha=alpha,
-                    y_range_name=self._y_range_name
-                    )
+                    y_range_name=self._y_range_name,
+                )
 
         # Set legend defaults if there are multiple series.
         if color_column is not None:
-            self._chart.style._apply_settings('legend')
+            self._chart.style._apply_settings("legend")
 
         return self._chart
