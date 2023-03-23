@@ -32,6 +32,7 @@ from bokeh.embed import file_html
 from bokeh.resources import INLINE
 from IPython.display import display
 from PIL import Image
+from PIL.Image import Resampling
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -466,7 +467,7 @@ y_axis_type='{y_axis_type}')
         image = Image.open(BytesIO(png))
         target_dimensions = (self.style.plot_width, self.style.plot_height)
         if image.size != target_dimensions:
-            image = image.resize(target_dimensions, resample=Image.LANCZOS)
+            image = image.resize(target_dimensions, resample=Resampling.LANCZOS)
         return image
 
     def _set_svg_backend_decorator(f):

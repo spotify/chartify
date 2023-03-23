@@ -1,11 +1,11 @@
-pandas>=1.0.0,<2.0.0
-Pillow>=8.4.0
+pandas>=1.2.0,<2.0.0
+Pillow>=9.0.0
 # Avoid selenium bug:
 # https://github.com/SeleniumHQ/selenium/issues/5296
-selenium>=3.7.0,<=3.8.0
-bokeh>=2.0.0
-scipy>=1.0.0,<2.0.0
-ipykernel>=5.0
-ipython>=7.0
-pyyaml>=5.3.1
-Jinja2<3.1.0
+selenium>=4.0.0
+bokeh>=3.0.0
+scipy>=1.6.0,<2.0.0
+ipykernel>=6.0
+ipython>=7.17.0
+pyyaml>=6.0.0
+Jinja2>=3.1.0
