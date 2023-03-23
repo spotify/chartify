@@ -20,6 +20,9 @@ import chartify
 import pandas as pd
 import numpy as np
 import bokeh
+import bokeh.models
+
+from packaging import version
 
 
 def chart_data(chart_object, series_name):
@@ -41,7 +44,7 @@ def chart_color_mapper(chart_object):
 
 
 class TestHeatmap:
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category1': ['a', 'a', 'b', 'b'],
             'category2': [1, 2, 1, 2],
@@ -65,16 +68,18 @@ class TestHeatmap:
 
 
 class TestLine:
-    def setup(self):
-        self.data = pd.DataFrame({
-            'category1': ['a', 'b', 'a', 'b', 'a', 'b'],
-            'number1': [1, 1, 2, 2, 3, 3],
-            'number2': [5, 4, 10, -3, 0, -10],
-            'datetimes': [
-                '2017-01-01', '2017-01-01', '2017-01-02', '2017-01-02',
-                '2017-01-03', '2017-01-03'
-            ],
-        })
+    def setup_method(self):
+        self.data = pd.DataFrame(
+            {
+                'category1': ['a', 'b', 'a', 'b', 'a', 'b'],
+                'number1': [1, 1, 2, 2, 3, 3],
+                'number2': [5, 4, 10, -3, 0, -10],
+                'datetimes': [
+                    '2017-01-01', '2017-01-01', '2017-01-02', '2017-01-02',
+                    '2017-01-03', '2017-01-03'
+                ],
+            }
+        )
 
     def test_single_numeric_line(self):
         """Single line test"""
@@ -113,7 +118,7 @@ class TestLine:
 
 
 class TestScatter:
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category1': ['a', 'b', 'a', 'b', 'a', 'b'],
             'number1': [1, 1, 2, 2, 3, 3],
@@ -161,7 +166,7 @@ class TestScatter:
 
 
 class TestText:
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'text': ['a', 'b', 'a', 'b', 'a', 'b'],
             'number1': [1, 1, 2, 2, 3, 3],
@@ -244,14 +249,13 @@ class TestAreaPlot:
     - Multi series interval
     """
 
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category': ['a', 'a', 'b', 'b'],
             'upper': [20, 30, 2, 3],
             'lower': [10, 20, 1, 2],
             'x': [1, 2, 1, 2]
         })
-
         self.data_missing = pd.DataFrame({
             'category': ['a', 'a', 'b', 'b', 'a', 'c'],
             'upper': [20, 30, 2, 3, 40, 4],
@@ -327,7 +331,7 @@ class TestAreaPlot:
         ch.plot.area(test_data, 'x', 'upper', color_column='category')
         assert (np.array_equal(chart_data(ch, 'a')['x'], [1, 2, 3, 3, 2, 1]))
         assert (np.array_equal(
-            chart_data(ch, 'a')['upper'], [20., 30., 40.,  0.,  0.,  0.]))
+            chart_data(ch, 'a')['upper'], [20., 30., 40., 0., 0., 0.]))
 
         assert (np.array_equal(chart_data(ch, 'c')['x'], [1, 2, 3, 3, 2, 1]))
         assert (np.array_equal(
@@ -341,7 +345,7 @@ class TestAreaPlot:
             test_data, 'x', 'upper', color_column='category', stacked=True)
         assert (np.array_equal(chart_data(ch, 'a')['x'], [1, 2, 3, 3, 2, 1]))
         assert (np.array_equal(
-            chart_data(ch, 'a')['upper'], [20., 30., 40.,  0.,  0.,  0.]))
+            chart_data(ch, 'a')['upper'], [20., 30., 40., 0., 0., 0.]))
 
         assert (np.array_equal(chart_data(ch, 'c')['x'], [1, 2, 3, 3, 2, 1]))
         assert (np.array_equal(
@@ -351,7 +355,7 @@ class TestAreaPlot:
 class TestBarLollipopParallel:
     """Tests for bar, lollipop, and parallel plots"""
 
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category1': ['a', 'b', 'a', 'b', 'a'],
             'category2': [1, 1, 2, 2, 3],
@@ -438,10 +442,20 @@ class TestBarLollipopParallel:
             categorical_columns='category2',
             numeric_column='number',
             color_column='category2')
+
+        if version.parse(bokeh.__version__) < version.parse("3.0"):
+            assert (np.array_equal(
+                chart_color_mapper(ch).factors, ['1', '2', '3']))
+            assert (np.array_equal(chart_color_mapper(ch).palette,
+                                   ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            return
+
+        vbar_glyph = ch.figure.renderers[0].glyph
         assert (np.array_equal(
-            chart_color_mapper(ch).factors, ['1', '2', '3']))
-        assert (np.array_equal(
-            chart_color_mapper(ch).palette, ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            vbar_glyph.fill_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(vbar_glyph.fill_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        assert vbar_glyph.line_color == 'white'
 
     def test_lollipop_color_column(self):
         sliced_data = self.data[self.data['category1'] == 'a']
@@ -451,10 +465,30 @@ class TestBarLollipopParallel:
             categorical_columns='category2',
             numeric_column='number',
             color_column='category2')
+
+        if version.parse(bokeh.__version__) < version.parse("3.0"):
+            assert (np.array_equal(
+                chart_color_mapper(ch).factors, ['1', '2', '3']))
+            assert (np.array_equal(chart_color_mapper(ch).palette,
+                                   ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            return
+
+        segment_glyph = ch.figure.renderers[0].glyph
+        circle_glyph = ch.figure.renderers[1].glyph
+        # check segment colors
         assert (np.array_equal(
-            chart_color_mapper(ch).factors, ['1', '2', '3']))
+            segment_glyph.line_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(segment_glyph.line_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        # check circle colors
         assert (np.array_equal(
-            chart_color_mapper(ch).palette, ['#1f77b4', '#ff7f0e', '#2ca02c']))
+            circle_glyph.line_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(circle_glyph.line_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
+        assert (np.array_equal(
+            circle_glyph.fill_color.transform.factors, ['1', '2', '3']))
+        assert (np.array_equal(circle_glyph.fill_color.transform.palette,
+                               ['#1f77b4', '#ff7f0e', '#2ca02c']))
 
     def test_bar_parallel_color_column(self):
         ch = chartify.Chart(x_axis_type='categorical')
@@ -480,7 +514,7 @@ class TestBarLollipopParallel:
 
 
 class TestBarNumericSort:
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category': ['a', 'a', 'b', 'b', 'a', 'c'],
             'upper': [20, 30, 2, 3, 40, 4],
@@ -496,7 +530,7 @@ class TestBarNumericSort:
                     categorical_order_by='labels',
                     categorical_order_ascending=True)
         assert (np.array_equal(
-            chart_data(ch, '')['upper'], [20,  2, 30,  3,  4, 40]))
+            chart_data(ch, '')['upper'], [20, 2, 30, 3, 4, 40]))
         assert (np.array_equal(
             chart_data(ch, '')['index'], [0, 1, 2, 3, 4, 5]))
 
@@ -541,14 +575,14 @@ class TestBoxplot:
                     names=('category', 'sub-category'))
                 assert clean_data[i]['factors'].equals(multi_index)
                 assert clean_data[i]['factors'].equal_levels(multi_index)
-                assert np.array_equal(clean_data[i]['numeric'],
-                                      [120, 15, 20, 130, -20, 170])
+                assert np.array_equal(clean_data[i]['numeric'], [120, 15, 20, 130, -20, 170])
 
-    def setup(self):
+    def setup_method(self):
         np.random.seed(10)
-        random_series_1 = pd.Series(list(np.random.randint(10, 60, 50))+[120])
-        random_series_2 = pd.Series(list(np.random.randint(40, 200, 50))
-                                    + list(np.random.randint(180, 225, 50)))
+        random_series_1 = pd.Series(list(np.random.randint(10, 60, 50)) + [120])
+        random_series_2 = pd.Series(
+            list(np.random.randint(40, 200, 50)) + list(np.random.randint(180, 225, 50))
+        )
         df1 = pd.DataFrame({'category': 'a',
                             'sub-category': 'd',
                             'numeric': random_series_1.values})
@@ -646,7 +680,7 @@ class TestBoxplot:
 class TestBarStacked:
     """Tests for stacked bar plots"""
 
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category1': ['a', 'b', 'a', 'b', 'a'],
             'category2': [1, 1, 2, 2, 3],
@@ -656,7 +690,7 @@ class TestBarStacked:
 
 class TestAxisFormatPrecision:
 
-    def setup(self):
+    def setup_method(self):
         self.tests = {
             (0, 0): "0,0.[0]",
             (0, 0.004): "0,0.[0000]",
@@ -685,7 +719,7 @@ class TestAxisFormatPrecision:
 
 
 class TestHexbin:
-    def setup(self):
+    def setup_method(self):
         n_samples = 2000
         np.random.seed(10)
         x_values = 2 + .5 * np.random.standard_normal(n_samples)
@@ -698,7 +732,7 @@ class TestHexbin:
             x_axis_type='density',
             y_axis_type='density',
             layout='slide_100%',
-            )
+        )
         ch.plot.hexbin(self.data, 'x', 'y', .5, orientation='flattop')
         assert (ch.data[0]['r'].tolist() == [
             -2, -1, -2, -1, -3, -2, -1, -3, -2, -4, -3
@@ -714,7 +748,7 @@ class TestHexbin:
             x_axis_type='density',
             y_axis_type='density',
             layout='slide_50%',
-            )
+        )
         ch.plot.hexbin(self.data, 'x', 'y', 1, orientation='flattop')
         assert (ch.data[0]['r'].tolist() == [
             -1, 0, -2, -1, 0, -3, -2, -1
@@ -728,7 +762,7 @@ class TestHexbin:
 
 
 class TestHistogram:
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'values': [0, 4, 8, 22, 2, 2, 10],
             'dimension': ['a', 'a', 'a', 'a', 'b', 'b', 'b']

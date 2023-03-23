@@ -23,9 +23,12 @@ from itertools import cycle
 import yaml
 
 import bokeh
+from bokeh.core.properties import value as bokeh_value
 
 from chartify._core import colors
 from chartify._core.options import options
+
+from packaging import version
 
 
 class BasePalette:
@@ -36,7 +39,6 @@ class BasePalette:
         self._set_palette_colors(palette)
 
     def _set_palette_colors(self, palette):
-
         try:
             # Palette is a string.
             # Retreive the appropriate ColorPalette object.
@@ -45,49 +47,41 @@ class BasePalette:
         except AttributeError:
             pass
 
-        palette_colors = getattr(palette, 'colors', None)
+        palette_colors = getattr(palette, "colors", None)
         if palette_colors is not None:
             # Palette is a ColorPalette object
             self._colors = [color.get_hex_l() for color in palette_colors]
         else:
             # Palette is a list of color strings
-            self._colors = [
-                colors.Color(color).get_hex_l() for color in palette
-            ]
+            self._colors = [colors.Color(color).get_hex_l() for color in palette]
 
     @classmethod
-    def _get_palette_class(cls,
-                           chart,
-                           palette_type='categorical',
-                           palette=None,
-                           accent_values=None):
-        if palette_type == 'categorical':
+    def _get_palette_class(cls, chart, palette_type="categorical", palette=None, accent_values=None):
+        if palette_type == "categorical":
             if palette is None:
-                palette_name = options.get_option(
-                    'style.color_palette_categorical')
+                palette_name = options.get_option("style.color_palette_categorical")
                 palette = colors.color_palettes[palette_name]
             return CategoricalPalette(chart, palette)
-        elif palette_type == 'sequential':
+        elif palette_type == "sequential":
             if palette is None:
-                palette_name = options.get_option(
-                    'style.color_palette_sequential')
+                palette_name = options.get_option("style.color_palette_sequential")
                 palette = colors.color_palettes[palette_name]
             return OrdinalPalette(chart, palette)
-        elif palette_type == 'diverging':
+        elif palette_type == "diverging":
             if palette is None:
-                palette_name = options.get_option(
-                    'style.color_palette_diverging')
+                palette_name = options.get_option("style.color_palette_diverging")
                 palette = colors.color_palettes[palette_name]
             return OrdinalPalette(chart, palette)
-        elif palette_type == 'accent':
+        elif palette_type == "accent":
             if palette is None:
-                palette_name = options.get_option('style.color_palette_accent')
+                palette_name = options.get_option("style.color_palette_accent")
                 palette = colors.color_palettes[palette_name]
             return AccentPalette(chart, palette, accent_values)
         else:
             raise ValueError(
                 """Type must be one of: ('categorical', 'sequential',
-                                         'diverging', 'accent').""")
+                                         'diverging', 'accent')."""
+            )
 
     def next_colors(self, color_column_values):
         """Return a list of colors associated with each value."""
@@ -129,11 +123,9 @@ class OrdinalPalette(OrderedPaletteMixin, BasePalette):
         """Return a list of colors associated with each value."""
         palette_colors = self._colors
         if len(color_column_values) > len(self._colors):
-            palette = (colors.ColorPalette.from_hex_list(colors=self._colors)
-                       .expand_palette(len(color_column_values)))
+            palette = colors.ColorPalette.from_hex_list(colors=self._colors).expand_palette(len(color_column_values))
             palette_colors = [color.get_hex_l() for color in palette.colors]
-        return bokeh.palettes.linear_palette(palette_colors,
-                                             len(color_column_values))
+        return bokeh.palettes.linear_palette(palette_colors, len(color_column_values))
 
 
 class AccentPalette(BasePalette):
@@ -148,8 +140,7 @@ class AccentPalette(BasePalette):
         super(AccentPalette, self).__init__(chart, palette)
         self._accent_color_map = None
         self.set_accent_values(accent_values)
-        self.set_default_color(
-            options.get_option('style.color_palette_accent_default_color'))
+        self.set_default_color(options.get_option("style.color_palette_accent_default_color"))
 
     def set_accent_values(self, accent_values):
         """Set values that should be accented.
@@ -159,13 +150,9 @@ class AccentPalette(BasePalette):
         should be accented or dictionary of 'value': 'color' pairs.
         """
         if isinstance(accent_values, dict):
-            self._accent_color_map = {
-                value: colors.Color(color).get_hex_l()
-                for value, color in accent_values.items()
-            }
+            self._accent_color_map = {value: colors.Color(color).get_hex_l() for value, color in accent_values.items()}
         else:
-            self._accent_color_map = dict(
-                list(zip(accent_values, cycle(self._colors))))
+            self._accent_color_map = dict(list(zip(accent_values, cycle(self._colors))))
         return self._chart
 
     def next_color(self, color_column_value=None):
@@ -174,8 +161,7 @@ class AccentPalette(BasePalette):
         Args:
             color_column_value: TODO
         """
-        return self._accent_color_map.get(color_column_value,
-                                          self._default_color)
+        return self._accent_color_map.get(color_column_value, self._default_color)
 
     def set_default_color(self, color):
         """
@@ -198,162 +184,168 @@ class Style:
         self._set_width_and_height(layout)
 
         self.settings = {
-            'legend': {
-                'figure.legend.orientation': 'horizontal',
-                'figure.legend.location': 'top_left',
-                'figure.legend.label_text_font': 'helvetica'
+            "legend": {
+                "figure.legend.orientation": "horizontal",
+                "figure.legend.location": "top_left",
+                "figure.legend.label_text_font": "helvetica",
             },
-            'chart': {
-                'figure.background_fill_color': "white",
-                'figure.xgrid.grid_line_color': None,
-                'figure.ygrid.grid_line_color': None,
-                'figure.border_fill_color': "white",
-                'figure.min_border_left': 60,
-                'figure.min_border_right': 60,
-                'figure.min_border_top': 40,
-                'figure.min_border_bottom': 60,
-                'figure.xaxis.axis_line_width': 1,
-                'figure.yaxis.axis_line_width': 1,
-                'figure.yaxis.axis_line_color': "#C0C0C0",
-                'figure.xaxis.axis_line_color': "#C0C0C0",
-                'figure.yaxis.axis_label_text_color': "#666666",
-                'figure.xaxis.axis_label_text_color': "#666666",
-                'figure.xaxis.major_tick_line_color': "#C0C0C0",
-                'figure.xaxis.minor_tick_line_color': "#C0C0C0",
-                'figure.yaxis.major_tick_line_color': "#C0C0C0",
-                'figure.yaxis.minor_tick_line_color': "#C0C0C0",
-                'figure.xaxis.major_label_text_color': '#898989',
-                'figure.yaxis.major_label_text_color': '#898989',
-                'figure.outline_line_alpha': 1,
-                'figure.outline_line_color': 'white',
-                'figure.xaxis.axis_label_text_font': 'helvetica',
-                'figure.yaxis.axis_label_text_font': 'helvetica',
-                'figure.yaxis.major_label_text_font': 'helvetica',
-                'figure.xaxis.major_label_text_font': 'helvetica',
-                'figure.yaxis.axis_label_text_font_style': 'bold',
-                'figure.xaxis.axis_label_text_font_style': 'bold',
-                'figure.yaxis.axis_label_text_font_size': "11pt",
-                'figure.xaxis.axis_label_text_font_size': "11pt",
-                'figure.yaxis.major_label_text_font_size': "10pt",
-                'figure.xaxis.major_label_text_font_size': "10pt",
-                'figure.title.text_font': 'helvetica',
-                'figure.title.text_color': '#333333',
-                'figure.title.text_font_size': "18pt",
-                'figure.xaxis.minor_tick_out': 1,
-                'figure.yaxis.minor_tick_out': 1,
-                'figure.xaxis.major_tick_line_width': 1,
-                'figure.yaxis.major_tick_line_width': 1,
-                'figure.xaxis.major_tick_out': 4,
-                'figure.yaxis.major_tick_out': 4,
-                'figure.xaxis.major_tick_in': 0,
-                'figure.yaxis.major_tick_in': 0,
+            "chart": {
+                "figure.background_fill_color": "white",
+                "figure.xgrid.grid_line_color": None,
+                "figure.ygrid.grid_line_color": None,
+                "figure.border_fill_color": "white",
+                "figure.min_border_left": 60,
+                "figure.min_border_right": 60,
+                "figure.min_border_top": 40,
+                "figure.min_border_bottom": 60,
+                "figure.xaxis.axis_line_width": 1,
+                "figure.yaxis.axis_line_width": 1,
+                "figure.yaxis.axis_line_color": "#C0C0C0",
+                "figure.xaxis.axis_line_color": "#C0C0C0",
+                "figure.yaxis.axis_label_text_color": "#666666",
+                "figure.xaxis.axis_label_text_color": "#666666",
+                "figure.xaxis.major_tick_line_color": "#C0C0C0",
+                "figure.xaxis.minor_tick_line_color": "#C0C0C0",
+                "figure.yaxis.major_tick_line_color": "#C0C0C0",
+                "figure.yaxis.minor_tick_line_color": "#C0C0C0",
+                "figure.xaxis.major_label_text_color": "#898989",
+                "figure.yaxis.major_label_text_color": "#898989",
+                "figure.outline_line_alpha": 1,
+                "figure.outline_line_color": "white",
+                "figure.xaxis.axis_label_text_font": "helvetica",
+                "figure.yaxis.axis_label_text_font": "helvetica",
+                "figure.yaxis.major_label_text_font": "helvetica",
+                "figure.xaxis.major_label_text_font": "helvetica",
+                "figure.yaxis.axis_label_text_font_style": "bold",
+                "figure.xaxis.axis_label_text_font_style": "bold",
+                "figure.yaxis.axis_label_text_font_size": "11pt",
+                "figure.xaxis.axis_label_text_font_size": "11pt",
+                "figure.yaxis.major_label_text_font_size": "10pt",
+                "figure.xaxis.major_label_text_font_size": "10pt",
+                "figure.title.text_font": "helvetica",
+                "figure.title.text_color": "#333333",
+                "figure.title.text_font_size": "18pt",
+                "figure.xaxis.minor_tick_out": 1,
+                "figure.yaxis.minor_tick_out": 1,
+                "figure.xaxis.major_tick_line_width": 1,
+                "figure.yaxis.major_tick_line_width": 1,
+                "figure.xaxis.major_tick_out": 4,
+                "figure.yaxis.major_tick_out": 4,
+                "figure.xaxis.major_tick_in": 0,
+                "figure.yaxis.major_tick_in": 0,
             },
-            'categorical_xaxis': {
+            "categorical_xaxis": {
                 # Used for grouped categorical axes
-                'figure.xaxis.separator_line_alpha': 0,
-                'figure.xaxis.subgroup_text_font': 'helvetica',
-                'figure.xaxis.group_text_font': 'helvetica',
-                'figure.xaxis.subgroup_text_font_size': "11pt",
-                'figure.xaxis.group_text_font_size': "11pt",
-                'figure.x_range.factor_padding': .25
+                "figure.xaxis.separator_line_alpha": 0,
+                "figure.xaxis.subgroup_text_font": "helvetica",
+                "figure.xaxis.group_text_font": "helvetica",
+                "figure.xaxis.subgroup_text_font_size": "11pt",
+                "figure.xaxis.group_text_font_size": "11pt",
+                "figure.x_range.factor_padding": 0.25,
             },
-            'categorical_yaxis': {
+            "categorical_yaxis": {
                 # Used for grouped categorical axes
-                'figure.yaxis.separator_line_alpha': 0,
-                'figure.yaxis.subgroup_text_font': 'helvetica',
-                'figure.yaxis.group_text_font': 'helvetica',
-                'figure.y_range.factor_padding': .25,
-                'figure.yaxis.subgroup_text_font_size': "11pt",
-                'figure.yaxis.group_text_font_size': "11pt",
+                "figure.yaxis.separator_line_alpha": 0,
+                "figure.yaxis.subgroup_text_font": "helvetica",
+                "figure.yaxis.group_text_font": "helvetica",
+                "figure.y_range.factor_padding": 0.25,
+                "figure.yaxis.subgroup_text_font_size": "11pt",
+                "figure.yaxis.group_text_font_size": "11pt",
             },
-            'categorical_xyaxis': {
+            "categorical_xyaxis": {
                 # Used for grouped categorical axes
-                'figure.yaxis.separator_line_alpha': 0,
-                'figure.yaxis.subgroup_text_font': 'helvetica',
-                'figure.yaxis.group_text_font': 'helvetica',
-                'figure.yaxis.subgroup_text_font_size': "11pt",
-                'figure.yaxis.group_text_font_size': "11pt",
+                "figure.yaxis.separator_line_alpha": 0,
+                "figure.yaxis.subgroup_text_font": "helvetica",
+                "figure.yaxis.group_text_font": "helvetica",
+                "figure.yaxis.subgroup_text_font_size": "11pt",
+                "figure.yaxis.group_text_font_size": "11pt",
                 # Used for grouped categorical axes
-                'figure.xaxis.separator_line_alpha': 0,
-                'figure.xaxis.subgroup_text_font': 'helvetica',
-                'figure.xaxis.group_text_font': 'helvetica',
-                'figure.xaxis.subgroup_text_font_size': "11pt",
-                'figure.xaxis.group_text_font_size': "11pt",
+                "figure.xaxis.separator_line_alpha": 0,
+                "figure.xaxis.subgroup_text_font": "helvetica",
+                "figure.xaxis.group_text_font": "helvetica",
+                "figure.xaxis.subgroup_text_font_size": "11pt",
+                "figure.xaxis.group_text_font_size": "11pt",
             },
-            'subtitle': {
-                'subtitle_align': 'left',
-                'subtitle_text_color': '#666666',
-                'subtitle_location': 'above',
-                'subtitle_text_size': '12pt',
-                'subtitle_text_font': 'helvetica'
+            "subtitle": {
+                "subtitle_align": "left",
+                "subtitle_text_color": "#666666",
+                "subtitle_location": "above",
+                "subtitle_text_size": "12pt",
+                "subtitle_text_font": "helvetica",
             },
-            'text_callout_and_plot': {
-                'font': 'helvetica',
+            "text_callout_and_plot": {
+                "font": self._font_value("helvetica"),
             },
-            'interval_plot': {
-                'space_between_bars': .25,
-                'margin': .05,
-                'bar_width': .9,
-                'space_between_categories': 1.15,
+            "interval_plot": {
+                "space_between_bars": 0.25,
+                "margin": 0.05,
+                "bar_width": 0.9,
+                "space_between_categories": 1.15,
                 # Note each stem is drawn twice
-                'interval_end_stem_size': .1 / 2,
-                'interval_midpoint_stem_size': .03 / 2
+                "interval_end_stem_size": 0.1 / 2,
+                "interval_midpoint_stem_size": 0.03 / 2,
             },
-            'line_plot': {
-                'line_cap': 'round',
-                'line_join': 'round',
-                'line_width': 4,
-                'line_dash': 'solid'
+            "line_plot": {
+                "line_cap": "round",
+                "line_join": "round",
+                "line_width": 4,
+                "line_dash": "solid",
             },
-            'second_y_axis': {
-                'figure.yaxis[1].axis_label_text_color': "#666666",
-                'figure.yaxis[1].axis_line_color': "#C0C0C0",
-                'figure.yaxis[1].axis_line_width': 1,
-                'figure.yaxis[1].major_tick_line_color': "#C0C0C0",
-                'figure.yaxis[1].minor_tick_line_color': "#C0C0C0",
-                'figure.yaxis[1].major_label_text_color': '#898989',
-                'figure.yaxis[1].axis_label_text_font': 'helvetica',
-                'figure.yaxis[1].major_label_text_font': 'helvetica',
-                'figure.yaxis[1].axis_label_text_font_style': 'bold',
-                'figure.yaxis[1].axis_label_text_font_size': "11pt",
-                'figure.yaxis[1].major_label_text_font_size': "10pt",
-                'figure.yaxis[1].minor_tick_out': 1,
-                'figure.yaxis[1].major_tick_line_width': 1,
-                'figure.yaxis[1].major_tick_out': 4,
-                'figure.yaxis[1].major_tick_in': 0,
-            }
+            "second_y_axis": {
+                "figure.yaxis[1].axis_label_text_color": "#666666",
+                "figure.yaxis[1].axis_line_color": "#C0C0C0",
+                "figure.yaxis[1].axis_line_width": 1,
+                "figure.yaxis[1].major_tick_line_color": "#C0C0C0",
+                "figure.yaxis[1].minor_tick_line_color": "#C0C0C0",
+                "figure.yaxis[1].major_label_text_color": "#898989",
+                "figure.yaxis[1].axis_label_text_font": "helvetica",
+                "figure.yaxis[1].major_label_text_font": "helvetica",
+                "figure.yaxis[1].axis_label_text_font_style": "bold",
+                "figure.yaxis[1].axis_label_text_font_size": "11pt",
+                "figure.yaxis[1].major_label_text_font_size": "10pt",
+                "figure.yaxis[1].minor_tick_out": 1,
+                "figure.yaxis[1].major_tick_line_width": 1,
+                "figure.yaxis[1].major_tick_out": 4,
+                "figure.yaxis[1].major_tick_in": 0,
+            },
         }
 
-        config_filename = options.get_option('config.style_settings')
+        config_filename = options.get_option("config.style_settings")
         try:
-            self._settings_from_yaml(
-                config_filename, apply_chart_settings=False)
+            self._settings_from_yaml(config_filename, apply_chart_settings=False)
         except FileNotFoundError:
             pass
 
-    def _set_width_and_height(self, layout='slide_100%'):
+    @staticmethod
+    def _font_value(text_font):
+        # https://github.com/bokeh/bokeh/issues/11044
+        if version.parse(bokeh.__version__) < version.parse("2.3"):
+            return text_font
+        else:  # >= 2.3
+            return bokeh_value(text_font)
+
+    def _set_width_and_height(self, layout="slide_100%"):
         """Set plot width and height based on the layout"""
         self.plot_width = 960
         self.plot_height = 540
-        height_multiplier, width_multiplier = 1., 1.
+        height_multiplier, width_multiplier = 1.0, 1.0
 
-        if layout == 'slide_75%':
-            height_multiplier = 1. * .8
-            width_multiplier = .75 * .8
+        if layout == "slide_75%":
+            height_multiplier = 1.0 * 0.8
+            width_multiplier = 0.75 * 0.8
 
-        elif layout == 'slide_50%':
-            height_multiplier = 1.
-            width_multiplier = .5
+        elif layout == "slide_50%":
+            height_multiplier = 1.0
+            width_multiplier = 0.5
 
-        elif layout == 'slide_25%':
-            height_multiplier = .5
-            width_multiplier = .5
+        elif layout == "slide_25%":
+            height_multiplier = 0.5
+            width_multiplier = 0.5
 
         self.plot_height = int(self.plot_height * height_multiplier)
         self.plot_width = int(self.plot_width * width_multiplier)
 
-    def set_color_palette(self, palette_type, palette=None,
-                          accent_values=None):
+    def set_color_palette(self, palette_type, palette=None, accent_values=None):
         """
         Args:
             palette_type:
@@ -376,7 +368,8 @@ class Style:
             self._chart,
             palette_type=palette_type,
             palette=palette,
-            accent_values=accent_values)
+            accent_values=accent_values,
+        )
 
         return self._chart
 
@@ -392,10 +385,10 @@ class Style:
         E.g. figures can have more than one x-axis.
         """
         # If not a bokeh attribute then we don't need to apply anything.
-        if 'figure' not in attribute and base_obj is None:
+        if "figure" not in attribute and base_obj is None:
             return
 
-        split_attribute = attribute.split('.')
+        split_attribute = attribute.split(".")
         if base_obj is None:
             base_obj = self._chart
         if len(split_attribute) == 1:
@@ -403,10 +396,10 @@ class Style:
         else:
             for i, attr in enumerate(split_attribute):
                 # If the attribute contains a list, the slice the list.
-                list_split = attr.split('[')
+                list_split = attr.split("[")
                 list_index = None
                 if len(list_split) > 1:
-                    list_index = int(list_split[1].replace(']', ''))
+                    list_index = int(list_split[1].replace("]", ""))
                     attr = list_split[0]
 
                 if i < len(split_attribute) - 1:
@@ -416,12 +409,9 @@ class Style:
                     base_obj = base_obj[list_index]
                 # If the base object is a list, then apply settings to each
                 # element.
-                if isinstance(base_obj, (list, )):
+                if isinstance(base_obj, (list,)):
                     for obj in base_obj:
-                        self._apply_bokeh_setting(
-                            '.'.join(split_attribute[i + 1:]),
-                            value,
-                            base_obj=obj)
+                        self._apply_bokeh_setting(".".join(split_attribute[i + 1 :]), value, base_obj=obj)
                     break
             else:
                 setattr(base_obj, attr, value)
@@ -438,7 +428,7 @@ class Style:
 
     def _settings_to_yaml(self, filename):
         """Write the chart settings dict to a yaml file"""
-        with open(filename, 'w') as outfile:
+        with open(filename, "w") as outfile:
             yaml.dump(self.settings, outfile, default_flow_style=False)
 
     def _settings_from_yaml(self, filename, apply_chart_settings=True):
@@ -448,4 +438,4 @@ class Style:
         self.settings.update(yaml_settings)
         # Apply the settings that have been loaded.
         if apply_chart_settings:
-            self._apply_settings('chart')
+            self._apply_settings("chart")

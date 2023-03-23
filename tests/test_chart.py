@@ -107,7 +107,7 @@ class TestLegend:
 
 class TestChart:
 
-    def setup(self):
+    def setup_method(self):
         data = chartify.examples.example_data()
         data = data.sort_values(['date', 'fruit'])
         color_order = data['fruit'].unique()
@@ -145,7 +145,7 @@ class TestChart:
 
 class TestSecondYChart:
 
-    def setup(self):
+    def setup_method(self):
         self.data = pd.DataFrame({
             'category1': ['a', 'b', 'a', 'b', 'a', 'b'],
             'number1': [1, 1, 2, 2, 3, 3],

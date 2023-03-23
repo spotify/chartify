@@ -26,7 +26,6 @@ from math import pi
 
 
 class YAxisMixin:
-
     def __init__(self):
         self._y_axis_index = 0
         self._y_range = self._chart.figure.y_range
@@ -59,12 +58,9 @@ class YAxisMixin:
         removed with .axes.set_yaxis_label("")
         """
         self._chart.figure.yaxis[self._y_axis_index].axis_line_alpha = 0
-        self._chart.figure.yaxis[
-            self._y_axis_index].major_tick_line_color = None
-        self._chart.figure.yaxis[
-            self._y_axis_index].minor_tick_line_color = None
-        self._chart.figure.yaxis[
-            self._y_axis_index].major_label_text_color = None
+        self._chart.figure.yaxis[self._y_axis_index].major_tick_line_color = None
+        self._chart.figure.yaxis[self._y_axis_index].minor_tick_line_color = None
+        self._chart.figure.yaxis[self._y_axis_index].major_label_text_color = None
         return self._chart
 
 
@@ -78,23 +74,21 @@ class BaseAxes(YAxisMixin):
 
     @classmethod
     def _get_axis_class(cls, x_axis_type, y_axis_type):
-        if x_axis_type == 'categorical' and y_axis_type == 'categorical':
+        if x_axis_type == "categorical" and y_axis_type == "categorical":
             return CategoricalXYAxes
-        elif x_axis_type == 'categorical':
+        elif x_axis_type == "categorical":
             return NumericalYAxis
-        elif y_axis_type == 'categorical':
+        elif y_axis_type == "categorical":
             return NumericalXAxis
-        elif x_axis_type == 'datetime':
+        elif x_axis_type == "datetime":
             return DatetimeXNumericalYAxes
         return NumericalXYAxes
 
     @property
     def _vertical(self):
-        if self._chart._x_axis_type == 'density':
+        if self._chart._x_axis_type == "density":
             return False
-        elif isinstance(self, (NumericalYAxis,
-                               NumericalXYAxes,
-                               DatetimeXNumericalYAxes)):
+        elif isinstance(self, (NumericalYAxis, NumericalXYAxes, DatetimeXNumericalYAxes)):
             return True
         else:
             return False
@@ -103,8 +97,8 @@ class BaseAxes(YAxisMixin):
         xaxis_label = """ch.axes.set_xaxis_label('label (units)')"""
         yaxis_label = """ch.axes.set_yaxis_label('label (units)')"""
         if self._chart._blank_labels:
-            xaxis_label = ''
-            yaxis_label = ''
+            xaxis_label = ""
+            yaxis_label = ""
         self.set_xaxis_label(xaxis_label)
         self.set_yaxis_label(yaxis_label)
 
@@ -112,13 +106,12 @@ class BaseAxes(YAxisMixin):
     def _convert_major_orientation_labels(orientation):
         """Map the user inputted orientation values to the values expected by
         bokeh for major labels."""
-        if orientation == 'vertical':
+        if orientation == "vertical":
             orientation = pi / 180 * 90
-        elif orientation == 'diagonal':
+        elif orientation == "diagonal":
             orientation = pi / 180 * 45
-        elif orientation != 'horizontal':
-            raise ValueError(
-                'Orientation must be `horizontal`, `vertical`, or `diagonal`.')
+        elif orientation != "horizontal":
+            raise ValueError("Orientation must be `horizontal`, `vertical`, or `diagonal`.")
         return orientation
 
     def _convert_subgroup_orientation_labels(self, orientation):
@@ -126,21 +119,20 @@ class BaseAxes(YAxisMixin):
         bokeh for group labels."""
 
         if self._vertical:
-            horizontal_value = 'parallel'
+            horizontal_value = "parallel"
             vertical_value = pi / 180 * 90
         else:
-            horizontal_value = 'normal'
-            vertical_value = 'parallel'
+            horizontal_value = "normal"
+            vertical_value = "parallel"
 
-        if orientation == 'horizontal':
+        if orientation == "horizontal":
             orientation = horizontal_value
-        elif orientation == 'vertical':
+        elif orientation == "vertical":
             orientation = vertical_value
-        elif orientation == 'diagonal':
+        elif orientation == "diagonal":
             orientation = pi / 180 * 45
         else:
-            raise ValueError(
-                'Orientation must be `horizontal`, `vertical`, or `diagonal`.')
+            raise ValueError("Orientation must be `horizontal`, `vertical`, or `diagonal`.")
         return orientation
 
     @property
@@ -180,7 +172,7 @@ class BaseAxes(YAxisMixin):
 
         return self._chart
 
-    def set_xaxis_tick_orientation(self, orientation='horizontal'):
+    def set_xaxis_tick_orientation(self, orientation="horizontal"):
         """Change the orientation or the x axis tick labels.
 
         Args:
@@ -194,7 +186,7 @@ class BaseAxes(YAxisMixin):
             orientation = [orientation] * 3
 
         level_1 = orientation[0]
-        level_2 = orientation[1] if len(orientation) > 1 else 'horizontal'
+        level_2 = orientation[1] if len(orientation) > 1 else "horizontal"
         level_3 = orientation[2] if len(orientation) > 2 else level_2
 
         level_1 = self._convert_major_orientation_labels(level_1)
@@ -204,11 +196,11 @@ class BaseAxes(YAxisMixin):
         self._chart.figure.xaxis.major_label_orientation = level_1
 
         xaxis = self._chart.figure.xaxis[0]
-        has_subgroup_label = getattr(xaxis, 'subgroup_label_orientation', None)
+        has_subgroup_label = getattr(xaxis, "subgroup_label_orientation", None)
         if has_subgroup_label is not None:
             self._chart.figure.xaxis.subgroup_label_orientation = level_2
 
-        has_group_label = getattr(xaxis, 'group_label_orientation', None)
+        has_group_label = getattr(xaxis, "group_label_orientation", None)
         if has_group_label is not None:
             self._chart.figure.xaxis.group_label_orientation = level_3
         return self._chart
@@ -225,8 +217,10 @@ class NumericalXMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.x_range.end = end
-        self._chart.figure.x_range.start = start
+        if end is not None:
+            self._chart.figure.x_range.end = end
+        if start is not None:
+            self._chart.figure.x_range.start = start
         return self._chart
 
     def set_xaxis_tick_values(self, values):
@@ -270,14 +264,11 @@ class NumericalXMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.xaxis[0].formatter = (
-            bokeh.models.NumeralTickFormatter(format=num_format)
-            )
+        self._chart.figure.xaxis[0].formatter = bokeh.models.NumeralTickFormatter(format=num_format)
         return self._chart
 
 
 class NumericalYMixin:
-
     def set_yaxis_range(self, start=None, end=None):
         """Set y-axis range.
 
@@ -288,8 +279,10 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._y_range.end = end
-        self._y_range.start = start
+        if end is not None:
+            self._y_range.end = end
+        if start is not None:
+            self._y_range.start = start
         return self._chart
 
     def set_yaxis_tick_values(self, values):
@@ -301,8 +294,7 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.yaxis[
-            self._y_axis_index].ticker = FixedTicker(ticks=values)
+        self._chart.figure.yaxis[self._y_axis_index].ticker = FixedTicker(ticks=values)
         return self._chart
 
     def set_yaxis_tick_format(self, num_format):
@@ -334,8 +326,7 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.yaxis[self._y_axis_index].formatter = (
-                bokeh.models.NumeralTickFormatter(format=num_format))
+        self._chart.figure.yaxis[self._y_axis_index].formatter = bokeh.models.NumeralTickFormatter(format=num_format)
         return self._chart
 
 
@@ -420,7 +411,7 @@ class CategoricalYMixin:
             pass
         return self._chart
 
-    def set_yaxis_tick_orientation(self, orientation='horizontal'):
+    def set_yaxis_tick_orientation(self, orientation="horizontal"):
         """Change the orientation or the y axis tick labels.
 
         Args:
@@ -434,7 +425,7 @@ class CategoricalYMixin:
             orientation = [orientation] * 3
 
         level_1 = orientation[0]
-        level_2 = orientation[1] if len(orientation) > 1 else 'horizontal'
+        level_2 = orientation[1] if len(orientation) > 1 else "horizontal"
         level_3 = orientation[2] if len(orientation) > 2 else level_2
 
         level_1 = self._convert_major_orientation_labels(level_1)
@@ -454,15 +445,14 @@ class DatetimeXMixin:
     def _convert_timestamp_list_to_epoch_ms(ts_list):
         return list(
             map(
-                lambda x: (
-                    (pd.to_datetime(x) - pd.Timestamp("1970-01-01"))
-                    // pd.Timedelta('1ms')),
-                ts_list))
+                lambda x: ((pd.to_datetime(x) - pd.Timestamp("1970-01-01")) // pd.Timedelta("1ms")),
+                ts_list,
+            )
+        )
 
     @staticmethod
     def _convert_timestamp_to_epoch_ms(timestamp):
-        return (pd.to_datetime(timestamp) -
-                pd.Timestamp("1970-01-01")) // pd.Timedelta('1ms')
+        return (pd.to_datetime(timestamp) - pd.Timestamp("1970-01-01")) // pd.Timedelta("1ms")
 
     def set_xaxis_range(self, start=None, end=None):
         """Set x-axis range.
@@ -541,17 +531,17 @@ class DatetimeXMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.xaxis[
-            0].formatter = bokeh.models.DatetimeTickFormatter(
-                milliseconds=[date_format],
-                seconds=[date_format],
-                minsec=[date_format],
-                minutes=[date_format],
-                hourmin=[date_format],
-                hours=[date_format],
-                days=[date_format],
-                months=[date_format],
-                years=[date_format])
+        self._chart.figure.xaxis[0].formatter = bokeh.models.DatetimeTickFormatter(
+            milliseconds=[date_format],
+            seconds=[date_format],
+            minsec=[date_format],
+            minutes=[date_format],
+            hourmin=[date_format],
+            hours=[date_format],
+            days=[date_format],
+            months=[date_format],
+            years=[date_format],
+        )
         return self._chart
 
 
@@ -560,7 +550,7 @@ class NumericalXAxis(BaseAxes, NumericalXMixin, CategoricalYMixin):
 
     def __init__(self, chart):
         super(NumericalXAxis, self).__init__(chart)
-        self._chart.style._apply_settings('categorical_yaxis')
+        self._chart.style._apply_settings("categorical_yaxis")
 
 
 class NumericalYAxis(BaseAxes, CategoricalXMixin, NumericalYMixin):
@@ -568,7 +558,7 @@ class NumericalYAxis(BaseAxes, CategoricalXMixin, NumericalYMixin):
 
     def __init__(self, chart):
         super(NumericalYAxis, self).__init__(chart)
-        self._chart.style._apply_settings('categorical_xaxis')
+        self._chart.style._apply_settings("categorical_xaxis")
 
 
 class NumericalXYAxes(BaseAxes, NumericalXMixin, NumericalYMixin):
@@ -584,27 +574,25 @@ class CategoricalXYAxes(BaseAxes, CategoricalXMixin, CategoricalYMixin):
 
     def __init__(self, chart):
         super(CategoricalXYAxes, self).__init__(chart)
-        self._chart.style._apply_settings('categorical_xyaxis')
+        self._chart.style._apply_settings("categorical_xyaxis")
 
 
 class SecondYNumericalAxis(YAxisMixin, NumericalYMixin):
     """Axis class for second Y numerical axes."""
+
     def __init__(self, chart):
         self._chart = chart
-        self._y_range_name = 'second_y'
-        self._chart.figure.extra_y_ranges = {
-            self._y_range_name: DataRange1d(bounds='auto')
-        }
+        self._y_range_name = "second_y"
+        self._chart.figure.extra_y_ranges = {self._y_range_name: DataRange1d(bounds="auto")}
         # Add the appropriate axis type to the figure.
         axis_class = LinearAxis
-        if self._chart._second_y_axis_type == 'log':
+        if self._chart._second_y_axis_type == "log":
             axis_class = LogAxis
-        self._chart.figure.add_layout(
-            axis_class(y_range_name=self._y_range_name), 'right')
+        self._chart.figure.add_layout(axis_class(y_range_name=self._y_range_name), "right")
 
         self._y_axis_index = 1
         self._y_range = self._chart.figure.extra_y_ranges[self._y_range_name]
-        self._chart.style._apply_settings('second_y_axis')
+        self._chart.style._apply_settings("second_y_axis")
 
 
 class SecondAxis:

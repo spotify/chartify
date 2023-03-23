@@ -29,13 +29,15 @@ class Callout:
     def __init__(self, chart):
         self._chart = chart
 
-    def line(self,
-             location,
-             orientation='width',
-             line_color='black',
-             line_dash='solid',
-             line_width=2,
-             line_alpha=1.0):
+    def line(
+        self,
+        location,
+        orientation="width",
+        line_color="black",
+        line_dash="solid",
+        line_width=2,
+        line_alpha=1.0,
+    ):
         """Add line callout to the chart.
 
         Args:
@@ -58,11 +60,10 @@ class Callout:
             Current chart object
         """
         # Convert datetime values to epoch if datetime axis.
-        if isinstance(self._chart.axes,
-                      DatetimeXNumericalYAxes) and orientation == 'height':
+        if isinstance(self._chart.axes, DatetimeXNumericalYAxes) and orientation == "height":
             location = self._chart.axes._convert_timestamp_to_epoch_ms(location)
         line_color = colors.Color(line_color).get_hex_l()
-        location_units = 'data'
+        location_units = "data"
         span = bokeh.models.Span(
             location=location,
             dimension=orientation,
@@ -70,19 +71,22 @@ class Callout:
             line_dash=line_dash,
             line_width=line_width,
             location_units=location_units,
-            line_alpha=line_alpha)
+            line_alpha=line_alpha,
+        )
         self._chart.figure.add_layout(span)
         return self._chart
 
-    def line_segment(self,
-                     x_start,
-                     y_start,
-                     x_end,
-                     y_end,
-                     line_color='black',
-                     line_dash='solid',
-                     line_width=2,
-                     line_alpha=1.0):
+    def line_segment(
+        self,
+        x_start,
+        y_start,
+        x_end,
+        y_end,
+        line_color="black",
+        line_dash="solid",
+        line_width=2,
+        line_alpha=1.0,
+    ):
         """Add line segment callout to the chart.
 
         Args:
@@ -119,18 +123,13 @@ class Callout:
             line_color=line_color,
             line_width=line_width,
             line_dash=line_dash,
-            line_alpha=line_alpha)
+            line_alpha=line_alpha,
+        )
 
         self._chart.figure.add_layout(segment)
         return self._chart
 
-    def box(self,
-            top=None,
-            bottom=None,
-            left=None,
-            right=None,
-            alpha=.2,
-            color='red'):
+    def box(self, top=None, bottom=None, left=None, right=None, alpha=0.2, color="red"):
         """Add box callout to the chart.
 
         Args:
@@ -162,18 +161,21 @@ class Callout:
             left=left,
             right=right,
             fill_alpha=alpha,
-            fill_color=color)
+            fill_color=color,
+        )
         self._chart.figure.add_layout(box)
         return self._chart
 
-    def text(self,
-             text,
-             x,
-             y,
-             text_color='black',
-             text_align='left',
-             font_size='1em',
-             angle=0):
+    def text(
+        self,
+        text,
+        x,
+        y,
+        text_color="black",
+        text_align="left",
+        font_size="1em",
+        angle=0,
+    ):
         """Add text callout to the chart.
 
         Note:
@@ -194,22 +196,18 @@ class Callout:
         if isinstance(self._chart.axes, DatetimeXNumericalYAxes):
             x = self._chart.axes._convert_timestamp_to_epoch_ms(x)
         text_color = colors.Color(text_color).get_hex_l()
-        source = bokeh.models.ColumnDataSource({
-            'text': [text],
-            'x': [x],
-            'y': [y]
-        })
-        text_font = self._chart.style._get_settings('text_callout_and_plot')[
-            'font']
+        source = bokeh.models.ColumnDataSource({"text": [text], "x": [x], "y": [y]})
+        text_font = self._chart.style._get_settings("text_callout_and_plot")["font"]
         self._chart.figure.text(
-            x='x',
-            y='y',
-            text='text',
+            x="x",
+            y="y",
+            text="text",
             text_color=text_color,
             text_align=text_align,
             angle=angle,
-            angle_units='deg',
+            angle_units="deg",
             text_font=text_font,
             source=source,
-            text_font_size=font_size)
+            text_font_size=font_size,
+        )
         return self._chart
