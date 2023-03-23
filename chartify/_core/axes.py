@@ -225,8 +225,10 @@ class NumericalXMixin:
         Returns:
             Current chart object
         """
-        self._chart.figure.x_range.end = end
-        self._chart.figure.x_range.start = start
+        if end is not None:
+            self._chart.figure.x_range.end = end
+        if start is not None:
+            self._chart.figure.x_range.start = start
         return self._chart
 
     def set_xaxis_tick_values(self, values):
@@ -288,8 +290,10 @@ class NumericalYMixin:
         Returns:
             Current chart object
         """
-        self._y_range.end = end
-        self._y_range.start = start
+        if end is not None:
+            self._y_range.end = end
+        if start is not None:
+            self._y_range.start = start
         return self._chart
 
     def set_yaxis_tick_values(self, values):
