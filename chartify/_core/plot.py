@@ -2003,13 +2003,14 @@ class PlotMixedTypeXY(BasePlot):
 
         axis_factors = data_frame.groupby(categorical_columns).size()
 
+        is_string = isinstance(categorical_order_by, str)
         order_length = getattr(categorical_order_by, "__len__", None)
-        if categorical_order_by == "labels":
+        if is_string and categorical_order_by == "labels":
             axis_factors = axis_factors.sort_index(ascending=categorical_order_ascending).index
-        elif categorical_order_by == "count":
+        elif is_string and categorical_order_by == "count":
             axis_factors = axis_factors.sort_values(ascending=categorical_order_ascending).index
         # User-specified order.
-        elif order_length is not None:
+        elif not is_string and order_length is not None:
             axis_factors = categorical_order_by
         else:
             raise ValueError("""Must be 'count', 'labels', or a list of values.""")
