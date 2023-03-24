@@ -1014,9 +1014,10 @@ class PlotMixedTypeXY(BasePlot):
         if normalize:
             source = source.div(source.sum(axis=1), axis=0)
 
+        is_string = isinstance(categorical_order_by, str)
         order_length = getattr(categorical_order_by, "__len__", None)
         # Sort the categories
-        if categorical_order_by == "values":
+        if is_string and categorical_order_by == "values":
             # Recursively sort values within each level of the index.
             row_totals = source.sum(axis=1, numeric_only=True)
             row_totals.name = "sum"
@@ -1035,10 +1036,10 @@ class PlotMixedTypeXY(BasePlot):
                 ascending=categorical_order_ascending,
             )
             source = source.reindex(row_totals.index)
-        elif categorical_order_by == "labels":
+        elif is_string and categorical_order_by == "labels":
             source = source.sort_index(axis=0, ascending=categorical_order_ascending)
         # Manual sort
-        elif order_length is not None:
+        elif not is_string and order_length is not None:
             source = source.reindex(categorical_order_by, axis="index")
         else:
             raise ValueError("""Must be 'values', 'labels', or a list of values.""")
