@@ -2,6 +2,11 @@
 History
 =======
 
+4.0.1 (2023-03-24)
+------------------
+
+* Updated version requirement of pillow to avoid bug
+
 4.0.0 (2023-03-23)
 ------------------
 
