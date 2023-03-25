@@ -947,6 +947,49 @@ class PlotMixedTypeXY(BasePlot):
         else:
             return 0.9
 
+    @staticmethod
+    def _sort_categories_by_value(source, categorical_columns, categorical_order_ascending):
+        # Recursively sort values within each level of the index.
+        row_totals = source.sum(axis=1, numeric_only=True)
+        row_totals.name = "sum"
+        old_index = row_totals.index
+        row_totals = row_totals.reset_index()
+        row_totals.columns = ["_%s" % col for col in row_totals.columns]
+        row_totals.index = old_index
+
+        hierarchical_sort_cols = categorical_columns[:]
+        for i, _ in enumerate(hierarchical_sort_cols):
+            row_totals["level_%s" % i] = row_totals.groupby(hierarchical_sort_cols[: i + 1])["_sum"].transform(
+                "sum"
+            )
+        row_totals = row_totals.sort_values(
+            by=["level_%s" % i for i, _ in enumerate(hierarchical_sort_cols)],
+            ascending=categorical_order_ascending,
+        )
+        return source.reindex(row_totals.index)
+
+    @staticmethod
+    def _sort_categories(
+            source,
+            categorical_columns,
+            categorical_order_by,
+            categorical_order_ascending
+    ):
+
+        is_string = isinstance(categorical_order_by, str)
+        order_length = getattr(categorical_order_by, "__len__", None)
+        # Sort the categories
+        if is_string and categorical_order_by == "values":
+            return PlotMixedTypeXY._sort_categories_by_value(
+                source, categorical_columns, categorical_order_ascending)
+        elif is_string and categorical_order_by == "labels":
+            return source.sort_index(axis=0, ascending=categorical_order_ascending)
+        # Manual sort
+        elif not is_string and order_length is not None:
+            return source.reindex(categorical_order_by, axis="index")
+
+        raise ValueError("""Must be 'values', 'labels', or a list of values.""")
+
     def _construct_source(
         self,
         data_frame,
@@ -1014,35 +1057,7 @@ class PlotMixedTypeXY(BasePlot):
         if normalize:
             source = source.div(source.sum(axis=1), axis=0)
 
-        is_string = isinstance(categorical_order_by, str)
-        order_length = getattr(categorical_order_by, "__len__", None)
-        # Sort the categories
-        if is_string and categorical_order_by == "values":
-            # Recursively sort values within each level of the index.
-            row_totals = source.sum(axis=1, numeric_only=True)
-            row_totals.name = "sum"
-            old_index = row_totals.index
-            row_totals = row_totals.reset_index()
-            row_totals.columns = ["_%s" % col for col in row_totals.columns]
-            row_totals.index = old_index
-
-            heirarchical_sort_cols = categorical_columns[:]
-            for i, _ in enumerate(heirarchical_sort_cols):
-                row_totals["level_%s" % i] = row_totals.groupby(heirarchical_sort_cols[: i + 1])["_sum"].transform(
-                    "sum"
-                )
-            row_totals = row_totals.sort_values(
-                by=["level_%s" % i for i, _ in enumerate(heirarchical_sort_cols)],
-                ascending=categorical_order_ascending,
-            )
-            source = source.reindex(row_totals.index)
-        elif is_string and categorical_order_by == "labels":
-            source = source.sort_index(axis=0, ascending=categorical_order_ascending)
-        # Manual sort
-        elif not is_string and order_length is not None:
-            source = source.reindex(categorical_order_by, axis="index")
-        else:
-            raise ValueError("""Must be 'values', 'labels', or a list of values.""")
+        source = self._sort_categories(source, categorical_columns, categorical_order_by, categorical_order_ascending)
 
         # Cast all categorical columns to strings
         # Plotting functions will break with non-str types.
