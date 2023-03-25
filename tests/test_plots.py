@@ -794,6 +794,71 @@ class TestHistogram:
         assert (np.array_equal(chart_data(ch, 'b')['min_edge'], [2., 6.]))
 
 
+class TestCategoricalOrderBy:
+    def _assert_order_by_array_like(self, chart):
+        assert (np.array_equal(chart.figure.x_range.factors, ['b', 'd', 'a', 'c']))
+        # check bar data
+        assert (np.array_equal(chart_data(chart, '')['factors'], ['b', 'd', 'a', 'c']))
+        assert (np.array_equal(chart_data(chart, '')['number1'], [3, 1, 4, 2]))
+        # check scatter data
+        assert (np.array_equal(chart_data(chart, 'number1')['factors'], ['a', 'b', 'c', 'd']))
+        assert (np.array_equal(chart_data(chart, 'number1')['number1'], [4, 3, 2, 1]))
+
+    def setup_method(self):
+        self.data1 = pd.DataFrame({
+            'category1': ['a', 'b', 'c', 'd'],
+            'number1': [4, 3, 2, 1],
+        })
+
+        self.data2 = pd.DataFrame({
+            'category2': ['b', 'a', 'b', 'b', 'a', 'c'],
+            'number2': [1, 2, 3, 4, 5, 6]
+        })
+
+    def test_order_by_labels(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+
+        ch.plot.bar(self.data1, ['category1'], 'number1', categorical_order_by='labels')
+        assert (np.array_equal(ch.figure.x_range.factors, ['d', 'c', 'b', 'a']))
+        assert (np.array_equal(chart_data(ch, '')['factors'], ['d', 'c', 'b', 'a']))
+        assert (np.array_equal(chart_data(ch, '')['number1'], [1, 2, 3, 4]))
+
+        ch.plot.scatter(self.data1, ['category1'], 'number1', categorical_order_by='labels')
+        assert (np.array_equal(ch.figure.x_range.factors, ['d', 'c', 'b', 'a']))
+        assert (np.array_equal(chart_data(ch, 'number1')['factors'], ['a', 'b', 'c', 'd']))
+        assert (np.array_equal(chart_data(ch, 'number1')['number1'], [4, 3, 2, 1]))
+
+    def test_order_by_values(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.bar(self.data1, ['category1'], 'number1', categorical_order_by='values')
+        assert (np.array_equal(chart_data(ch, '')['factors'], ['a', 'b', 'c', 'd']))
+        assert (np.array_equal(chart_data(ch, '')['number1'], [4, 3, 2, 1]))
+
+    def test_order_by_count(self):
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.scatter(self.data2, ['category2'], 'number2', categorical_order_by='count')
+
+        assert (np.array_equal(ch.figure.x_range.factors, ['b', 'a', 'c']))
+        assert (np.array_equal(chart_data(ch, 'number2')['factors'], ['b', 'a', 'b', 'b', 'a', 'c']))
+        assert (np.array_equal(chart_data(ch, 'number2')['number2'], [1, 2, 3, 4, 5, 6]))
+
+    @pytest.mark.parametrize(
+        'array_like', [['b', 'd', 'a', 'c'], np.array(['b', 'd', 'a', 'c']), pd.Series(['b', 'd', 'a', 'c'])])
+    def test_order_by_array_like(self, array_like):
+        ch = chartify.Chart(x_axis_type='categorical')
+        ch.plot.scatter(self.data1, ['category1'], 'number1', categorical_order_by=array_like)
+        ch.plot.bar(self.data1, ['category1'], 'number1', categorical_order_by=array_like)
+
+        self._assert_order_by_array_like(ch)
+
+    @pytest.mark.parametrize('plot_method,categorical_order_by', [('bar', 'count'), ('scatter', 'values')])
+    def test_error(self, plot_method, categorical_order_by):
+        ch = chartify.Chart(x_axis_type='categorical', y_axis_type='linear')
+        with pytest.raises(ValueError):
+            plot_method = getattr(ch.plot, plot_method)
+            plot_method(self.data1, ['category1'], 'number1', categorical_order_by=categorical_order_by)
+
+
 def test_categorical_axis_type_casting():
     """Categorical axis plotting breaks for non-str types.
     Test that type casting is performed correctly"""
