@@ -1,5 +1,5 @@
 pandas>=1.2.0,<2.0.0
-Pillow>=9.0.0
+Pillow>=9.1.0
 # Avoid selenium bug:
 # https://github.com/SeleniumHQ/selenium/issues/5296
 selenium>=4.0.0
