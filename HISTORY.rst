@@ -2,6 +2,15 @@
 History
 =======
 
+4.0.2 (2023-03-30)
+------------------
+
+* Fix categorical_order_by check for scatter plot
+* Fix categorical_order_by check for _construct_source
+* Refactor category sorting in _construct_source
+* Add tests for categorical_order_by
+* Fix scatter plot tests that used line plots
+
 4.0.1 (2023-03-24)
 ------------------
 
