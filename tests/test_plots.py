@@ -130,15 +130,15 @@ class TestScatter:
         })
 
     def test_single_numeric_scatter(self):
-        """Single line test"""
+        """Single scatter test"""
         single_scatter = self.data[self.data['category1'] == 'a']
         ch = chartify.Chart()
-        ch.plot.line(single_scatter, x_column='number1', y_column='number2')
+        ch.plot.scatter(single_scatter, x_column='number1', y_column='number2')
         assert (np.array_equal(chart_data(ch, '')['number1'], [1., 2., 3.]))
         assert (np.array_equal(chart_data(ch, '')['number2'], [5, 10, 0]))
 
     def test_multi_numeric_scatter(self):
-        """Single line test"""
+        """Multi scatter test"""
         ch = chartify.Chart()
         ch.plot.scatter(
             self.data,
@@ -151,7 +151,7 @@ class TestScatter:
         assert (np.array_equal(chart_data(ch, 'b')['number2'], [4, -3, -10]))
 
     def test_single_datetime_scatter(self):
-        """Single line test"""
+        """Single datetime scatter test"""
         data = pd.DataFrame({
             'number': [1, 10, -10, 0],
             'datetimes':
