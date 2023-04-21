@@ -2,6 +2,11 @@
 History
 =======
 
+4.0.3 (2023-04-21)
+------------------
+
+* Require jupyter_bokeh to enable html output
+
 4.0.2 (2023-03-30)
 ------------------
 

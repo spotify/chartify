@@ -9,3 +9,4 @@ ipykernel>=6.0
 ipython>=7.17.0
 pyyaml>=6.0.0
 Jinja2>=3.1.0
+jupyter-bokeh>=3.0.7
