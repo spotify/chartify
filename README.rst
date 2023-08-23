@@ -77,4 +77,4 @@ This project adheres to the `Open Code of Conduct <https://github.com/spotify/co
 Contributing
 ------------
 
-`See the contributing docs <CONTRIBUTING.rst>`_.
+`See the contributing docs <https://github.com/spotify/chartify/blob/master/CONTRIBUTING.rst>`_.
