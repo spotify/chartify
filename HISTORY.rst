@@ -2,6 +2,12 @@
 History
 =======
 
+4.0.4 (2023-08-23)
+------------------
+
+* Documentation build fix
+* Pin tornado requirement to reduce vulnerability
+
 4.0.3 (2023-04-21)
 ------------------
 

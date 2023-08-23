@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/cphalpert/chartify
+    $ git clone git://github.com/spotify/chartify
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/cphalpert/chartify/tarball/master
+    $ curl  -OL https://github.com/spotify/chartify/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/cphalpert/chartify
-.. _tarball: https://github.com/cphalpert/chartify/tarball/master
+.. _Github repo: https://github.com/spotify/chartify
+.. _tarball: https://github.com/spotify/chartify/tarball/master
