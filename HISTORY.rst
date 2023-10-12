@@ -1,6 +1,10 @@
 =======
 History
 =======
+4.0.5 (2023-10-12)
+------------------
+
+* Relaxed scipy and pandas version requirements to allow verions 2.x
 
 4.0.4 (2023-08-23)
 ------------------
