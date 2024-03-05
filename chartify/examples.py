@@ -1268,7 +1268,7 @@ def style_color_palette_sequential():
         id_vars=["time"],
         value_vars=data.columns[1:],
         value_name="y",
-        var_name=["grouping"],
+        var_name="grouping",
     )
 
     # Plot the data
