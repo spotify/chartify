@@ -81,8 +81,9 @@ Ready to contribute? Here's how to set up `chartify` for local development.
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
+5. When you're done making changes, format using make black, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
 
+    $ make black
     $ flake8 chartify tests
     $ python setup.py test or py.test
     $ tox
@@ -106,7 +107,7 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 3.8, 3.9 and 3.10. Check
+3. The pull request should work for Python 3.9, 3.10 and 3.11. Check
    https://github.com/spotify/chartify/actions
    and make sure that the tests pass for all supported Python versions.
 

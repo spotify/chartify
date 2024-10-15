@@ -104,13 +104,13 @@ setup(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'Natural Language :: English',
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: Apache Software License"
     ],
     test_suite='tests',
     tests_require=test_requirements,
     setup_requires=setup_requirements,
-    python_requires='>=3.8,<4',
+    python_requires='>=3.9,<4',
     license="Apache 2")
