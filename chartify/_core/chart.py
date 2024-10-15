@@ -20,7 +20,6 @@
 from collections import OrderedDict
 from functools import wraps
 import io
-from io import BytesIO
 import tempfile
 import warnings
 
