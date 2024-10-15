@@ -3,7 +3,7 @@ Pillow>=9.1.0
 # Avoid selenium bug:
 # https://github.com/SeleniumHQ/selenium/issues/5296
 selenium>=4.0.0
-bokeh>=3.0.0
+bokeh>=3.3.4
 scipy>=1.6.0
 ipykernel>=6.0
 ipython>=7.17.0
