@@ -17,7 +17,7 @@
 import importlib
 import os
 
-COLOR_PALETTES_CONFIG = '''\
+COLOR_PALETTES_CONFIG = """\
 - - - '#5ff550'
     - '#fae62d'
     - '#f037a5'
@@ -28,24 +28,25 @@ COLOR_PALETTES_CONFIG = '''\
     - '#eb1e32'
   - categorical
   - Baz Quux
-'''
+"""
 
 EXPECTED_COLOR_PALETTES = {
-    'foo bar': ['#5ff550', '#fae62d', '#f037a5'],
-    'baz quux': ['#ffc864', '#ffcdd2', '#eb1e32'],
+    "foo bar": ["#5ff550", "#fae62d", "#f037a5"],
+    "baz quux": ["#ffc864", "#ffcdd2", "#eb1e32"],
 }
 
 
 def test_color_palettes_config(monkeypatch, tmpdir):
-    f = tmpdir.join('color_palettes_config.yaml')
+    f = tmpdir.join("color_palettes_config.yaml")
     f.write(COLOR_PALETTES_CONFIG)
 
     # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
+    monkeypatch.setenv("CHARTIFY_CONFIG_DIR", os.path.join(str(tmpdir), ""))
 
     # reload modules to reload configuration
     import chartify._core.options
     import chartify._core.colors
+
     importlib.reload(chartify._core.options)
     importlib.reload(chartify._core.colors)
 

@@ -20,8 +20,8 @@ import numpy as np
 
 class TestColor:
     def test_color(self):
-        color = chartify._core.colors.Color('red')
-        assert (color.hex == '#f00')
+        color = chartify._core.colors.Color("red")
+        assert color.hex == "#f00"
 
 
 class TestColorPalettes:
@@ -29,20 +29,18 @@ class TestColorPalettes:
         # reload configuration
         importlib.reload(chartify)
 
-        palette = chartify.color_palettes['Category20']
-        assert (isinstance(palette, chartify._core.colors.ColorPalette))
-        assert (palette.name == 'Category20')
+        palette = chartify.color_palettes["Category20"]
+        assert isinstance(palette, chartify._core.colors.ColorPalette)
+        assert palette.name == "Category20"
 
     def test_create_palette(self):
-        chartify.color_palettes.create_palette(['white', 'black', '#fff000'],
-                                               'sequential',
-                                               'New')
-        new_palette = chartify.color_palettes['New']
-        assert new_palette.to_hex_list() == ['#ffffff', '#000000', '#fff000']
+        chartify.color_palettes.create_palette(["white", "black", "#fff000"], "sequential", "New")
+        new_palette = chartify.color_palettes["New"]
+        assert new_palette.to_hex_list() == ["#ffffff", "#000000", "#fff000"]
 
     def test_shift_palette(self):
-        palette = chartify.color_palettes['Greys']
+        palette = chartify.color_palettes["Greys"]
         assert np.array_equal(
-            palette.shift_palette('red', 20).to_hex_list(),
-            ['#e0afaf', '#ca9999', '#aa7979', '#8e5d5d',
-             '#734242', '#4f1e1e', '#310000'])
+            palette.shift_palette("red", 20).to_hex_list(),
+            ["#e0afaf", "#ca9999", "#aa7979", "#8e5d5d", "#734242", "#4f1e1e", "#310000"],
+        )

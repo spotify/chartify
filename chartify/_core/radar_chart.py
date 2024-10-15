@@ -149,7 +149,9 @@ class PlotRadar(BasePlot):
 
             coord_df = sliced_data.copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
+                coord_df, radius_column, self._THETA_COLUMN
+            )
 
             source = self._named_column_data_source(coord_df, series_name=color_value)
 
@@ -214,7 +216,9 @@ class PlotRadar(BasePlot):
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
+                coord_df, radius_column, self._THETA_COLUMN
+            )
             # Add endpoint
             coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
@@ -267,7 +271,9 @@ class PlotRadar(BasePlot):
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
+                coord_df, radius_column, self._THETA_COLUMN
+            )
             # Add endpoint
             coord_df = pd.concat([coord_df, pd.DataFrame([coord_df.iloc[0]])])
 
@@ -337,7 +343,9 @@ class PlotRadar(BasePlot):
 
             coord_df = sliced_data[[radius_column]].copy()
             coord_df[self._THETA_COLUMN] = self._get_thetas(len(coord_df))
-            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(coord_df, radius_column, self._THETA_COLUMN)
+            coord_df[[self._X_COLUMN, self._Y_COLUMN]] = self._to_xy_coords(
+                coord_df, radius_column, self._THETA_COLUMN
+            )
 
             color_value = str(color_value) if color_value is not None else color_value
 

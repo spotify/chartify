@@ -87,4 +87,4 @@ install-from-test-pypi:
 	pip3 install --index-url https://test.pypi.org/simple/ chartify
 
 black:
-	black spotify_confidence tests --line-length 119
+	black chartify tests --line-length 119
