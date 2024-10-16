@@ -59,8 +59,6 @@ Documentation available on `chartify.readthedocs.io <https://chartify.readthedoc
 Getting support
 ---------------
 
-Join #chartify on spotify-foss.slack.com (`Get an invite <https://slackin.spotify.com/>`_)
-
 Use the `chartify tag on StackOverflow <https://stackoverflow.com/questions/tagged/chartify>`_.
 
 Resources
