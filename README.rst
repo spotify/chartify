@@ -1,12 +1,12 @@
 Chartify
 ========
 
-![status] (https://img.shields.io/badge/Status-Beta-blue.svg)
-![release] (https://img.shields.io/badge/Release-5.0.0-blue.svg)
-![python] (https://img.shields.io/badge/Python-3.9-blue.svg)
-![python] (https://img.shields.io/badge/Python-3.10-blue.svg)
-![python] (https://img.shields.io/badge/Python-3.11-blue.svg)
-![CI] (https://github.com/spotify/chartify/workflows/Tox/badge.svg)
+![Status](https://img.shields.io/badge/Status-Beta-blue.svg)
+![Latest release](https://img.shields.io/badge/Release-5.0.0-blue.svg "Latest release: 3.0.4")
+![python](https://img.shields.io/badge/Python-3.9-blue.svg "Python 3.9")
+![python](https://img.shields.io/badge/Python-3.10-blue.svg "Python 3.10")
+![python](https://img.shields.io/badge/Python-3.11-blue.svg "Python 3.11")
+![CI](https://github.com/spotify/chartify/workflows/Tox/badge.svg "Tox")
 
 Chartify is a Python library that makes it easy for data scientists to create charts.
 
