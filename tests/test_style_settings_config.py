@@ -17,32 +17,34 @@
 import importlib
 import os
 
-STYLE_SETTINGS_CONFIG = '''\
+STYLE_SETTINGS_CONFIG = """\
 foo:
   baz.bar: 0.25
   quux: deadbeef
 bar:
   baz: bar quux
-'''
+"""
 
 
 def test_style_settings_config(monkeypatch, tmpdir):
-    f = tmpdir.join('style_settings_config.yaml')
+    f = tmpdir.join("style_settings_config.yaml")
     f.write(STYLE_SETTINGS_CONFIG)
 
     # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
+    monkeypatch.setenv("CHARTIFY_CONFIG_DIR", os.path.join(str(tmpdir), ""))
 
     # reload modules to reload configuration
     import chartify._core.options
     import chartify._core.style
+
     importlib.reload(chartify._core.options)
     importlib.reload(chartify._core.style)
 
     # Check that the expected style is loaded
-    style = chartify._core.style.Style(None, '')
+    style = chartify._core.style.Style(None, "")
 
     import yaml
+
     expected_settings = yaml.safe_load(STYLE_SETTINGS_CONFIG)
 
     for key, expected_value in expected_settings.items():

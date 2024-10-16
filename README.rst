@@ -4,8 +4,10 @@ Chartify
 |status|  |release|  |python|  |CI|
 
 .. |status| image:: https://img.shields.io/badge/Status-Beta-blue.svg
-.. |release| image:: https://img.shields.io/badge/Release-4.0.3-blue.svg
-.. |python| image:: https://img.shields.io/badge/Python-3.7-blue.svg
+.. |release| image:: https://img.shields.io/badge/Release-5.0.0-blue.svg
+.. |python| image:: https://img.shields.io/badge/Python-3.9-blue.svg
+.. |python| image:: https://img.shields.io/badge/Python-3.10-blue.svg
+.. |python| image:: https://img.shields.io/badge/Python-3.11-blue.svg
 .. |CI| image:: https://github.com/spotify/chartify/workflows/Tox/badge.svg
         :target: https://github.com/spotify/chartify/actions
 

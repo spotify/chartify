@@ -1,6 +1,13 @@
 =======
 History
 =======
+5.0.0 (2024-10-16)
+
+* Drop support for Python 3.8
+* Add support for Python 3.11
+* Fixes bad cropping in png introduced by changes to chrome webdriver
+* Add support and recommendation to use make black for code formatting
+
 4.0.5 (2023-10-12)
 ------------------
 

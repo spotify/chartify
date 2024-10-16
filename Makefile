@@ -85,3 +85,6 @@ release-prod: clean ## package and upload a release
 
 install-from-test-pypi:
 	pip3 install --index-url https://test.pypi.org/simple/ chartify
+
+black:
+	black chartify tests --line-length 119
