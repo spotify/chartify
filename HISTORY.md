@@ -1,6 +1,11 @@
 History
 =======
 
+5.0.1 (2024-10-16)
+------------------
+
+* Bugfixes to render project description correctly on PyPi
+
 5.0.0 (2024-10-16)
 ------------------
 

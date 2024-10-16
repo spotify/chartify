@@ -2,7 +2,7 @@ Chartify
 ========
 
 ![Status](https://img.shields.io/badge/Status-Beta-blue.svg)
-![Latest release](https://img.shields.io/badge/Release-5.0.0-blue.svg "Latest release: 5.0.0")
+![Latest release](https://img.shields.io/badge/Release-5.0.1-blue.svg "Latest release: 5.0.1")
 ![python](https://img.shields.io/badge/Python-3.9-blue.svg "Python 3.9")
 ![python](https://img.shields.io/badge/Python-3.10-blue.svg "Python 3.10")
 ![python](https://img.shields.io/badge/Python-3.11-blue.svg "Python 3.11")
