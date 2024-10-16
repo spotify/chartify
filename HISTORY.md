@@ -1,7 +1,8 @@
-=======
 History
 =======
+
 5.0.0 (2024-10-16)
+------------------
 
 * Drop support for Python 3.8
 * Add support for Python 3.11
