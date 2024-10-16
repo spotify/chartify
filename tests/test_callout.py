@@ -17,24 +17,21 @@ import chartify
 
 
 class TestBaseAxes:
-
     def test_datetime_callouts(self):
         data = chartify.examples.example_data()
 
         # Sum price grouped by date
-        price_by_date = (
-            data.groupby('date')['total_price'].sum()
-            .reset_index()  # Move 'date' from index to column
-        )
+        price_by_date = data.groupby("date")["total_price"].sum().reset_index()  # Move 'date' from index to column
 
         # Plot the data
-        ch = chartify.Chart(blank_labels=True, x_axis_type='datetime')
+        ch = chartify.Chart(blank_labels=True, x_axis_type="datetime")
         ch.plot.line(
             # Data must be sorted by x column
-            data_frame=price_by_date.sort_values('date'),
-            x_column='date',
-            y_column='total_price')
-        ch.callout.line('2017-08-01', orientation='height', line_width=10)
-        ch.callout.line_segment('2017-08-01', 10, '2017-09-05', 20)
-        ch.callout.box(10, 0, '2017-05-01', '2017-05-05')
-        ch.callout.text('text', '2017-05-01', 10)
+            data_frame=price_by_date.sort_values("date"),
+            x_column="date",
+            y_column="total_price",
+        )
+        ch.callout.line("2017-08-01", orientation="height", line_width=10)
+        ch.callout.line_segment("2017-08-01", 10, "2017-09-05", 20)
+        ch.callout.box(10, 0, "2017-05-01", "2017-05-05")
+        ch.callout.text("text", "2017-05-01", 10)

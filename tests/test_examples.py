@@ -23,12 +23,11 @@ def test_examples():
     # reload configuration
     importlib.reload(chartify)
 
-    excluded_examples = ['chart_show']
+    excluded_examples = ["chart_show"]
     public_examples = [
-        attr for attr in dir(chartify.examples) if
-        callable(getattr(chartify.examples, attr))
-        and not attr.startswith("_")
-        and attr not in excluded_examples
+        attr
+        for attr in dir(chartify.examples)
+        if callable(getattr(chartify.examples, attr)) and not attr.startswith("_") and attr not in excluded_examples
     ]
     # Disable chart rendering
     chartify.examples._OUTPUT_FORMAT = None

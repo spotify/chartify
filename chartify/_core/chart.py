@@ -20,12 +20,11 @@
 from collections import OrderedDict
 from functools import wraps
 import io
-from io import BytesIO
 import tempfile
 import warnings
 
 import bokeh
-from bokeh.io.export import _SVG_SCRIPT, wait_until_render_complete
+from bokeh.io.export import _SVG_SCRIPT, wait_until_render_complete, get_screenshot_as_png
 import bokeh.plotting
 from bokeh.embed import file_html
 
@@ -444,7 +443,7 @@ y_axis_type='{y_axis_type}')
         driver = webdriver.Chrome(options=options)
         return driver
 
-    def _figure_to_png(self):
+    def _figure_to_png(self, force_resize=True, scale_factor=1):
         """Convert figure object to PNG
         Bokeh can only save figure objects as html.
         To convert to PNG the HTML file is opened in a headless browser.
@@ -458,14 +457,14 @@ y_axis_type='{y_axis_type}')
         # Open html file in the browser.
         driver.get("file:///" + fp.name)
         driver.execute_script("document.body.style.margin = '0px';")
-        png = driver.get_screenshot_as_png()
+        image = get_screenshot_as_png(self.figure, driver=driver, scale_factor=scale_factor)
         driver.quit()
         fp.close()
         # Resize image if necessary.
-        image = Image.open(BytesIO(png))
-        target_dimensions = (self.style.plot_width, self.style.plot_height)
-        if image.size != target_dimensions:
-            image = image.resize(target_dimensions, resample=Resampling.LANCZOS)
+        if force_resize:
+            target_dimensions = (self.style.plot_width, self.style.plot_height)
+            if image.size != target_dimensions:
+                image = image.resize(target_dimensions, resample=Resampling.LANCZOS)
         return image
 
     def _set_svg_backend_decorator(f):

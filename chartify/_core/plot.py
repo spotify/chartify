@@ -350,7 +350,9 @@ class PlotNumericXY(BasePlot):
             else:
                 sliced_data = data_frame[data_frame[color_column] == color_value]
             # Filter to only relevant columns.
-            sliced_data = sliced_data[[col for col in sliced_data.columns if col in (x_column, y_column, color_column)]]
+            sliced_data = sliced_data[
+                [col for col in sliced_data.columns if col in (x_column, y_column, color_column)]
+            ]
 
             cast_data = self._cast_datetime_axis(sliced_data, x_column)
 
@@ -959,9 +961,7 @@ class PlotMixedTypeXY(BasePlot):
 
         hierarchical_sort_cols = categorical_columns[:]
         for i, _ in enumerate(hierarchical_sort_cols):
-            row_totals["level_%s" % i] = row_totals.groupby(hierarchical_sort_cols[: i + 1])["_sum"].transform(
-                "sum"
-            )
+            row_totals["level_%s" % i] = row_totals.groupby(hierarchical_sort_cols[: i + 1])["_sum"].transform("sum")
         row_totals = row_totals.sort_values(
             by=["level_%s" % i for i, _ in enumerate(hierarchical_sort_cols)],
             ascending=categorical_order_ascending,
@@ -969,19 +969,12 @@ class PlotMixedTypeXY(BasePlot):
         return source.reindex(row_totals.index)
 
     @staticmethod
-    def _sort_categories(
-            source,
-            categorical_columns,
-            categorical_order_by,
-            categorical_order_ascending
-    ):
-
+    def _sort_categories(source, categorical_columns, categorical_order_by, categorical_order_ascending):
         is_string = isinstance(categorical_order_by, str)
         order_length = getattr(categorical_order_by, "__len__", None)
         # Sort the categories
         if is_string and categorical_order_by == "values":
-            return PlotMixedTypeXY._sort_categories_by_value(
-                source, categorical_columns, categorical_order_ascending)
+            return PlotMixedTypeXY._sort_categories_by_value(source, categorical_columns, categorical_order_ascending)
         elif is_string and categorical_order_by == "labels":
             return source.sort_index(axis=0, ascending=categorical_order_ascending)
         # Manual sort

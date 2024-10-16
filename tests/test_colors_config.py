@@ -17,7 +17,7 @@
 import importlib
 import os
 
-COLORS_CONFIG = '''\
+COLORS_CONFIG = """\
 ? !!python/tuple
 - 0
 - 100
@@ -33,32 +33,34 @@ COLORS_CONFIG = '''\
 - 230
 - 140
 : Baz
-'''
+"""
 
 EXPECTED_COLORS = {
-    'style.color_palette_categorical': 'My Palette',
-    'style.color_palette_sequential': 'Midnight Orange Sequential',
-    'style.color_palette_diverging': 'Midnight Orange Diverging',
-    'style.color_palette_accent': 'My Palette',
-    'style.color_palette_accent_default_color': 'light grey',
+    "style.color_palette_categorical": "My Palette",
+    "style.color_palette_sequential": "Midnight Orange Sequential",
+    "style.color_palette_diverging": "Midnight Orange Diverging",
+    "style.color_palette_accent": "My Palette",
+    "style.color_palette_accent_default_color": "light grey",
 }
 
 
 def test_colors_config(monkeypatch, tmpdir):
-    f = tmpdir.join('colors_config.yaml')
+    f = tmpdir.join("colors_config.yaml")
     f.write(COLORS_CONFIG)
 
     # XXX (dano): CHARTIFY_CONFIG_DIR must end with /
-    monkeypatch.setenv('CHARTIFY_CONFIG_DIR', os.path.join(str(tmpdir), ''))
+    monkeypatch.setenv("CHARTIFY_CONFIG_DIR", os.path.join(str(tmpdir), ""))
 
     # reload modules to reload configuration
     import chartify._core.options
     import chartify._core.colors
     import chartify._core.style
+
     importlib.reload(chartify._core.options)
     importlib.reload(chartify._core.colors)
 
     import chartify._core.colour as colour
-    assert colour.COLOR_NAME_TO_RGB['foo'] == (0, 100, 80)
-    assert colour.COLOR_NAME_TO_RGB['bar'] == (25, 20, 20)
-    assert colour.COLOR_NAME_TO_RGB['baz'] == (25, 230, 140)
+
+    assert colour.COLOR_NAME_TO_RGB["foo"] == (0, 100, 80)
+    assert colour.COLOR_NAME_TO_RGB["bar"] == (25, 20, 20)
+    assert colour.COLOR_NAME_TO_RGB["baz"] == (25, 230, 140)
