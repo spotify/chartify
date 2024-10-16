@@ -26,7 +26,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
+with open('HISTORY.md') as history_file:
     history = history_file.read()
 
 
@@ -92,6 +92,7 @@ setup(
     version=find_meta('version'),
     description="Python library to make plotting simpler for data scientists",
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/markdown',
     author=find_meta('author'),
     author_email=find_meta('email'),
     url='https://github.com/spotify/chartify',
