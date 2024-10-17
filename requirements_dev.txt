@@ -15,4 +15,4 @@ pytest-cov==4.0.0
 coverage-badge==1.1.0
 pytest-runner==6.0.0
 importlib-metadata==6.1.0
-black==23.1.0
+black==24.3.0
