@@ -434,9 +434,9 @@ y_axis_type='{y_axis_type}')
             "window-size={width},{height}".format(width=self.style.plot_width, height=self.style.plot_height)
         )
         options.add_argument("start-maximized")
-        options.add_argument("disable-infobars")
-        options.add_argument("disable-gpu")
-        options.add_argument("no-sandbox")  # Required for use in docker.
+        options.add_argument("--disable-infobars")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")  # Required for use in docker.
         options.add_argument("--disable-extensions")
         options.add_argument("--headless")
         options.add_argument("--hide-scrollbars")
