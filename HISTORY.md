@@ -1,6 +1,11 @@
 History
 =======
 
+Unreleased
+----------
+
+* Fix empty chart output in Google Colab (#131)
+
 5.0.1 (2024-10-16)
 ------------------
 
