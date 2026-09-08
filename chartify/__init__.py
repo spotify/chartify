@@ -28,17 +28,45 @@ __version__ = "5.0.1"
 _IPYTHON_INSTANCE = False
 
 
+def _running_in_notebook_like_environment(ipython_instance):
+    """Return True if the current IPython instance is a notebook-style
+    frontend that Bokeh can render inline into.
+
+    This includes classic/Jupyter notebooks and JupyterLab (both backed by
+    ``ipykernel.zmqshell.ZMQInteractiveShell``), as well as Google Colab,
+    which implements its own shell (``google.colab._shell.Shell``) that is
+    *not* a subclass of ``ZMQInteractiveShell``. Relying solely on the
+    ``ZMQInteractiveShell`` isinstance check causes Colab to be silently
+    skipped, so ``output_notebook`` is never called and charts render an
+    empty output (see issue #131).
+    """
+    from ipykernel.zmqshell import ZMQInteractiveShell
+
+    if isinstance(ipython_instance, ZMQInteractiveShell):
+        return True
+
+    # Google Colab ships its own shell implementation that doesn't inherit
+    # from ZMQInteractiveShell. Detect it by class name/module instead of
+    # importing the (Colab-only) google.colab package directly.
+    shell_class = type(ipython_instance)
+    shell_module = getattr(shell_class, "__module__", "")
+    if shell_module.startswith("google.colab"):
+        return True
+
+    return False
+
+
 def set_display_settings():
     """Enable notebook output settings if running in a jupyter notebook"""
+    global _IPYTHON_INSTANCE
     from IPython.core.getipython import get_ipython
-    from ipykernel.zmqshell import ZMQInteractiveShell
     from bokeh.io import output_notebook
     from bokeh.resources import Resources
     from bokeh.io.state import curstate
 
     ipython_instance = get_ipython()
     if ipython_instance is not None:
-        if isinstance(ipython_instance, ZMQInteractiveShell):
+        if _running_in_notebook_like_environment(ipython_instance):
             _IPYTHON_INSTANCE = True
             # Defer to previous call to ``output_notebook`` so that users
             # can specify their own notebook type and Bokeh resources
