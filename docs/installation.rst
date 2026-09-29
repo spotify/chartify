@@ -1,51 +1,48 @@
-.. highlight:: shell
-
 ============
 Installation
 ============
 
-
 Stable release
 --------------
 
-To install chartify, run this command in your terminal:
+To install Chartify, run the following command in your terminal:
 
 .. code-block:: console
 
     $ pip install chartify
 
-This is the preferred method to install chartify, as it will always install the most recent stable release. 
+This installs the latest stable release of Chartify.
 
-If you don't have `pip`_ installed, this `Python installation guide`_ can guide
-you through the process.
+If ``pip`` is not installed, refer to the `Python installation guide`_
+for instructions.
 
-.. _pip: https://pip.pypa.io
-.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
+.. _Python installation guide:
+   https://docs.python.org/3/installing/
 
+From source
+-----------
 
-From sources
-------------
+The Chartify source code is available in the `GitHub repository`_.
 
-The sources for chartify can be downloaded from the `Github repo`_.
-
-You can either clone the public repository:
-
-.. code-block:: console
-
-    $ git clone git://github.com/spotify/chartify
-
-Or download the `tarball`_:
+To clone the repository using Git:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/spotify/chartify/tarball/master
+    $ git clone https://github.com/spotify/chartify.git
 
-Once you have a copy of the source, you can install it with:
+You can also download the source as a tarball:
 
 .. code-block:: console
 
+    $ curl -O https://github.com/spotify/chartify/archive/refs/heads/master.tar.gz
+
+Once you have a copy of the source, navigate to the Chartify directory
+and install it with:
+
+.. code-block:: console
+
+    $ cd chartify
     $ python setup.py install
 
-
-.. _Github repo: https://github.com/spotify/chartify
-.. _tarball: https://github.com/spotify/chartify/tarball/master
+.. _GitHub repository:
+   https://github.com/spotify/chartify
